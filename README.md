@@ -18,12 +18,17 @@ The system continuously monitors the player's tracking status (`is_catching`) an
 2.  **Fish Speed (Temporal Difficulty):**
     * *Success:* Increases velocity multiplier.
     * *Failure:* Decreases velocity multiplier.
+  
+**Logic snippet:**
+> If `Performance` > Threshold: Increase Difficulty ($\Delta+$ Speed, $\Delta-$ Size)
+> Else: Decrease Difficulty ($\Delta-$ Speed, $\Delta+$ Size)
 
 ## 📂 Repository Structure
 
 * `main.py`: The core simulation engine. Handles the game loop, DDA logic processing, and real-time data logging.
 * `plot_graph.py`: Data visualization script. Parses the generated CSV to visualize the correlation between **Player Performance** (Catch/Miss) and **Difficulty Metrics** (Bar Size).
-* `stardew_dda_result.csv`: (Generated) Raw dataset containing time-series data of the play session.
+* `stardew_dda_result.csv`: (Generated Output) Raw dataset containing time-series data of the play session.
+* `dda_graph.png`: (Generated Output) The final visualization chart showing the DDA algorithm's behavior.
 
 ## 🚀 Getting Started
 
@@ -40,14 +45,14 @@ The system continuously monitors the player's tracking status (`is_catching`) an
 1.  **Run the Simulation:**
     Start the game and play. The system will auto-adjust difficulty based on your inputs.
     ```bash
-    python main.py
+    python3 main.py
     ```
     *Controls: Use `UP` and `DOWN` arrow keys to keep the fish inside the bar.*
 
 2.  **Analyze the Data:**
     After closing the simulation, a CSV file is generated. Run the analysis script to visualize the session:
     ```bash
-    python plot_graph.py
+    python3 plot_graph.py
     ```
 
 3.  **View Results:**
