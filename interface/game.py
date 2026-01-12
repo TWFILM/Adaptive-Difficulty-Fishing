@@ -59,7 +59,7 @@ def run_game(screen, S, logger):
 
     BAR_BOUNCE_DAMP = 0.5   
     
-
+    # the fish you are catching
     fish_encounter = get_fish(get_random_rarity(rod_using["name"]))
     print(fish_encounter)
 
@@ -90,8 +90,8 @@ def run_game(screen, S, logger):
             if rod_using["name"] == "Meme Rod" and player_bar_width <= 600 and fish_encounter["name"] != "Meme Fish":
                 player_bar_width += 0.1
 
-            if fish_encounter["name"] == "Meme Fish":
-                player_bar_width -= 0.055
+            if fish_encounter["name"] == "Meme Fish" and player_bar_width >= 0:
+                player_bar_width -= 0.25
 
             mouse_pressed = pygame.mouse.get_pressed()[0]
 
