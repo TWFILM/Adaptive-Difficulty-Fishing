@@ -24,13 +24,13 @@ def main():
             # load player selection rod
             save_data = load_save()
             rod_name = save_data["player"]["rod"]
-            print(rod_name)
+            # print(rod_name)
             pygame.init()
             S = build_scaled_config()   
             screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
             
             success = run_game(screen, S, logger, rod_name)
-            print("Game Result:", "🎣 Catch success! Progress reached 100%." if success else "❌ Game ended before completion.")
+            print("Game Result:", f"🎣 Catch success! You caught the {success[1]} {success[2]}." if success[0] else "❌ Game ended the fish got away...")
             state = "LOBBY"
 
         elif state == "SELECT_ROD":

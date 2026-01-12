@@ -28,7 +28,7 @@ def get_random_rarity(rod_name):
            
     
     result = random.choices(rarities, weights=weights, k=1)
-    print(weights)
+    # print(weights)
     return result[0]
 
 def get_fishing_rod_info(name):

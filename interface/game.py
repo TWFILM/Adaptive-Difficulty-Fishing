@@ -66,14 +66,14 @@ def run_game(screen, S, logger, rod_name):
     
     # the fish you are catching
     fish_encounter = get_fish(get_random_rarity(rod_using["name"]))
-    print(fish_encounter)
+    # print(fish_encounter)
 
     fish_resilience = fish_encounter["FISH_RESILIENCE"]+rod_using["RESILIENCE"]
     fish_progress = fish_encounter["PROGRESS_SPD"]+rod_using["PROGRESS_SPD"]
     if rod_using["name"] == "Meme Rod":
         fish_progress = -0.99
 
-    success = False
+    success = [False, "None", "None"]
     running = True
     while running:
         for event in pygame.event.get():
@@ -205,7 +205,9 @@ def run_game(screen, S, logger, rod_name):
 
         if progress >= 1.0:
             running = False
-            success = True
+            success[0] = True
+            success[1] = fish_encounter["rarity"]
+            success[2] = fish_encounter["name"]
         elif progress <= 0:
             running = False
         
