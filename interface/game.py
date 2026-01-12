@@ -267,7 +267,7 @@ def run_game(screen, S, logger):
 
         pygame.display.flip()
         clock.tick(FPS)
-        
+    logger.export()
     pygame.quit()
     return success
 
