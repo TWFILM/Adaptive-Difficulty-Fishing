@@ -1,7 +1,26 @@
 # lobby.py
+import os
 import pygame
+
 from gameData.config import BG_COLOR, FPS
 from interface.gadgets import Button
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(BASE_DIR)
+
+FONT_PATH1 = os.path.join(
+    ROOT_DIR,
+    "assets",
+    "fonts",
+    "Underlines-PVjX2.ttf"
+)
+
+FONT_PATH2 = os.path.join(
+    ROOT_DIR,
+    "assets",
+    "fonts",
+    "RasterForgeRegular-JpBgm.ttf"
+)
 
 def run_lobby(screen, S):
     pygame.init()
@@ -9,8 +28,8 @@ def run_lobby(screen, S):
     pygame.display.set_caption("Fishing Lobby")
     clock = pygame.time.Clock()
 
-    title_font = pygame.font.Font('assets/fonts/Underlines-PVjX2.ttf', 42)
-    btn_font = pygame.font.Font('assets/fonts/RasterForgeRegular-JpBgm.ttf', 26)
+    title_font = pygame.font.Font(FONT_PATH1, 42)
+    btn_font = pygame.font.Font(FONT_PATH2, 26)
 
     # --- Buttons ---
     play_btn = Button(

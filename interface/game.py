@@ -3,27 +3,32 @@ import pygame
 import math
 import random
 import time
+import os
 
 from gameData.config import *
 from dda import update_fish_speed
 from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(BASE_DIR)
 
-def run_game(screen, S, logger):
+FONT_PATH1 = os.path.join(
+    ROOT_DIR,
+    "assets",
+    "fonts",
+    "RasterForgeRegular-JpBgm.ttf"
+)
+
+def run_game(screen, S, logger, rod_name):
     pygame.init()
 
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("DDA Experiment")
     clock = pygame.time.Clock()
-    font = pygame.font.Font('assets/fonts/RasterForgeRegular-JpBgm.ttf', 18)
+    font = pygame.font.Font(FONT_PATH1, 18)
 
-    # # RODDD
-    # rod_using = get_fishing_rod_info("Novice Rod")
-    rod_using = get_fishing_rod_info("Cool Rod")
-    # rod_using = get_fishing_rod_info("RU Sure Rod")
-    # rod_using = get_fishing_rod_info("Prismatic Rod")
-    # rod_using = get_fishing_rod_info("Rod of the Conqueror")
-    # rod_using = get_fishing_rod_info("Meme Rod")
+    # RODDD
+    rod_using = get_fishing_rod_info(rod_name)
 
     player_bar_width = S.BAR_WIDTH+(rod_using["CONTROLLED"]*S.BAR_WIDTH)   # player control bar    
     bar_x = S.WIDTH // 2 - player_bar_width // 2
