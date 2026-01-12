@@ -4,9 +4,9 @@ import math
 import random
 import time
 
-from config import *
+from gameData.config import *
 from dda import update_fish_speed
-import get_info
+from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
 
 
 def run_game(logger):
@@ -14,15 +14,15 @@ def run_game(logger):
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("DDA Experiment")
     clock = pygame.time.Clock()
-    font = pygame.font.SysFont("Arial", 18)
+    font = pygame.font.Font('assets/fonts/RasterForgeRegular-JpBgm.ttf', 18)
 
     # # RODDD
-    # rod_using = get_info.get_fishing_rod_info("Novice Rod")
-    # rod_using = get_info.get_fishing_rod_info("Cool Rod")
-    rod_using = get_info.get_fishing_rod_info("RU Sure Rod")
-    # rod_using = get_info.get_fishing_rod_info("Prismatic Rod")
-    # rod_using = get_info.get_fishing_rod_info("Rod of the Conqueror")
-    # rod_using = get_info.get_fishing_rod_info("Meme Rod")
+    # rod_using = get_fishing_rod_info("Novice Rod")
+    # rod_using = get_fishing_rod_info("Cool Rod")
+    rod_using = get_fishing_rod_info("RU Sure Rod")
+    # rod_using = get_fishing_rod_info("Prismatic Rod")
+    # rod_using = get_fishing_rod_info("Rod of the Conqueror")
+    # rod_using = get_fishing_rod_info("Meme Rod")
 
     player_bar_width = BAR_WIDTH+(rod_using["CONTROLLED"]*BAR_WIDTH)   # player control bar    
     bar_x = WIDTH // 2 - player_bar_width // 2
@@ -59,7 +59,7 @@ def run_game(logger):
     BAR_BOUNCE_DAMP = 0.5   
     
 
-    fish_encounter = get_info.get_fish(get_info.get_random_rarity(rod_using["name"]))
+    fish_encounter = get_fish(get_random_rarity(rod_using["name"]))
     print(fish_encounter)
 
     fish_resilience = fish_encounter["FISH_RESILIENCE"]+rod_using["RESILIENCE"]
@@ -179,7 +179,7 @@ def run_game(logger):
 
         # --- Collision (X-axis) ---
         fish_center = fish_x + FISH_SIZE / 2
-        is_catching = bar_x < fish_center < bar_x + player_bar_width
+        is_catching = bar_x <= fish_center <= bar_x + player_bar_width
         # --- Progression Bar Logic ---
         if not freeze_active:
             if is_catching:

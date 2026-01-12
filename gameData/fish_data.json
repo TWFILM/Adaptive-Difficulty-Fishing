@@ -3,11 +3,11 @@
         { "fish_id": 1, "name": "Mackerel", "rarity": "common", 
             "FISH_RESILIENCE": 0.8, "PROGRESS_SPD": 0 },
         { "fish_id": 2, "name": "Sardine", "rarity": "common", 
-            "FISH_RESILIENCE": 0.8, "PROGRESS_SPD": 0 },
+            "FISH_RESILIENCE": 0.85, "PROGRESS_SPD": 0 },
         { "fish_id": 3, "name": "Sea Bass", "rarity": "common", 
             "FISH_RESILIENCE": 0.8, "PROGRESS_SPD": 0.2 },
         { "fish_id": 4, "name": "Shrimp", "rarity": "common", 
-            "FISH_RESILIENCE": 0.8, "PROGRESS_SPD": 0 },
+            "FISH_RESILIENCE": 0.85, "PROGRESS_SPD": 0 },
         { "fish_id": 5, "name": "Haddock", "rarity": "common", 
             "FISH_RESILIENCE": 0.8, "PROGRESS_SPD": 0 },
         { "fish_id": 6, "name": "Mullet", "rarity": "common", 
@@ -17,7 +17,7 @@
         { "fish_id": 1, "name": "Cod", "rarity": "uncommon", 
             "FISH_RESILIENCE": 0.7, "PROGRESS_SPD": 0 },
         { "fish_id": 2, "name": "Crab", "rarity": "uncommon", 
-            "FISH_RESILIENCE": 0.7, "PROGRESS_SPD": 0 },
+            "FISH_RESILIENCE": 0.75, "PROGRESS_SPD": 0 },
         { "fish_id": 3, "name": "Salmon", "rarity": "uncommon", 
             "FISH_RESILIENCE": 0.7, "PROGRESS_SPD": 0 },
         { "fish_id": 4, "name": "Amberjack", "rarity": "uncommon", 
@@ -29,7 +29,7 @@
         { "fish_id": 2, "name": "Pufferfish", "rarity": "rare", 
             "FISH_RESILIENCE": 0.65, "PROGRESS_SPD": 0 },
         { "fish_id": 3, "name": "Octopus", "rarity": "rare", 
-            "FISH_RESILIENCE": 0.7, "PROGRESS_SPD": 0 }
+            "FISH_RESILIENCE": 0.6, "PROGRESS_SPD": 0 }
     ],
     "legendary":[
         { "fish_id": 1, "name": "Great White Shark", "rarity": "legendary", 
