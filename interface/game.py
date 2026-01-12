@@ -8,6 +8,7 @@ import os
 from gameData.config import *
 from dda import update_fish_speed
 from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
+from gameData.load_img import run_end_screen_meme
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
@@ -38,7 +39,12 @@ def run_game(screen, S, logger, rod_name):
 
     fish_speed = 1.0
     progress = 0
-
+    progress_bar_color = PROGRESS_BAR_COLOR
+    # for Rod of the Conqueror
+    progress_addition = 0
+    if rod_using["name"] == "Rod of the Conqueror":
+        progress_addition = 0.21
+        progress_bar_color = (255, 215, 0)
     
     # random fish movement
     fish_x = ( S.WIDTH // 2 ) - (S.FISH_SIZE // 2)
@@ -71,7 +77,7 @@ def run_game(screen, S, logger, rod_name):
     fish_resilience = fish_encounter["FISH_RESILIENCE"]+rod_using["RESILIENCE"]
     fish_progress = fish_encounter["PROGRESS_SPD"]+rod_using["PROGRESS_SPD"]
     if rod_using["name"] == "Meme Rod":
-        fish_progress = -0.99
+        fish_progress = -0.95
 
     success = [False, "None", "None"]
     running = True
@@ -84,14 +90,15 @@ def run_game(screen, S, logger, rod_name):
         freeze_active = (current_time - encounter_start_time) < ENCOUNTER_FREEZE_TIME
 
         # --- Progress animation during freeze ---
-        if freeze_active and progress < PROGRESS_INIT:
+        if freeze_active and progress < (PROGRESS_INIT + progress_addition):
             progress += PROGRESS_FILL_ANIM_SPEED
-            progress = min(progress, PROGRESS_INIT)
+            progress = min(progress, PROGRESS_INIT+progress_addition)
 
 
         # --- Player Control ---
         if not freeze_active:
             # Meme Rod's Secret Passive
+            progress_bar_color = PROGRESS_BAR_COLOR 
             if rod_using["name"] == "Meme Rod" and player_bar_width <= 600 and fish_encounter["name"] != "Meme Fish":
                 player_bar_width += 0.1
 
@@ -244,7 +251,7 @@ def run_game(screen, S, logger, rod_name):
         # --- Progress Fill ---
         pygame.draw.rect(
             screen,
-            (255, 215, 0),
+            progress_bar_color,
             (
                 S.WIDTH // 2 - S.PROGRESS_BAR_WIDTH // 2,
                 S.PROGRESS_BAR_Y,
@@ -277,7 +284,13 @@ def run_game(screen, S, logger, rod_name):
 
         pygame.display.flip()
         clock.tick(FPS)
+
     logger.export()
+
+    # Meme Rod only!
+    if rod_using["name"] == "Meme Rod" and success[0] is True:
+        run_end_screen_meme(screen, clock, duration=4)
+
     pygame.quit()
     return success
 

@@ -15,10 +15,10 @@
             "RESILIENCE": 0.45, "PROGRESS_SPD": 0, "LUCK": 0.8 }
     ,
     "Rod of the Conqueror":
-        { "name": "Rod of the Conqueror", "CONTROLLED": 1.25, 
-            "RESILIENCE": 0.7, "PROGRESS_SPD": 0.15, "LUCK": 1.25 }
+        { "name": "Rod of the Conqueror", "CONTROLLED": 1.85, 
+            "RESILIENCE": 0.7, "PROGRESS_SPD": 0, "LUCK": 1.25 }
     ,
     "Meme Rod" :
         { "name": "Meme Rod", "CONTROLLED": 0, 
-                "RESILIENCE": 2.22, "PROGRESS_SPD": 0, "LUCK": 0.25 }
+                "RESILIENCE": 2.22, "PROGRESS_SPD": 0, "LUCK": 0.85 }
 }
