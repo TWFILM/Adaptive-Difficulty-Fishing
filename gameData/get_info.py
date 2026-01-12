@@ -17,7 +17,10 @@ def get_random_rarity(rod_name):
 
     luck = rod.get("LUCK", 0)
     if luck!=0:
-        weights[0] *= luck/2 # uncommon
+        if luck < 0:
+            weights[0] = weights[0] * 1+abs(luck) # common
+        else :
+            weights[0] = weights[0] * abs(luck)/2 # common
         weights[1] *= 1+luck # uncommon
         weights[2] *= 1+(luck*2) # rare
         weights[3] *= 1+(luck*4) # legendary

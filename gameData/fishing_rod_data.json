@@ -19,6 +19,6 @@
             "RESILIENCE": 0.7, "PROGRESS_SPD": 0.15, "LUCK": 1.25 }
     ,
     "Meme Rod" :
-        { "name": "Meme Rod", "CONTROLLED": 2.5, 
+        { "name": "Meme Rod", "CONTROLLED": 0, 
                 "RESILIENCE": 2.5, "PROGRESS_SPD": -0.99, "LUCK": 0.25 }
 }

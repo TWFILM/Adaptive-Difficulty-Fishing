@@ -9,8 +9,9 @@ from dda import update_fish_speed
 from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
 
 
-def run_game(logger):
+def run_game(screen, S, logger):
     pygame.init()
+
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("DDA Experiment")
     clock = pygame.time.Clock()
@@ -18,15 +19,15 @@ def run_game(logger):
 
     # # RODDD
     # rod_using = get_fishing_rod_info("Novice Rod")
-    # rod_using = get_fishing_rod_info("Cool Rod")
-    rod_using = get_fishing_rod_info("RU Sure Rod")
+    rod_using = get_fishing_rod_info("Cool Rod")
+    # rod_using = get_fishing_rod_info("RU Sure Rod")
     # rod_using = get_fishing_rod_info("Prismatic Rod")
     # rod_using = get_fishing_rod_info("Rod of the Conqueror")
     # rod_using = get_fishing_rod_info("Meme Rod")
 
-    player_bar_width = BAR_WIDTH+(rod_using["CONTROLLED"]*BAR_WIDTH)   # player control bar    
-    bar_x = WIDTH // 2 - player_bar_width // 2
-    bar_y = TRACK_Y
+    player_bar_width = S.BAR_WIDTH+(rod_using["CONTROLLED"]*S.BAR_WIDTH)   # player control bar    
+    bar_x = S.WIDTH // 2 - player_bar_width // 2
+    bar_y = S.TRACK_Y
     
     encounter_start_time = time.time()
 
@@ -35,15 +36,15 @@ def run_game(logger):
 
     
     # random fish movement
-    fish_x = ( WIDTH // 2 ) - (FISH_SIZE // 2)
+    fish_x = ( S.WIDTH // 2 ) - (S.FISH_SIZE // 2)
     fish_direction = random.choice([-1, 1])
     fish_speed = random.uniform(FISH_MIN_SPEED, FISH_MAX_SPEED)
 
     distance = random.randint(FISH_MOVE_MIN_DIST, FISH_MOVE_MAX_DIST)
     fish_target_x = fish_x + fish_direction * distance
     fish_target_x = max(
-        BAR_MIN_X,
-        min(BAR_MAX_X + BAR_WIDTH - FISH_SIZE, fish_target_x)
+        S.BAR_MIN_X,
+        min(S.BAR_MAX_X + S.BAR_WIDTH - S.FISH_SIZE, fish_target_x)
     )
 
     fish_waiting = False
@@ -85,6 +86,10 @@ def run_game(logger):
 
         # --- Player Control ---
         if not freeze_active:
+            # Meme Rod's Secret Passive
+            if rod_using["name"] == "Meme Rod" and player_bar_width <= 600:
+                player_bar_width += 0.1
+
             mouse_pressed = pygame.mouse.get_pressed()[0]
 
             if mouse_pressed:
@@ -123,8 +128,8 @@ def run_game(logger):
                 else:
                     bar_velocity = max(bar_velocity, 0)
 
-            elif bar_x >= WIDTH - player_bar_width:
-                bar_x = WIDTH - player_bar_width
+            elif bar_x >= S.WIDTH - player_bar_width:
+                bar_x = S.WIDTH - player_bar_width
                 if not bar_bounced_right:
                     bar_velocity = -bar_velocity * BAR_BOUNCE_DAMP
                     bar_bounced_right = True
@@ -151,8 +156,8 @@ def run_game(logger):
                     distance = random.randint(FISH_MOVE_MIN_DIST, FISH_MOVE_MAX_DIST)
                     fish_target_x = fish_x + fish_direction * distance
                     fish_target_x = max(
-                        BAR_MIN_X,
-                        min(BAR_MAX_X + BAR_WIDTH, fish_target_x)
+                        S.BAR_MIN_X,
+                        min(S.BAR_MAX_X + S.BAR_WIDTH - S.FISH_SIZE, fish_target_x)
                     )
 
             else:
@@ -166,19 +171,19 @@ def run_game(logger):
                     fish_waiting = True
 
                 # hard boundary
-                if fish_x <= BAR_MIN_X:
-                    fish_x = BAR_MIN_X
+                if fish_x <= S.BAR_MIN_X:
+                    fish_x = S.BAR_MIN_X
                     fish_direction = 1
                     fish_waiting = True
 
-                elif fish_x >= BAR_MAX_X + BAR_WIDTH :
-                    fish_x = BAR_MAX_X + BAR_WIDTH 
+                elif fish_x >= S.BAR_MAX_X + S.BAR_WIDTH - S.FISH_SIZE :
+                    fish_x = S.BAR_MAX_X + S.BAR_WIDTH - S.FISH_SIZE
                     fish_direction = -1
                     fish_waiting = True
 
 
         # --- Collision (X-axis) ---
-        fish_center = fish_x + FISH_SIZE / 2
+        fish_center = fish_x + S.FISH_SIZE / 2
         is_catching = bar_x <= fish_center <= bar_x + player_bar_width
         # --- Progression Bar Logic ---
         if not freeze_active:
@@ -209,20 +214,20 @@ def run_game(logger):
         pygame.draw.rect(
             screen,
             TRACK_COLOR,
-            (0, TRACK_Y, WIDTH, TRACK_HEIGHT)
+            (0, S.TRACK_Y, S.WIDTH, S.TRACK_HEIGHT)
         )
 
-        pygame.draw.rect(screen, BAR_COLOR, (bar_x, bar_y, player_bar_width, BAR_HEIGHT))
-        pygame.draw.rect(screen, FISH_COLOR, (fish_x, bar_y + 15, FISH_SIZE, FISH_SIZE))
+        pygame.draw.rect(screen, BAR_COLOR, (bar_x, bar_y, player_bar_width, S.BAR_HEIGHT))
+        pygame.draw.rect(screen, FISH_COLOR, (fish_x, bar_y + 15, S.FISH_SIZE, S.FISH_SIZE))
         # --- Progress Bar Background ---
         pygame.draw.rect(
             screen,
             (80, 80, 80),
             (
-                WIDTH // 2 - PROGRESS_BAR_WIDTH // 2,
-                PROGRESS_BAR_Y,
-                PROGRESS_BAR_WIDTH,
-                PROGRESS_BAR_HEIGHT
+                S.WIDTH // 2 - S.PROGRESS_BAR_WIDTH // 2,
+                S.PROGRESS_BAR_Y,
+                S.PROGRESS_BAR_WIDTH,
+                S.PROGRESS_BAR_HEIGHT
             )
         )
 
@@ -231,10 +236,10 @@ def run_game(logger):
             screen,
             (255, 215, 0),
             (
-                WIDTH // 2 - PROGRESS_BAR_WIDTH // 2,
-                PROGRESS_BAR_Y,
-                int(PROGRESS_BAR_WIDTH * progress),
-                PROGRESS_BAR_HEIGHT
+                S.WIDTH // 2 - S.PROGRESS_BAR_WIDTH // 2,
+                S.PROGRESS_BAR_Y,
+                int(S.PROGRESS_BAR_WIDTH * progress),
+                S.PROGRESS_BAR_HEIGHT
             )
         )
 
@@ -249,8 +254,8 @@ def run_game(logger):
 
             text_rect = text_surface.get_rect(
                 center=(
-                    WIDTH // 2,
-                    PROGRESS_BAR_Y + PROGRESS_BAR_HEIGHT + 15
+                    S.WIDTH // 2,
+                    S.PROGRESS_BAR_Y + S.PROGRESS_BAR_HEIGHT + 15
                 )
             )
 

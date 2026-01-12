@@ -1,5 +1,5 @@
 # config.py
-WIDTH, HEIGHT = 400, 600
+WIDTH, HEIGHT = 600, 800    # BASE W, H
 
 BG_COLOR = (20, 30, 40)
 BAR_COLOR = (100, 255, 100)
@@ -15,7 +15,7 @@ FISH_SIZE = 20
 FPS = 60
 
 TRACK_HEIGHT = 50
-TRACK_Y = HEIGHT - 100
+TRACK_Y = HEIGHT - 200   # bottom bar location Y
 TRACK_COLOR = (30, 45, 60)
 CONTROLLED = -0.2
 
@@ -26,7 +26,7 @@ FISH_MAX_SPEED = 3.0    # spd const
 FISH_RESILIENCE = -0.7  # high = slower (not use bc move it to the fish_data)
 
 PROGRESS_INIT = 0.2
-PROGRESS_FILL_ANIM_SPEED = 0.01
+PROGRESS_FILL_ANIM_SPEED = 0.007
 
 
 PROGRESS_UP_RATE = 0.002     # cacthing
@@ -34,7 +34,7 @@ PROGRESS_DOWN_RATE = 0.003   # miss
 
 PROGRESS_BAR_WIDTH = 300
 PROGRESS_BAR_HEIGHT = 16
-PROGRESS_BAR_Y = 40
+PROGRESS_BAR_Y = TRACK_Y + 75   # progression bar location y
 
 ENCOUNTER_FREEZE_TIME = 2   # sec
 
