@@ -1,34 +1,46 @@
 # Adaptive Difficulty Fishing 🎣
 
-A research-oriented simulation project exploring **Dynamic Difficulty Adjustment (DDA)** algorithms within a Stardew Valley-inspired fishing mechanic.
+A research-oriented simulation project exploring **Dynamic Difficulty Adjustment (DDA)** algorithms within a fishing mechanic.
 
-This repository demonstrates how real-time user performance metrics can drive algorithmic adjustments to game parameters (e.g., hit window size, object velocity) to maintain an optimal "Flow State" for the player.
+This repository demonstrates how real-time user performance metrics can drive algorithmic adjustments to game parameters (specifically **Fish Speed**) to maintain an optimal "Flow State" for the player.
 
 ## 🧪 Project Objective
 
-The primary goal is to study the relationship between **player performance** and **system adaptation**. The system logs gameplay data to analyze how quickly and effectively the DDA algorithm responds to player skill variance.
+The primary goal is to study the relationship between **player performance** and **system adaptation**. The system logs gameplay data to analyze how the DDA algorithm responds to player skill variance.
 
 ## ⚙️ Core Mechanics (The DDA Algorithm)
 
-The system continuously monitors the player's tracking status (`is_catching`) and adjusts two key variables in real-time:
+The system continuously monitors the player's tracking status (`is_catching`) and adjusts the difficulty in real-time:
 
-1.  **Bar Height (Spatial Difficulty):**
-    * *Success:* Decreases size (requires more precision).
-    * *Failure:* Increases size (provides assist).
-2.  **Fish Speed (Temporal Difficulty):**
-    * *Success:* Increases velocity multiplier.
-    * *Failure:* Decreases velocity multiplier.
-  
+**Fish Speed (Temporal Difficulty):**
+* **Success (Catching):** The fish moves faster (Speed increases).
+* **Failure (Missing):** The fish slows down (Speed decreases).
+
 **Logic snippet:**
-> If `Performance` > Threshold: Increase Difficulty ($\Delta+$ Speed, $\Delta-$ Size)
-> Else: Decrease Difficulty ($\Delta-$ Speed, $\Delta+$ Size)
+> If `is_catching` is True: Increase Fish Speed (Max 3.0)
+> Else: Decrease Fish Speed (Min 0.5)
+
+*(Note: Currently, the Bar Width is fixed at 120px and defined in `config.py`)*
+
+## 🎮 Controls & Physics
+
+The game simulates a fishing bar fighting against a water current.
+* **Mouse Click (Hold):** Apply force to move the bar to the **Right**.
+* **Release Mouse:** The bar naturally drifts to the **Left** due to current/friction.
+
+**Goal:** Keep the green bar overlapping with the red fish to fill the progress bar.
 
 ## 📂 Repository Structure
 
-* `main.py`: The core simulation engine. Handles the game loop, DDA logic processing, and real-time data logging.
-* `plot_graph.py`: Data visualization script. Parses the generated CSV to visualize the correlation between **Player Performance** (Catch/Miss) and **Difficulty Metrics** (Bar Size).
-* `stardew_dda_result.csv`: (Generated Output) Raw dataset containing time-series data of the play session.
-* `dda_graph.png`: (Generated Output) The final visualization chart showing the DDA algorithm's behavior.
+* `main.py`: Entry point of the application.
+* `game.py`: Handles the main game loop, physics engine, and rendering.
+* `dda.py`: Contains the Dynamic Difficulty Adjustment logic.
+* `config.py`: Stores constant variables (Screen size, Colors, Fixed physics values).
+* `logger.py`: Handles data recording during the session.
+* `fish_data.json` & `get_info.py`: Database of fish types with different resilience traits.
+* `plot_graph.py`: Visualization script to generate performance charts.
+* `dda_result.csv`: (Generated Output) Raw gameplay data.
+* `dda_graph.png`: (Generated Output) Visualization of the session.
 
 ## 🚀 Getting Started
 
@@ -43,26 +55,25 @@ The system continuously monitors the player's tracking status (`is_catching`) an
 ### Usage
 
 1.  **Run the Simulation:**
-    Start the game and play. The system will auto-adjust difficulty based on your inputs.
+    Start the game and play.
     ```bash
-    python3 main.py
+    python main.py
     ```
-    *Controls: Use `UP` and `DOWN` arrow keys to keep the fish inside the bar.*
 
 2.  **Analyze the Data:**
-    After closing the simulation, a CSV file is generated. Run the analysis script to visualize the session:
+    After closing the simulation (or finishing the catch), a CSV file is generated. Run the analysis script:
     ```bash
-    python3 plot_graph.py
+    python plot_graph.py
     ```
 
 3.  **View Results:**
-    Check `dda_graph_clean.png` to see the visualization of how the system adapted to your gameplay.
+    Check `dda_graph.png` to see the visualization of your performance vs. fish speed adaptation.
 
 ## 📊 Data Visualization
 
 The analysis script produces a dual-axis chart:
 * **Top Chart:** Binary Player State (Green = Catching, Red = Missing).
-* **Bottom Chart:** Difficulty Curve (Inverted Y-axis: Higher curve = Higher difficulty/Smaller Bar).
+* **Bottom Chart:** Difficulty Curve (Inverted Y-axis logic applied if plotting bar size, or standard for speed).
 
 ## 🛠 Tech Stack
 
