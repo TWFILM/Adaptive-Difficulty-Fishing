@@ -7,7 +7,7 @@ FISH_COLOR = (255, 80, 80)
 
 BAR_HEIGHT = 50          # FIXED height
 BAR_WIDTH = 120     # FIXED width (NO AUTO CHANGE)
-BAR_MIN_X = 50
+BAR_MIN_X = 10
 BAR_MAX_X = WIDTH - 150
 
 
@@ -17,12 +17,13 @@ FPS = 60
 TRACK_HEIGHT = 50
 TRACK_Y = HEIGHT - 100
 TRACK_COLOR = (30, 45, 60)
+CONTROLLED = -0.2
 
 FISH_MOVE_MIN_DIST = 40
 FISH_MOVE_MAX_DIST = 160
-FISH_MIN_SPEED = 0.5
-FISH_MAX_SPEED = 3.0
-FISH_RESILIENCE = -0.7  # high = slower
+FISH_MIN_SPEED = 0.5    # spd const
+FISH_MAX_SPEED = 3.0    # spd const
+FISH_RESILIENCE = -0.7  # high = slower (not use bc move it to the fish_data)
 
 PROGRESS_INIT = 0.2
 PROGRESS_FILL_ANIM_SPEED = 0.01
@@ -35,7 +36,7 @@ PROGRESS_BAR_WIDTH = 300
 PROGRESS_BAR_HEIGHT = 16
 PROGRESS_BAR_Y = 40
 
-ENCOUNTER_FREEZE_TIME = 1.5   # sec
+ENCOUNTER_FREEZE_TIME = 2   # sec
 
 BAR_MAX_SPEED = 8.0       # Limit
 BAR_FRICTION = 0.96       # inertia control
