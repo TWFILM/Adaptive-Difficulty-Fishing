@@ -19,11 +19,11 @@ def run_game(screen, S, logger):
 
     # # RODDD
     # rod_using = get_fishing_rod_info("Novice Rod")
-    rod_using = get_fishing_rod_info("Cool Rod")
+    # rod_using = get_fishing_rod_info("Cool Rod")
     # rod_using = get_fishing_rod_info("RU Sure Rod")
     # rod_using = get_fishing_rod_info("Prismatic Rod")
     # rod_using = get_fishing_rod_info("Rod of the Conqueror")
-    # rod_using = get_fishing_rod_info("Meme Rod")
+    rod_using = get_fishing_rod_info("Meme Rod")
 
     player_bar_width = S.BAR_WIDTH+(rod_using["CONTROLLED"]*S.BAR_WIDTH)   # player control bar    
     bar_x = S.WIDTH // 2 - player_bar_width // 2
@@ -87,8 +87,11 @@ def run_game(screen, S, logger):
         # --- Player Control ---
         if not freeze_active:
             # Meme Rod's Secret Passive
-            if rod_using["name"] == "Meme Rod" and player_bar_width <= 600:
+            if rod_using["name"] == "Meme Rod" and player_bar_width <= 600 and fish_encounter["name"] != "Meme Fish":
                 player_bar_width += 0.1
+
+            if fish_encounter["name"] == "Meme Fish":
+                player_bar_width -= 0.055
 
             mouse_pressed = pygame.mouse.get_pressed()[0]
 

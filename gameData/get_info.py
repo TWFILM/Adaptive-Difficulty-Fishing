@@ -12,8 +12,8 @@ def get_fish(rarity):
 
 def get_random_rarity(rod_name):
     rod = get_fishing_rod_info(rod_name)
-    rarities = ["common", "uncommon", "rare", "legendary", "Mythical"]
-    weights = [1/2, 1/4, 1/8, 1/16, 1/32]
+    rarities = ["Common", "Uncommon", "Rare", "Legendary", "Mythical", "Meme"]
+    weights = [1/2, 1/4, 1/8, 1/16, 1/32, 1/15]
 
     luck = rod.get("LUCK", 0)
     if luck!=0:

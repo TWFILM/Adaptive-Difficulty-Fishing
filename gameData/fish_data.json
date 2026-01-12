@@ -1,42 +1,42 @@
 {
-    "common":[
-        { "fish_id": 1, "name": "Mackerel", "rarity": "common", 
+    "Common":[
+        { "fish_id": 1, "name": "Mackerel", "rarity": "Common", 
             "FISH_RESILIENCE": 0.8, "PROGRESS_SPD": 0 },
-        { "fish_id": 2, "name": "Sardine", "rarity": "common", 
+        { "fish_id": 2, "name": "Sardine", "rarity": "Common", 
             "FISH_RESILIENCE": 0.85, "PROGRESS_SPD": 0 },
-        { "fish_id": 3, "name": "Sea Bass", "rarity": "common", 
+        { "fish_id": 3, "name": "Sea Bass", "rarity": "Common", 
             "FISH_RESILIENCE": 0.8, "PROGRESS_SPD": 0.2 },
-        { "fish_id": 4, "name": "Shrimp", "rarity": "common", 
+        { "fish_id": 4, "name": "Shrimp", "rarity": "Common", 
             "FISH_RESILIENCE": 0.85, "PROGRESS_SPD": 0 },
-        { "fish_id": 5, "name": "Haddock", "rarity": "common", 
+        { "fish_id": 5, "name": "Haddock", "rarity": "Common", 
             "FISH_RESILIENCE": 0.8, "PROGRESS_SPD": 0 },
-        { "fish_id": 6, "name": "Mullet", "rarity": "common", 
+        { "fish_id": 6, "name": "Mullet", "rarity": "Common", 
             "FISH_RESILIENCE": 0.8, "PROGRESS_SPD": 0 }
     ],
-    "uncommon":[
-        { "fish_id": 1, "name": "Cod", "rarity": "uncommon", 
+    "Uncommon":[
+        { "fish_id": 1, "name": "Cod", "rarity": "Uncommon", 
             "FISH_RESILIENCE": 0.7, "PROGRESS_SPD": 0 },
-        { "fish_id": 2, "name": "Crab", "rarity": "uncommon", 
+        { "fish_id": 2, "name": "Crab", "rarity": "Uncommon", 
             "FISH_RESILIENCE": 0.75, "PROGRESS_SPD": 0 },
-        { "fish_id": 3, "name": "Salmon", "rarity": "uncommon", 
+        { "fish_id": 3, "name": "Salmon", "rarity": "Uncommon", 
             "FISH_RESILIENCE": 0.7, "PROGRESS_SPD": 0 },
-        { "fish_id": 4, "name": "Amberjack", "rarity": "uncommon", 
+        { "fish_id": 4, "name": "Amberjack", "rarity": "Uncommon", 
             "FISH_RESILIENCE": 0.7, "PROGRESS_SPD": 0 }
     ],
-    "rare":[
-        { "fish_id": 1, "name": "Bluefin Tuna", "rarity": "rare", 
+    "Rare":[
+        { "fish_id": 1, "name": "Bluefin Tuna", "rarity": "Rare", 
             "FISH_RESILIENCE": 0.65, "PROGRESS_SPD": 0 },
-        { "fish_id": 2, "name": "Pufferfish", "rarity": "rare", 
+        { "fish_id": 2, "name": "Pufferfish", "rarity": "Rare", 
             "FISH_RESILIENCE": 0.65, "PROGRESS_SPD": 0 },
-        { "fish_id": 3, "name": "Octopus", "rarity": "rare", 
+        { "fish_id": 3, "name": "Octopus", "rarity": "Rare", 
             "FISH_RESILIENCE": 0.6, "PROGRESS_SPD": 0 }
     ],
-    "legendary":[
-        { "fish_id": 1, "name": "Great White Shark", "rarity": "legendary", 
+    "Legendary":[
+        { "fish_id": 1, "name": "Great White Shark", "rarity": "Legendary", 
             "FISH_RESILIENCE": -0.4, "PROGRESS_SPD": -0.45 },
-        { "fish_id": 2, "name": "Flying Fish", "rarity": "legendary", 
+        { "fish_id": 2, "name": "Flying Fish", "rarity": "Legendary", 
             "FISH_RESILIENCE": -0.15, "PROGRESS_SPD": -0.2 },
-        { "fish_id": 3, "name": "Sea Turtle", "rarity": "legendary", 
+        { "fish_id": 3, "name": "Sea Turtle", "rarity": "Legendary", 
             "FISH_RESILIENCE": 0.2, "PROGRESS_SPD": 0 }
     ],
     "Mythical":[
@@ -44,5 +44,9 @@
             "FISH_RESILIENCE": -0.7, "PROGRESS_SPD": -0.75 },
         { "fish_id": 2, "name": "Orca", "rarity": "Mythical", 
             "FISH_RESILIENCE": -0.65, "PROGRESS_SPD": -0.8 }
+    ],
+    "Meme":[
+        { "fish_id": 1, "name": "Meme Fish", "rarity": "Meme", 
+            "FISH_RESILIENCE": 0, "PROGRESS_SPD": 0 }
     ]
 }
