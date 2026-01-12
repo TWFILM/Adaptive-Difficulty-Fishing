@@ -1,7 +1,7 @@
 # lobby.py
 import pygame
 from gameData.config import WIDTH, HEIGHT, BG_COLOR, FPS
-from gadgets import Button
+from interface.gadgets import Button
 
 def run_lobby():
     pygame.init()
