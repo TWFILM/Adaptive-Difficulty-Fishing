@@ -77,7 +77,7 @@ def run_game(screen, S, logger, rod_name):
     fish_resilience = fish_encounter["FISH_RESILIENCE"]+rod_using["RESILIENCE"]
     fish_progress = fish_encounter["PROGRESS_SPD"]+rod_using["PROGRESS_SPD"]
     if rod_using["name"] == "Meme Rod":
-        fish_progress = -0.95
+        fish_progress = -0.9
 
     success = [False, "None", "None"]
     running = True

@@ -8,7 +8,7 @@ from gameData.config import WIDTH, HEIGHT
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def run_end_screen_meme(screen, clock, duration=4):
-    IMG_PATH = os.path.join(BASE_DIR, "assets", "images", f"meme{random.randint(1,3)}.png")
+    IMG_PATH = os.path.join(BASE_DIR, "assets", "images", f"meme{random.randint(1,4)}.png")
     image_path = IMG_PATH
 
     end_image = pygame.image.load(image_path).convert_alpha()
