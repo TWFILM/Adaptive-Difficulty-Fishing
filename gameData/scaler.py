@@ -15,6 +15,7 @@ def build_scaled_config():
     )
 
     s = ScaledConfig()
+    s.scale = scale
 
     # screen
     s.WIDTH = int(gameData.config.WIDTH * scale)

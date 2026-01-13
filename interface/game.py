@@ -23,7 +23,7 @@ FONT_PATH1 = os.path.join(
 def run_game(screen, S, logger, rod_name):
     pygame.init()
 
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
     pygame.display.set_caption("DDA Experiment")
     clock = pygame.time.Clock()
     font = pygame.font.Font(FONT_PATH1, 18)
@@ -235,7 +235,7 @@ def run_game(screen, S, logger, rod_name):
         )
 
         pygame.draw.rect(screen, BAR_COLOR, (bar_x, bar_y, player_bar_width, S.BAR_HEIGHT))
-        pygame.draw.rect(screen, FISH_COLOR, (fish_x, bar_y + 15, S.FISH_SIZE, S.FISH_SIZE))
+        pygame.draw.rect(screen, FISH_COLOR, (fish_x, bar_y + (15*S.scale), S.FISH_SIZE, S.FISH_SIZE))
         # --- Progress Bar Background ---
         pygame.draw.rect(
             screen,

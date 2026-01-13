@@ -25,12 +25,12 @@ FISH_MIN_SPEED = 0.5    # spd const
 FISH_MAX_SPEED = 3.0    # spd const
 FISH_RESILIENCE = -0.7  # high = slower (not use bc move it to the fish_data)
 
-PROGRESS_INIT = 0.2
+PROGRESS_INIT = 0.25
 PROGRESS_FILL_ANIM_SPEED = 0.007
 
 
 PROGRESS_UP_RATE = 0.002     # cacthing
-PROGRESS_DOWN_RATE = 0.003   # miss
+PROGRESS_DOWN_RATE = 0.002   # miss
 
 PROGRESS_BAR_WIDTH = 300
 PROGRESS_BAR_HEIGHT = 16
