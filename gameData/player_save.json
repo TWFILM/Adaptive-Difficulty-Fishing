@@ -1,5 +1,6 @@
 {
     "player": {
-        "rod": "Cool Rod"
+        "rod": "RU Sure Rod",
+        "default": "horizontal"
     }
 }

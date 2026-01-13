@@ -8,7 +8,7 @@ import os
 from gameData.config import *
 from dda import update_fish_speed
 from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
-from gameData.load_img import run_end_screen_meme
+from utils.load_img import run_end_screen_meme
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
@@ -32,7 +32,7 @@ def run_game(screen, S, logger, rod_name):
     rod_using = get_fishing_rod_info(rod_name)
 
     player_bar_width = S.BAR_WIDTH+(rod_using["CONTROLLED"]*S.BAR_WIDTH)   # player control bar    
-    bar_x = S.WIDTH // 2 - player_bar_width // 2
+    bar_x = S.TRACK_X + S.TRACK_WIDTH // 2 - player_bar_width // 2
     bar_y = S.TRACK_Y
     
     encounter_start_time = time.time()
@@ -43,19 +43,19 @@ def run_game(screen, S, logger, rod_name):
     # for Rod of the Conqueror
     progress_addition = 0
     if rod_using["name"] == "Rod of the Conqueror":
-        progress_addition = 0.21
+        progress_addition = 0.26
         progress_bar_color = (255, 215, 0)
     
     # random fish movement
-    fish_x = ( S.WIDTH // 2 ) - (S.FISH_SIZE // 2)
+    fish_x = (S.TRACK_X + S.TRACK_WIDTH // 2 ) - (S.FISH_SIZE // 2)
     fish_direction = random.choice([-1, 1])
     fish_speed = random.uniform(FISH_MIN_SPEED, FISH_MAX_SPEED)
 
     distance = random.randint(FISH_MOVE_MIN_DIST, FISH_MOVE_MAX_DIST)
     fish_target_x = fish_x + fish_direction * distance
     fish_target_x = max(
-        S.BAR_MIN_X,
-        min(S.BAR_MAX_X + S.BAR_WIDTH - S.FISH_SIZE, fish_target_x)
+        S.BAR_MIN_X + (S.FISH_SIZE+10),
+        min(S.BAR_MAX_X + S.BAR_WIDTH - (S.FISH_SIZE+10), fish_target_x)
     )
 
     fish_waiting = False
@@ -135,16 +135,16 @@ def run_game(screen, S, logger, rod_name):
 
             # update position
             # ---- Edge Collision with Single Bounce ----
-            if bar_x <= 0:
-                bar_x = 0
+            if bar_x <= S.BAR_MIN_X:
+                bar_x = S.BAR_MIN_X
                 if not bar_bounced_left:
                     bar_velocity = -bar_velocity * BAR_BOUNCE_DAMP
                     bar_bounced_left = True
                 else:
                     bar_velocity = max(bar_velocity, 0)
 
-            elif bar_x >= S.WIDTH - player_bar_width:
-                bar_x = S.WIDTH - player_bar_width
+            elif bar_x + player_bar_width >= S.BAR_MAX_X + S.BAR_WIDTH:
+                bar_x = S.BAR_MAX_X + S.BAR_WIDTH - player_bar_width
                 if not bar_bounced_right:
                     bar_velocity = -bar_velocity * BAR_BOUNCE_DAMP
                     bar_bounced_right = True
@@ -165,14 +165,14 @@ def run_game(screen, S, logger, rod_name):
                     resilient_timer = 0
                     fish_waiting = False
 
-                    fish_direction = random.choice([-1, 1])
+                    fish_direction = random.choice([1, 1])
                     fish_speed = random.uniform(FISH_MIN_SPEED+(fish_resilience*-1), FISH_MAX_SPEED+(fish_resilience*-1))
 
                     distance = random.randint(FISH_MOVE_MIN_DIST, FISH_MOVE_MAX_DIST)
                     fish_target_x = fish_x + fish_direction * distance
                     fish_target_x = max(
-                        S.BAR_MIN_X,
-                        min(S.BAR_MAX_X + S.BAR_WIDTH - S.FISH_SIZE, fish_target_x)
+                        S.BAR_MIN_X + (S.FISH_SIZE+10),
+                        min(S.BAR_MAX_X + S.BAR_WIDTH - (S.FISH_SIZE+10), fish_target_x)
                     )
 
             else:
@@ -186,13 +186,13 @@ def run_game(screen, S, logger, rod_name):
                     fish_waiting = True
 
                 # hard boundary
-                if fish_x <= S.BAR_MIN_X:
-                    fish_x = S.BAR_MIN_X
+                if fish_x <= S.BAR_MIN_X + (S.FISH_SIZE+10):
+                    fish_x = S.BAR_MIN_X + (S.FISH_SIZE+10)
                     fish_direction = 1
                     fish_waiting = True
 
-                elif fish_x >= S.BAR_MAX_X + S.BAR_WIDTH - S.FISH_SIZE :
-                    fish_x = S.BAR_MAX_X + S.BAR_WIDTH - S.FISH_SIZE
+                elif fish_x >= S.BAR_MAX_X + S.BAR_WIDTH - (S.FISH_SIZE+10) :
+                    fish_x = S.BAR_MAX_X + S.BAR_WIDTH - (S.FISH_SIZE+10)
                     fish_direction = -1
                     fish_waiting = True
 
@@ -231,11 +231,11 @@ def run_game(screen, S, logger, rod_name):
         pygame.draw.rect(
             screen,
             TRACK_COLOR,
-            (0, S.TRACK_Y, S.WIDTH, S.TRACK_HEIGHT)
+            (S.TRACK_X, S.TRACK_Y, S.TRACK_WIDTH, S.TRACK_HEIGHT)
         )
 
         pygame.draw.rect(screen, BAR_COLOR, (bar_x, bar_y, player_bar_width, S.BAR_HEIGHT))
-        pygame.draw.rect(screen, FISH_COLOR, (fish_x, bar_y + (15*S.scale), S.FISH_SIZE, S.FISH_SIZE))
+        pygame.draw.rect(screen, FISH_COLOR, (fish_x, bar_y + (S.FISH_SIZE*S.scale), S.FISH_SIZE, S.FISH_SIZE))
         # --- Progress Bar Background ---
         pygame.draw.rect(
             screen,

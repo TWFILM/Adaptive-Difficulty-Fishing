@@ -26,7 +26,7 @@ def load_save(path=SAVE_PATH):
 def default_save():
     return {
         "player": {
-            "rod": "Novice Rod"
-        
+            "rod": "Novice Rod",
+        "default-axis": "horizontal"
         }
     }

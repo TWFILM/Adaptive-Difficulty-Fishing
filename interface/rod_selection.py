@@ -1,7 +1,7 @@
 import pygame
 import os
 from gameData.config import BG_COLOR, FPS
-from gameData.save_writer import SaveManager
+from utils.save_writer import SaveManager
 from interface.gadgets import Button
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))

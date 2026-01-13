@@ -1,6 +1,6 @@
 import json
 import os
-from gameData.save_reader import load_save
+from utils.save_reader import load_save
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SAVE_DIR = os.path.join(PROJECT_ROOT, "gameData")
