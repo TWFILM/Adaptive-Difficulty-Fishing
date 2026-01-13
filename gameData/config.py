@@ -40,10 +40,10 @@ PROGRESS_BAR_COLOR = (255, 255, 255)
 ENCOUNTER_FREEZE_TIME = 2   # sec
 
 BAR_MAX_SPEED = 8.0       # Limit
-BAR_FRICTION = 0.96       # inertia control
+BAR_FRICTION = 0.93       # inertia control
 
-BAR_FORCE_INC = 0.04     # increase when mouse clicked
-BAR_FORCE_DEC = 0.05    # decrease when mouse is not clicked
+BAR_FORCE_INC = 0.03     # increase when mouse clicked
+BAR_FORCE_DEC = 0.03    # decrease when mouse is not clicked
 BAR_FORCE_MAX = 0.9      
 
 BAR_DRIFT_LEFT = -0.5

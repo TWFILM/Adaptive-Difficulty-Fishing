@@ -293,4 +293,3 @@ def run_game(screen, S, logger, rod_name):
 
     pygame.quit()
     return success
-
