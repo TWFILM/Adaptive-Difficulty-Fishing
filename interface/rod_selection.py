@@ -4,7 +4,7 @@ import os
 from gameData.config import BG_COLOR, FPS
 from gameData.get_info import get_rod_des
 from utils.save_writer import SaveManager
-from interface.gadgets import Button, RodCard
+from utils.gadgets import Button, RodCard
 
 # ── PATH ───────────────────────────
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))

@@ -3,7 +3,7 @@ import os
 import pygame
 
 from gameData.config import BG_COLOR, FPS
-from interface.gadgets import Button
+from utils.gadgets import Button
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
