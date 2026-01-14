@@ -8,7 +8,8 @@ import os
 from gameData.config import *
 from dda import update_fish_speed
 from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
-from utils.load_img import run_end_screen_meme
+from utils.load_img import *
+from utils.load_audio import trigger_jumpscare
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
@@ -99,7 +100,7 @@ def run_game(screen, S, logger, rod_name):
         if not freeze_active:
             # Meme Rod's Secret Passive
             progress_bar_color = PROGRESS_BAR_COLOR 
-            if rod_using["name"] == "Meme Rod" and player_bar_width <= 600 and fish_encounter["name"] != "Meme Fish":
+            if rod_using["name"] == "Meme Rod" and player_bar_width <= S.TRACK_WIDTH and fish_encounter["name"] != "Meme Fish":
                 player_bar_width += 0.1
 
             if fish_encounter["name"] == "Meme Fish" and player_bar_width >= 0:
@@ -289,7 +290,12 @@ def run_game(screen, S, logger, rod_name):
 
     # Meme Rod only!
     if rod_using["name"] == "Meme Rod" and success[0] is True:
-        run_end_screen_meme(screen, clock, duration=4)
+        trigger_jumpscare(meme_fish=False)
+        run_end_screen_meme(screen, clock, duration=4, meme_fish=False)
+    
+    if fish_encounter["name"] == "Meme Fish" and success[0] is False:
+        trigger_jumpscare(meme_fish=True)
+        run_end_screen_meme(screen, clock, duration=4, meme_fish=True)
 
     pygame.quit()
     return success

@@ -1,24 +1,30 @@
 {
     "Novice Rod": { "name": "Novice Rod", "CONTROLLED": 0, 
-            "RESILIENCE": 0, "PROGRESS_SPD": 0 , "LUCK": 0}      
+            "RESILIENCE": 0, "PROGRESS_SPD": 0 , "LUCK": 0, 
+            "desc": "A basic rod for beginners. Enjoy fishing!", "img": "meme1.png" }      
     ,
     "Cool Rod":
         { "name": "Cool Rod", "CONTROLLED": 0.4, 
-            "RESILIENCE": 0.05, "PROGRESS_SPD": 0, "LUCK": -0.2}
+            "RESILIENCE": 0.05, "PROGRESS_SPD": 0, "LUCK": -0.2, 
+            "desc": "Getting for an upgrade.", "img": "meme1.png" }
     ,
     "RU Sure Rod":
         { "name": "RU Sure Rod", "CONTROLLED": -0.2, 
-            "RESILIENCE": -0.12, "PROGRESS_SPD": 0.2, "LUCK": 0.2 }
+            "RESILIENCE": -0.12, "PROGRESS_SPD": 0.2, "LUCK": 0.2, 
+            "desc": "Really? I think it is not a good idea.", "img": "meme1.png" }
     ,
     "Prismatic Rod":
         { "name": "Prismatic Rod", "CONTROLLED": 0.55, 
-            "RESILIENCE": 0.45, "PROGRESS_SPD": 0, "LUCK": 0.8 }
+            "RESILIENCE": 0.45, "PROGRESS_SPD": 0, "LUCK": 0.8, 
+            "desc": "Prismatic prism shined your rod.", "img": "meme1.png" }
     ,
     "Rod of the Conqueror":
         { "name": "Rod of the Conqueror", "CONTROLLED": 1.85, 
-            "RESILIENCE": 0.7, "PROGRESS_SPD": 0, "LUCK": 1.25 }
+            "RESILIENCE": 0.7, "PROGRESS_SPD": 0, "LUCK": 1.25, 
+            "desc": "This Rod will significantly fill the progression bar.", "img": "meme1.png" }
     ,
-    "Meme Rod" :
+    "Meme Rod" : 
         { "name": "Meme Rod", "CONTROLLED": 0, 
-                "RESILIENCE": 2.22, "PROGRESS_SPD": 0, "LUCK": 0.85 }
+                "RESILIENCE": 2.22, "PROGRESS_SPD": 0, "LUCK": 0.85, 
+                "desc": "Do not tell anyone you have this rod :3", "img": "meme1.png" }
 }

@@ -7,7 +7,8 @@ import os
 from gameData.config_vertical import *
 from dda import update_fish_speed
 from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
-from utils.load_img import run_end_screen_meme
+from utils.load_img import *
+from utils.load_audio import trigger_jumpscare
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -93,6 +94,12 @@ def run_game_vertical(screen, S, logger, rod_name):
 
         # ── PLAYER CONTROL ────────────
         if not freeze_active:
+            progress_bar_color = PROGRESS_BAR_COLOR 
+            if rod_using["name"] == "Meme Rod" and player_bar_height <= S.TRACK_HEIGHT and fish_encounter["name"] != "Meme Fish":
+                player_bar_height += 0.1
+            if fish_encounter["name"] == "Meme Fish" and player_bar_height >= 0:
+                player_bar_height -= 0.25
+
             mouse_pressed = pygame.mouse.get_pressed()[0]
 
             if mouse_pressed:
@@ -250,8 +257,13 @@ def run_game_vertical(screen, S, logger, rod_name):
 
     logger.export()
 
-    if rod_using["name"] == "Meme Rod" and success[0]:
-        run_end_screen_meme(screen, clock, duration=4)
+    if rod_using["name"] == "Meme Rod" and success[0] is True:
+        trigger_jumpscare(meme_fish=False)
+        run_end_screen_meme(screen, clock, duration=4, meme_fish=False)
+    
+    if fish_encounter["name"] == "Meme Fish" and success[0] is False:
+        trigger_jumpscare(meme_fish=True)
+        run_end_screen_meme(screen, clock, duration=4, meme_fish=True)
 
     pygame.quit()
     return success

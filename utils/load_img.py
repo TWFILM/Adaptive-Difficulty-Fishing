@@ -7,9 +7,12 @@ from gameData.config import WIDTH, HEIGHT
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-def run_end_screen_meme(screen, clock, duration=4):
-    IMG_PATH = os.path.join(BASE_DIR, "assets", "images", f"meme{random.randint(1,5)}.png")
-    image_path = IMG_PATH
+def run_end_screen_meme(screen, clock, duration=4, meme_fish=False):
+    if meme_fish:
+        image_path= os.path.join(BASE_DIR, "assets", "images", f"meme_fish.png")
+    else :
+        image_path= os.path.join(BASE_DIR, "assets", "images", f"meme{random.randint(1,5)}.png")
+
 
     end_image = pygame.image.load(image_path).convert_alpha()
     end_image = pygame.transform.scale(end_image, (WIDTH, HEIGHT))

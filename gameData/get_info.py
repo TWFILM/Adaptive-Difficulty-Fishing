@@ -38,3 +38,11 @@ def get_fishing_rod_info(name):
         rod_data = json.load(f)
 
     return rod_data[name]
+
+def get_rod_des():
+    rod_data = {}
+    path = Path(__file__).parent / "fishing_rod_data.json"
+    with open(path, 'r', encoding='utf-8') as f:
+        rod_data = json.load(f)
+
+    return rod_data
