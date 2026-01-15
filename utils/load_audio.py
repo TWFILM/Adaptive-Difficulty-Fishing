@@ -15,3 +15,12 @@ def trigger_jumpscare(meme_fish=False):
 
     jumpscare_sfx.set_volume(1.0) 
     jumpscare_sfx.play()
+
+def lobby_sfx():
+    pygame.mixer.init()
+    lobby_path = os.path.join(BASE_DIR, "assets", "sfx", "monplaisir.wav")
+    lobby_sfx = pygame.mixer.Sound(lobby_path)
+    lobby_sfx.play(0)
+
+def stop_sfx():
+    pygame.mixer.stop()
