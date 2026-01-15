@@ -94,10 +94,10 @@ def run_game_vertical(screen, S, logger, rod_name):
 
         # ── PLAYER CONTROL ────────────
         if not freeze_active:
-            progress_bar_color = PROGRESS_BAR_COLOR 
+            progress_color = PROGRESS_BAR_COLOR 
             if rod_using["name"] == "Meme Rod" and player_bar_height <= S.TRACK_HEIGHT and fish_encounter["name"] != "Meme Fish":
                 player_bar_height += 0.1
-            if fish_encounter["name"] == "Meme Fish" and player_bar_height >= 0:
+            if fish_encounter["name"] == "Meme Fish" and player_bar_height >= 0 and rod_using["name"] != "Meme Rod":
                 player_bar_height -= 0.25
 
             mouse_pressed = pygame.mouse.get_pressed()[0]
