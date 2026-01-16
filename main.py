@@ -8,8 +8,10 @@ from logger import DataLogger
 import pygame
 from utils.scaler import build_scaled_config
 from utils.save_reader import load_save
-from utils.load_audio import lobby_sfx, stop_sfx
+from utils.load_audio import lobby_sfx, stop_sfx, load_stab_sfx
+from gameData.get_info import get_unlocked_rods
 
+load_stab_sfx()
 
 def main():
     logger = DataLogger()
@@ -42,6 +44,7 @@ def main():
             lobby_sfx()
 
         elif state == "SELECT_ROD":
+            get_unlocked_rods()
             pygame.init()
             save_data = load_save()
             unlocked_rods = save_data["player"]["unlocked_rods"]

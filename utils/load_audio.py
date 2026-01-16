@@ -24,3 +24,14 @@ def lobby_sfx():
 
 def stop_sfx():
     pygame.mixer.stop()
+
+stab_sfx = None
+
+def load_stab_sfx():
+    global stab_sfx
+    stab_path = os.path.join(BASE_DIR, "assets", "sfx", "slash.wav")
+    stab_sfx = pygame.mixer.Sound(stab_path)
+    stab_sfx.set_volume(0.5) 
+
+def play_stab_sfx():
+    stab_sfx.play()

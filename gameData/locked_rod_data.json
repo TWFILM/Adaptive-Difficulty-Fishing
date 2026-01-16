@@ -5,12 +5,17 @@
     ,
     "Cool Rod":
         { "name": "Cool Rod", 
-        "desc": "Unlock by getting 20 total caught fish.",
+        "desc": "Unlock by getting 15 total caught fish.",
         "img": "locked_rod.png" }
     ,
     "RU Sure Rod":
         { "name": "RU Sure Rod", 
         "desc": "Unlock by getting 20 catching streaks.",
+        "img": "locked_rod.png" }
+    ,
+    "Knife Rod":
+        { "name": "Knife Rod", 
+        "desc": "Unlock by getting 100 total caught fish.",
         "img": "locked_rod.png" }
     ,
     "Prismatic Rod":
@@ -27,4 +32,5 @@
         { "name": "Meme Rod", 
         "desc": "Unlock by caught the secret fish.",
         "img": "locked_rod.png" }
+    
 }

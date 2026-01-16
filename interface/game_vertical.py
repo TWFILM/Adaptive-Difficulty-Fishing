@@ -8,7 +8,7 @@ from gameData.config_vertical import *
 from dda import update_fish_speed
 from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
 from utils.load_img import *
-from utils.load_audio import trigger_jumpscare
+from utils.load_audio import trigger_jumpscare, play_stab_sfx
 from utils.save_writer import SaveManager
 
 
@@ -46,6 +46,7 @@ def run_game_vertical(screen, S, logger, rod_name):
     progress_addition = 0
 
     if rod_using["name"] == "Rod of the Conqueror":
+        conqueror_active = True
         progress_addition = 0.26
         progress_color = (255, 215, 0)
 
@@ -80,6 +81,16 @@ def run_game_vertical(screen, S, logger, rod_name):
     if rod_using["name"] == "Meme Rod":
         fish_progress = -0.9
 
+    # for Knife Rod
+    if rod_using["name"] == "Knife Rod":
+        knife_fill_remaining = 0.0
+        KNIFE_FILL_TOTAL = 0.05
+        KNIFE_FILL_SPEED = 0.075   # stop fish movement for 0.75 sec
+        knife_checked = False  
+
+    knife_active = False
+    conqueror_active = False
+
     success = [False, None, None]
     running = True
 
@@ -96,10 +107,11 @@ def run_game_vertical(screen, S, logger, rod_name):
         if freeze_active and progress < (PROGRESS_INIT + progress_addition):
             progress += PROGRESS_FILL_ANIM_SPEED
             progress = min(progress, PROGRESS_INIT + progress_addition)
+            
 
         # ── PLAYER CONTROL ────────────
         if not freeze_active:
-            progress_color = PROGRESS_BAR_COLOR 
+            conqueror_active = False
             if rod_using["name"] == "Meme Rod" and player_bar_height <= S.TRACK_HEIGHT and fish_encounter["name"] != "Meme Fish":
                 player_bar_height += 0.1
             if fish_encounter["name"] == "Meme Fish" and player_bar_height >= 0 and rod_using["name"] != "Meme Rod":
@@ -146,6 +158,16 @@ def run_game_vertical(screen, S, logger, rod_name):
         if not freeze_active:
             if fish_waiting:
                 resilient_timer += clock.get_time() / 1000
+
+                # ===== Knife Rod logic =====
+                if rod_using["name"] == "Knife Rod" and not knife_active and not knife_checked:
+                    if random.random() < 0.25:
+                        knife_active = True
+                        knife_checked = True
+                        knife_fill_remaining = KNIFE_FILL_TOTAL
+                        resilient_timer = 0
+                        fish_waiting = True   # fish stop moving
+
                 if resilient_timer >= fish_resilience:
                     resilient_timer = 0
                     fish_waiting = False
@@ -189,6 +211,21 @@ def run_game_vertical(screen, S, logger, rod_name):
         fish_center = fish_y + S.FISH_SIZE / 2
         is_catching = bar_y <= fish_center <= bar_y + player_bar_height
 
+        # --- Knife Rod fill animation ---
+        if knife_active:
+            progress_bar_color = (255, 215, 0)
+
+            k_dt = clock.get_time() / 1000
+            fill_amount = KNIFE_FILL_SPEED * k_dt
+
+            actual_fill = min(fill_amount, knife_fill_remaining)
+            knife_fill_remaining -= actual_fill
+            progress += actual_fill
+                    
+            if knife_fill_remaining <= 0:
+                knife_active = False
+                progress_bar_color = PROGRESS_BAR_COLOR
+
         if not freeze_active:
             if is_catching:
                 progress += PROGRESS_UP_RATE + (fish_progress * PROGRESS_UP_RATE)
@@ -224,6 +261,35 @@ def run_game_vertical(screen, S, logger, rod_name):
             (bar_x + (S.BAR_WIDTH // 2 - S.FISH_SIZE // 2), fish_y,
              S.FISH_SIZE, S.FISH_SIZE)
         )
+
+        if knife_active:
+            if conqueror_active:
+                mult =  random.choice([1,1.5, 2, 2.5, 3, 3.5, 4, 4.5])
+                knife_length = int(S.FISH_SIZE * (mult))
+                knife_thickness = int(S.FISH_SIZE * (mult))
+                angle = 0 
+            else:
+                knife_length = int(S.FISH_SIZE * 2.5)
+                knife_thickness = int(3 * S.scale)
+                angle = 45*random.choice([-1, 1, 0]) # for random / \ |
+
+            knife_surf = pygame.Surface(
+                (knife_length, knife_thickness),
+                pygame.SRCALPHA
+            )
+            knife_surf.fill(progress_bar_color)
+
+            knife_rotated = pygame.transform.rotate(knife_surf, angle)
+           
+            fish_x = bar_x + (S.BAR_WIDTH // 2 - S.FISH_SIZE // 2)
+            fish_center_x = fish_x + (S.FISH_SIZE // 2)
+            fish_center_y = fish_y + (S.FISH_SIZE // 2)
+
+            knife_rect = knife_rotated.get_rect(
+                center=(fish_center_x, fish_center_y)
+            )
+
+            screen.blit(knife_rotated, knife_rect)
 
         pygame.draw.rect(
             screen, (80, 80, 80),

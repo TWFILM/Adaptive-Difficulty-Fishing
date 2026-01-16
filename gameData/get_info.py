@@ -17,7 +17,7 @@ def get_fish(rarity):
 def get_random_rarity(rod_name):
     rod = get_fishing_rod_info(rod_name)
     rarities = ["Common", "Uncommon", "Rare", "Legendary", "Mythical", "Meme"]
-    weights = [1/2, 1/4, 1/8, 1/16, 1/32, 1/50]  # base weights
+    weights = [1/2, 1/4, 1/8, 1/16, 1/32, 1/40]  # base weights
 
     luck = rod.get("LUCK", 0)
     if luck!=0:
@@ -54,11 +54,15 @@ def get_rod_des():
 def get_unlocked_rods():
     save_data = SaveManager()
     player_data = save_data.data["player"]
-    if "Cool Rod" not in player_data["unlocked_rods"] and player_data["total_catched"] >= 20:
+    if "Cool Rod" not in player_data["unlocked_rods"] and player_data["total_catched"] >= 15:
         save_data.data["player"]["unlocked_rods"].append("Cool Rod")
         save_data.save()
     if "RU Sure Rod" not in player_data["unlocked_rods"] and player_data["catched_streak"] >= 20:
         save_data.data["player"]["unlocked_rods"].append("RU Sure Rod")
+        save_data.save()
+
+    if "Knife Rod" not in player_data["unlocked_rods"] and player_data["total_catched"] >= 100:
+        save_data.data["player"]["unlocked_rods"].append("Knife Rod")
         save_data.save()
 
     if "Prismatic Rod" not in player_data["unlocked_rods"] and all_caught_fish_mythical():

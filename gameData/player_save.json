@@ -3,12 +3,11 @@
         "rod": "Novice Rod",
         "default": "horizontal",
         "catched_fish": [
-            "Mullet",
-            "Colossal Squid",
-            "Blue Whale"
+            "Sea Turtle",
+            "Pufferfish"
         ],
-        "total_catched": 1,
-        "catched_streak": 1,
+        "total_catched": 2,
+        "catched_streak": 2,
         "unlocked_rods": [
             "Novice Rod"
         ]

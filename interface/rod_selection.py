@@ -2,7 +2,7 @@ import pygame
 import os
 
 from gameData.config import BG_COLOR, FPS
-from gameData.get_info import get_rod_des, get_locked_rod_info, get_unlocked_rods
+from gameData.get_info import get_rod_des, get_locked_rod_info
 from utils.save_writer import SaveManager
 from utils.gadgets import Button, RodCard
 
@@ -22,8 +22,6 @@ FONT_PATH2 = os.path.join(
 RODS = get_rod_des()   # list[dict]
 LOCKED_RODS = get_locked_rod_info()  # dict
 rod_data = list(RODS.values())
-
-get_unlocked_rods()  # Update unlocked rods
 
 def run_rod_selection(screen, S, unlocked_rods):
     pygame.init()
