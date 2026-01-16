@@ -1,15 +1,29 @@
 {
     "player": {
-        "rod": "Novice Rod",
+        "rod": "Knife Rod",
         "default": "horizontal",
         "catched_fish": [
             "Sea Turtle",
-            "Pufferfish"
+            "Pufferfish",
+            "Sea Bass",
+            "Clownfish",
+            "Octopus",
+            "Salmon",
+            "Amberjack",
+            "Great White Shark",
+            "Mackerel",
+            "Flying Fish",
+            "Crab",
+            "Barracuda",
+            "Cod",
+            "Bluefin Tuna"
         ],
-        "total_catched": 2,
-        "catched_streak": 2,
+        "total_catched": 19,
+        "catched_streak": 0,
         "unlocked_rods": [
-            "Novice Rod"
+            "Novice Rod",
+            "Knife Rod",
+            "Cool Rod"
         ]
     }
 }

@@ -44,6 +44,7 @@ def run_game_vertical(screen, S, logger, rod_name):
     progress = 0
     progress_color = PROGRESS_BAR_COLOR
     progress_addition = 0
+    conqueror_active = False
 
     if rod_using["name"] == "Rod of the Conqueror":
         conqueror_active = True
@@ -87,9 +88,10 @@ def run_game_vertical(screen, S, logger, rod_name):
         KNIFE_FILL_TOTAL = 0.05
         KNIFE_FILL_SPEED = 0.075   # stop fish movement for 0.75 sec
         knife_checked = False  
+        angle_mode = 1
 
     knife_active = False
-    conqueror_active = False
+    
 
     success = [False, None, None]
     running = True
@@ -162,6 +164,7 @@ def run_game_vertical(screen, S, logger, rod_name):
                 # ===== Knife Rod logic =====
                 if rod_using["name"] == "Knife Rod" and not knife_active and not knife_checked:
                     if random.random() < 0.25:
+                        angle_mode =random.choice([-1, 0, 1])
                         knife_active = True
                         knife_checked = True
                         knife_fill_remaining = KNIFE_FILL_TOTAL
@@ -194,17 +197,20 @@ def run_game_vertical(screen, S, logger, rod_name):
                     (fish_direction == -1 and fish_y <= fish_target_y)):
                     fish_y = fish_target_y
                     fish_waiting = True
+                    knife_checked = False
 
                 # hard boundary
                 if fish_y <= S.BAR_MIN_Y + (S.FISH_SIZE+10):
                     fish_y = S.BAR_MIN_Y + (S.FISH_SIZE+10)
                     fish_direction = 1
                     fish_waiting = True
+                    knife_checked = False
 
                 elif fish_y >= S.BAR_MAX_Y + S.BAR_HEIGHT - (S.FISH_SIZE+10):
                     fish_y = S.BAR_MAX_Y + S.BAR_HEIGHT - (S.FISH_SIZE+10)
                     fish_direction = -1
                     fish_waiting = True
+                    knife_checked = False
 
 
         # ── COLLISION ─────────────────
@@ -262,7 +268,7 @@ def run_game_vertical(screen, S, logger, rod_name):
              S.FISH_SIZE, S.FISH_SIZE)
         )
 
-        if knife_active:
+        if knife_active or conqueror_active:
             if conqueror_active:
                 mult =  random.choice([1,1.5, 2, 2.5, 3, 3.5, 4, 4.5])
                 knife_length = int(S.FISH_SIZE * (mult))
@@ -271,7 +277,7 @@ def run_game_vertical(screen, S, logger, rod_name):
             else:
                 knife_length = int(S.FISH_SIZE * 2.5)
                 knife_thickness = int(3 * S.scale)
-                angle = 45*random.choice([-1, 1, 0]) # for random / \ |
+                angle = random.choice([15, 30, 60])*angle_mode # for random / \ |
 
             knife_surf = pygame.Surface(
                 (knife_length, knife_thickness),
