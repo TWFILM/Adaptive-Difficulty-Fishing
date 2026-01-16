@@ -1,6 +1,16 @@
 {
     "player": {
         "rod": "Novice Rod",
-        "default": "horizontal"
+        "default": "horizontal",
+        "catched_fish": [
+            "Mullet",
+            "Colossal Squid",
+            "Blue Whale"
+        ],
+        "total_catched": 1,
+        "catched_streak": 1,
+        "unlocked_rods": [
+            "Novice Rod"
+        ]
     }
 }

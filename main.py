@@ -43,12 +43,14 @@ def main():
 
         elif state == "SELECT_ROD":
             pygame.init()
+            save_data = load_save()
+            unlocked_rods = save_data["player"]["unlocked_rods"]
             S = build_scaled_config()   
             screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
-            state = run_rod_selection(screen, S)
+            state = run_rod_selection(screen, S, unlocked_rods)
 
         elif state == "FISH_LOG":
-            print("BESTINARY (ยังไม่ทำ)")
+            print("BESTIARY (ยังไม่ทำ)")
             state = "LOBBY"
 
     stop_sfx()

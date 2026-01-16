@@ -46,7 +46,7 @@ def run_lobby(screen, S):
 
     log_btn = Button(
         rect=(S.WIDTH//2 - 100, S.HEIGHT//2 + 100, 200, 50),
-        text="BESTINARY",
+        text="BESTIARY",
         font=btn_font
     )
 

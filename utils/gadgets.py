@@ -112,11 +112,11 @@ class RodCard:
         # Stats
         y = self.rect.y + 52
         stats = [
-            f"LUCK        {int(self.rod['LUCK'] * 100)}%",
-            f"CONTROL     {float(self.rod['CONTROLLED'])}" if self.rod['CONTROLLED'] != 0 else 
-                f"CONTROL     {int(self.rod['CONTROLLED'])}",
-            f"RESILIENCE  {int(self.rod['RESILIENCE'] * 100)}%"
+            f"LUCK        {format_percent(self.rod.get('LUCK'))}",
+            f"CONTROL     {format_number(self.rod.get('CONTROLLED'))}",
+            f"RESILIENCE  {format_percent(self.rod.get('RESILIENCE'))}",
         ]
+
 
         for stat in stats:
             surf = self.small_font.render(stat, True, (210, 210, 210))
@@ -134,3 +134,13 @@ class RodCard:
         for line in desc_lines:
             screen.blit(line, (text_x, desc_y))
             desc_y += 18
+
+def format_percent(value):
+    if isinstance(value, (int, float)):
+        return f"{value * 100:.0f}%"
+    return "N/A"
+
+def format_number(value):
+    if isinstance(value, (int, float)):
+        return f"{value:.2f}".rstrip("0").rstrip(".")
+    return "N/A"

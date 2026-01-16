@@ -9,6 +9,7 @@ from dda import update_fish_speed
 from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
 from utils.load_img import *
 from utils.load_audio import trigger_jumpscare
+from utils.save_writer import SaveManager
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -25,6 +26,10 @@ def run_game_vertical(screen, S, logger, rod_name):
     pygame.display.set_caption("DDA Experiment (Vertical)")
     clock = pygame.time.Clock()
     font = pygame.font.Font(FONT_PATH, int(18 * S.scale))
+
+    # LOAD SAVE DATA
+    save = SaveManager()
+    CATCHED_STREAK = save.data["player"]["catched_streak"]
 
     # ── ROD ─────────────────────────
     rod_using = get_fishing_rod_info(rod_name)
@@ -252,10 +257,37 @@ def run_game_vertical(screen, S, logger, rod_name):
 
             screen.blit(text_surface, text_rect)
 
+        screen.blit(font.render(
+            f"Speed: {fish_speed:.2f} | Catching: {is_catching} | Catched Streak: {CATCHED_STREAK}",
+            True, (200, 200, 200)), (10, 10))
+
         pygame.display.flip()
         clock.tick(FPS)
 
     logger.export()
+    if success[0]:
+        screen.blit(font.render(
+            f"You caught the {fish_encounter['rarity']} {fish_encounter['name']}!",
+            True, (200, 200, 200)), ((S.WIDTH // 2 ) - (font.size(f"You caught the {fish_encounter['rarity']} {fish_encounter['name']}!")[0] // 2), S.HEIGHT * 0.1))
+        
+        if not fish_encounter["name"] in save.data["player"]["catched_fish"]:
+            save.data["player"]["catched_fish"].append(fish_encounter["name"])
+            
+        save.data["player"]["total_catched"] += 1
+        save.data["player"]["catched_streak"] += 1
+        save.save()
+        pygame.display.flip()
+        time.sleep(3)
+    else:
+        fail_message = "The fish got away..."
+        text_surface = font.render(fail_message, True, (200, 200, 200))
+        text_rect = text_surface.get_rect(center=(S.WIDTH // 2, S.HEIGHT * 0.1))
+        screen.blit(text_surface, text_rect)
+
+        save.data["player"]["catched_streak"] = 0
+        save.save()
+        pygame.display.flip()
+        time.sleep(3)
 
     if rod_using["name"] == "Meme Rod" and success[0] is True:
         trigger_jumpscare(meme_fish=False)

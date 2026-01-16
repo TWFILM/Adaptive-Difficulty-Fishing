@@ -1,19 +1,23 @@
 import json
-from pathlib import Path
 import random
+from pathlib import Path
+from utils.save_writer import SaveManager
 
-def get_fish(rarity):
+def get_fish_data():
     fish_data = {}
     path = Path(__file__).parent / "fish_data.json"
     with open(path, 'r', encoding='utf-8') as f:
         fish_data = json.load(f)
+    return fish_data
 
+def get_fish(rarity):
+    fish_data = get_fish_data()
     return random.choice(fish_data[rarity])
 
 def get_random_rarity(rod_name):
     rod = get_fishing_rod_info(rod_name)
     rarities = ["Common", "Uncommon", "Rare", "Legendary", "Mythical", "Meme"]
-    weights = [1/2, 1/4, 1/8, 1/16, 1/32, 1/15]
+    weights = [1/2, 1/4, 1/8, 1/16, 1/32, 1/50]  # base weights
 
     luck = rod.get("LUCK", 0)
     if luck!=0:
@@ -46,3 +50,44 @@ def get_rod_des():
         rod_data = json.load(f)
 
     return rod_data
+
+def get_unlocked_rods():
+    save_data = SaveManager()
+    player_data = save_data.data["player"]
+    if "Cool Rod" not in player_data["unlocked_rods"] and player_data["total_catched"] >= 20:
+        save_data.data["player"]["unlocked_rods"].append("Cool Rod")
+        save_data.save()
+    if "RU Sure Rod" not in player_data["unlocked_rods"] and player_data["catched_streak"] >= 20:
+        save_data.data["player"]["unlocked_rods"].append("RU Sure Rod")
+        save_data.save()
+
+    if "Prismatic Rod" not in player_data["unlocked_rods"] and all_caught_fish_mythical():
+        save_data.data["player"]["unlocked_rods"].append("Prismatic Rod")
+        save_data.save()
+
+    if "Rod of the Conqueror" not in player_data["unlocked_rods"] and player_data["catched_fish"] == len(get_fish_data()):
+        save_data.data["player"]["unlocked_rods"].append("Rod of the Conqueror")
+        save_data.save()
+
+    if "Meme Rod" not in player_data["unlocked_rods"] and "Meme Fish" in player_data["catched_fish"]:
+        save_data.data["player"]["unlocked_rods"].append("Meme Rod")
+        save_data.save()
+
+def get_locked_rod_info():
+    locked_info = {}
+    path = Path(__file__).parent / "locked_rod_data.json"
+    with open(path, 'r', encoding='utf-8') as f:
+        locked_info = json.load(f)
+    return locked_info
+
+def all_caught_fish_mythical():
+    save_data = SaveManager()
+    caught_fish = save_data.data["player"].get("catched_fish", [])
+
+    fish_data = get_fish_data() 
+    count = 0
+    for fish in fish_data["Mythical"]:
+        if fish["name"] in caught_fish:
+            count += 1
+
+    return count == len(fish_data["Mythical"])
