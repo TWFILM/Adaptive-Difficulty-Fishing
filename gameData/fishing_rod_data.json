@@ -13,13 +13,18 @@
             "RESILIENCE": -0.12, "PROGRESS_SPD": 0.2, "LUCK": 0.2, 
             "desc": "Really? I think it is not a good idea.", "img": "meme1.png" }
     ,
-    "Knife Rod":
-        { "name": "Knife Rod", "CONTROLLED": 0, 
+    "Shear Rod":
+        { "name": "Shear Rod", "CONTROLLED": 0, 
             "RESILIENCE": 0, "PROGRESS_SPD": 0, "LUCK": 0.6, 
             "desc": "This Rod has a chance to stab the fish.", "img": "meme1.png" }
     ,
+    "Anchor Rod" : 
+        { "name": "Anchor Rod", "CONTROLLED": 0.45, 
+                "RESILIENCE": 1, "PROGRESS_SPD": 0, "LUCK": 0.35, 
+                "desc": "So heavy..", "img": "meme1.png" }
+    ,
     "Prismatic Rod":
-        { "name": "Prismatic Rod", "CONTROLLED": 0.55, 
+        { "name": "Prismatic Rod", "CONTROLLED": 0.65, 
             "RESILIENCE": 0.45, "PROGRESS_SPD": 0, "LUCK": 0.8, 
             "desc": "Prismatic prism shined your rod.", "img": "meme1.png" }
     ,

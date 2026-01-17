@@ -10,17 +10,22 @@
     ,
     "RU Sure Rod":
         { "name": "RU Sure Rod", 
-        "desc": "Unlock by getting 20 catching streaks.",
+        "desc": "Unlock by getting 15 catching streaks.",
         "img": "locked_rod.png" }
     ,
-    "Knife Rod":
-        { "name": "Knife Rod", 
-        "desc": "Unlock by getting 100 total caught fish.",
+    "Shear Rod":
+        { "name": "Shear Rod", 
+        "desc": "Unlock by getting 70 total caught fish.",
+        "img": "locked_rod.png" }
+    ,
+    "Anchor Rod": 
+        { "name": "Anchor Rod", 
+        "desc": "Unlock by getting 15 total Perfect Catches.",
         "img": "locked_rod.png" }
     ,
     "Prismatic Rod":
         { "name": "Prismatic Rod", 
-        "desc": "Unlock by caught all Mythical fish.",
+        "desc": "Unlock by caught all Legendary fish.",
         "img": "locked_rod.png" }
     ,
     "Rod of the Conqueror":

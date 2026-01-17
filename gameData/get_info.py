@@ -57,15 +57,19 @@ def get_unlocked_rods():
     if "Cool Rod" not in player_data["unlocked_rods"] and player_data["total_catched"] >= 15:
         save_data.data["player"]["unlocked_rods"].append("Cool Rod")
         save_data.save()
-    if "RU Sure Rod" not in player_data["unlocked_rods"] and player_data["catched_streak"] >= 20:
+    if "RU Sure Rod" not in player_data["unlocked_rods"] and player_data["catched_streak"] >= 15:
         save_data.data["player"]["unlocked_rods"].append("RU Sure Rod")
         save_data.save()
 
-    if "Knife Rod" not in player_data["unlocked_rods"] and player_data["total_catched"] >= 100:
-        save_data.data["player"]["unlocked_rods"].append("Knife Rod")
+    if "Shear Rod" not in player_data["unlocked_rods"] and player_data["total_catched"] >= 70:
+        save_data.data["player"]["unlocked_rods"].append("Shear Rod")
         save_data.save()
 
-    if "Prismatic Rod" not in player_data["unlocked_rods"] and all_caught_fish_mythical():
+    if "Anchor Rod" not in player_data["unlocked_rods"] and player_data["perfect_catches"] >= 15:
+            save_data.data["player"]["unlocked_rods"].append("Anchor Rod")
+            save_data.save()
+
+    if "Prismatic Rod" not in player_data["unlocked_rods"] and all_caught_fish_legendary():
         save_data.data["player"]["unlocked_rods"].append("Prismatic Rod")
         save_data.save()
 
@@ -84,14 +88,14 @@ def get_locked_rod_info():
         locked_info = json.load(f)
     return locked_info
 
-def all_caught_fish_mythical():
+def all_caught_fish_legendary():
     save_data = SaveManager()
     caught_fish = save_data.data["player"].get("catched_fish", [])
 
     fish_data = get_fish_data() 
     count = 0
-    for fish in fish_data["Mythical"]:
+    for fish in fish_data["Legendary"]:
         if fish["name"] in caught_fish:
             count += 1
 
-    return count == len(fish_data["Mythical"])
+    return count == len(fish_data["Legendary"])

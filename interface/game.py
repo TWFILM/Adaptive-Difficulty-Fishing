@@ -53,9 +53,9 @@ def run_game(screen, S, logger, rod_name):
         conqueror_active = True
         progress_addition = 0.26
         progress_bar_color = (255, 215, 0)
-    
-    # for Knife Rod
-    if rod_using["name"] == "Knife Rod":
+
+    # for Shear Rod
+    if rod_using["name"] == "Shear Rod":
         knife_fill_remaining = 0.0
         KNIFE_FILL_TOTAL = 0.05
         KNIFE_FILL_SPEED = 0.075   # stop fish movement for 0.75 sec
@@ -64,6 +64,10 @@ def run_game(screen, S, logger, rod_name):
 
     knife_active = False
     
+    # For Anchor Rod
+    if rod_using["name"] == "Anchor Rod":
+        is_anchor_active = True
+        player_bar_width_before = S.BAR_WIDTH+(rod_using["CONTROLLED"]*S.BAR_WIDTH)
     
     # random fish movement
     fish_x = (S.TRACK_X + S.TRACK_WIDTH // 2 ) - (S.FISH_SIZE // 2)
@@ -99,6 +103,7 @@ def run_game(screen, S, logger, rod_name):
         fish_progress = -0.9  # Meme Rod special passive
 
     success = [False, "None", "None"]
+    is_perfect_catch = True
     running = True
     while running:
         for event in pygame.event.get():
@@ -114,15 +119,23 @@ def run_game(screen, S, logger, rod_name):
             progress = min(progress, PROGRESS_INIT+progress_addition)
             
 
-
         # --- Player Control ---
         if not freeze_active:
-            conqueror_active = False
             if rod_using["name"] == "Rod of the Conqueror":
                 progress_bar_color = PROGRESS_BAR_COLOR 
+                conqueror_active = False
             # Meme Rod's Secret Passive
             if rod_using["name"] == "Meme Rod" and player_bar_width <= S.TRACK_WIDTH and fish_encounter["name"] != "Meme Fish":
                 player_bar_width += 0.1
+            if rod_using["name"] == "Anchor Rod" and is_anchor_active:
+                if is_catching:
+                    if is_anchor_active and player_bar_width > player_bar_width_before*0.3:
+                        player_bar_width -= 0.25
+                        fish_progress += 0.0003
+                else:
+                    is_anchor_active = False
+                    fish_progress = fish_encounter["PROGRESS_SPD"]+rod_using["PROGRESS_SPD"]
+                    player_bar_width = player_bar_width_before
 
             if fish_encounter["name"] == "Meme Fish" and player_bar_width >= 0 and rod_using["name"] != "Meme Rod":
                 player_bar_width -= 0.25
@@ -186,8 +199,8 @@ def run_game(screen, S, logger, rod_name):
                 dt = clock.get_time() / 1000
                 resilient_timer += dt
                 
-                # ===== Knife Rod logic =====
-                if rod_using["name"] == "Knife Rod" and not knife_active and not knife_checked:
+                # ===== Shear Rod logic =====
+                if rod_using["name"] == "Shear Rod" and not knife_active and not knife_checked:
                     if random.random() < 0.25:
                         play_stab_sfx()
                         angle_mode =random.choice([-1, -0.2,0.2, 1])
@@ -248,7 +261,7 @@ def run_game(screen, S, logger, rod_name):
         fish_center = fish_x + S.FISH_SIZE / 2
         is_catching = bar_x <= fish_center <= bar_x + player_bar_width
 
-        # --- Knife Rod fill animation ---
+        # --- Shear Rod fill animation ---
         if knife_active:
             progress_bar_color = (255, 215, 0)
 
@@ -273,6 +286,7 @@ def run_game(screen, S, logger, rod_name):
                 progress += PROGRESS_UP_RATE + ((fish_progress)*PROGRESS_UP_RATE)
             else:
                 progress -= PROGRESS_DOWN_RATE
+                is_perfect_catch = False
         
         # clamp
         progress = max(0.0, min(1.0, progress))
@@ -390,6 +404,8 @@ def run_game(screen, S, logger, rod_name):
 
         save.data["player"]["total_catched"] += 1
         save.data["player"]["catched_streak"] += 1
+        if is_perfect_catch:
+            save.data["player"]["perfect_catches"] += 1
         save.save()
         pygame.display.flip()
         time.sleep(3)

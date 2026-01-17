@@ -50,6 +50,10 @@ def run_game_vertical(screen, S, logger, rod_name):
         conqueror_active = True
         progress_addition = 0.26
         progress_color = (255, 215, 0)
+    
+    if rod_using["name"] == "Anchor Rod":
+        is_anchor_active = True
+        player_bar_height_before = S.BAR_HEIGHT + (rod_using["CONTROLLED"] * S.BAR_HEIGHT)
 
     # ── FISH ─────────────────────────
     fish_y = S.TRACK_Y + S.TRACK_HEIGHT // 2 - S.FISH_SIZE // 2
@@ -82,8 +86,8 @@ def run_game_vertical(screen, S, logger, rod_name):
     if rod_using["name"] == "Meme Rod":
         fish_progress = -0.9
 
-    # for Knife Rod
-    if rod_using["name"] == "Knife Rod":
+    # for Shear Rod
+    if rod_using["name"] == "Shear Rod":
         knife_fill_remaining = 0.0
         KNIFE_FILL_TOTAL = 0.05
         KNIFE_FILL_SPEED = 0.075   # stop fish movement for 0.75 sec
@@ -92,7 +96,7 @@ def run_game_vertical(screen, S, logger, rod_name):
 
     knife_active = False
     
-
+    is_perfect_catch = True
     success = [False, None, None]
     running = True
 
@@ -113,9 +117,21 @@ def run_game_vertical(screen, S, logger, rod_name):
 
         # ── PLAYER CONTROL ────────────
         if not freeze_active:
-            conqueror_active = False
+            if rod_using["name"] == "Rod of the Conqueror":
+                progress_bar_color = PROGRESS_BAR_COLOR 
+                conqueror_active = False
             if rod_using["name"] == "Meme Rod" and player_bar_height <= S.TRACK_HEIGHT and fish_encounter["name"] != "Meme Fish":
                 player_bar_height += 0.1
+            if rod_using["name"] == "Anchor Rod" and is_anchor_active:
+                if is_catching:
+                    if is_anchor_active and player_bar_height > player_bar_height_before*0.3:
+                        player_bar_height -= 0.25
+                        fish_progress += 0.0003
+                else:
+                    is_anchor_active = False
+                    fish_progress = fish_encounter["PROGRESS_SPD"]+rod_using["PROGRESS_SPD"]
+                    player_bar_height = player_bar_height_before
+
             if fish_encounter["name"] == "Meme Fish" and player_bar_height >= 0 and rod_using["name"] != "Meme Rod":
                 player_bar_height -= 0.25
 
@@ -161,8 +177,8 @@ def run_game_vertical(screen, S, logger, rod_name):
             if fish_waiting:
                 resilient_timer += clock.get_time() / 1000
 
-                # ===== Knife Rod logic =====
-                if rod_using["name"] == "Knife Rod" and not knife_active and not knife_checked:
+                # ===== Shear Rod logic =====
+                if rod_using["name"] == "Shear Rod" and not knife_active and not knife_checked:
                     if random.random() < 0.25:
                         angle_mode =random.choice([-1, -0.2,0.2, 1])
                         knife_active = True
@@ -217,7 +233,7 @@ def run_game_vertical(screen, S, logger, rod_name):
         fish_center = fish_y + S.FISH_SIZE / 2
         is_catching = bar_y <= fish_center <= bar_y + player_bar_height
 
-        # --- Knife Rod fill animation ---
+        # --- Shear Rod fill animation ---
         if knife_active:
             progress_bar_color = (255, 215, 0)
 
@@ -237,6 +253,7 @@ def run_game_vertical(screen, S, logger, rod_name):
                 progress += PROGRESS_UP_RATE + (fish_progress * PROGRESS_UP_RATE)
             else:
                 progress -= PROGRESS_DOWN_RATE
+                is_perfect_catch = False
 
         progress = max(0.0, min(1.0, progress))
 
@@ -347,6 +364,8 @@ def run_game_vertical(screen, S, logger, rod_name):
             
         save.data["player"]["total_catched"] += 1
         save.data["player"]["catched_streak"] += 1
+        if is_perfect_catch:
+            save.data["player"]["perfect_catches"] += 1
         save.save()
         pygame.display.flip()
         time.sleep(3)
