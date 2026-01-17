@@ -164,7 +164,7 @@ def run_game_vertical(screen, S, logger, rod_name):
                 # ===== Knife Rod logic =====
                 if rod_using["name"] == "Knife Rod" and not knife_active and not knife_checked:
                     if random.random() < 0.25:
-                        angle_mode =random.choice([-1, 0, 1])
+                        angle_mode =random.choice([-1, -0.2,0.2, 1])
                         knife_active = True
                         knife_checked = True
                         knife_fill_remaining = KNIFE_FILL_TOTAL

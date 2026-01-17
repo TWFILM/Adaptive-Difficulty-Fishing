@@ -5,33 +5,48 @@ pygame.mixer.init()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# FOR MEME ROD ONLY!!
-def trigger_jumpscare(meme_fish=False):
-    if meme_fish:
-        jumpscare_path = os.path.join(BASE_DIR, "assets", "sfx", "meme_fish.wav")
-    else : 
-        jumpscare_path = os.path.join(BASE_DIR, "assets", "sfx", "meme.wav")
-    jumpscare_sfx = pygame.mixer.Sound(jumpscare_path)
-
-    jumpscare_sfx.set_volume(1.0) 
-    jumpscare_sfx.play()
-
-def lobby_sfx():
-    pygame.mixer.init()
-    lobby_path = os.path.join(BASE_DIR, "assets", "sfx", "monplaisir.wav")
-    lobby_sfx = pygame.mixer.Sound(lobby_path)
-    lobby_sfx.play(0)
-
-def stop_sfx():
-    pygame.mixer.stop()
-
+# Global SFX variables
 stab_sfx = None
+lobby_sfx = None
+meme_sfx = None
+meme_fish_sfx = None
 
-def load_stab_sfx():
-    global stab_sfx
-    stab_path = os.path.join(BASE_DIR, "assets", "sfx", "slash.wav")
-    stab_sfx = pygame.mixer.Sound(stab_path)
-    stab_sfx.set_volume(0.25) 
+def load_sfx():
+    global stab_sfx, lobby_sfx, meme_sfx, meme_fish_sfx
+    
+    try:
+        lobby_path = os.path.join(BASE_DIR, "assets", "sfx", "monplaisir.wav")
+        lobby_sfx = pygame.mixer.Sound(lobby_path)
+        
+        stab_path = os.path.join(BASE_DIR, "assets", "sfx", "slash.wav")
+        stab_sfx = pygame.mixer.Sound(stab_path)
+        stab_sfx.set_volume(0.25)
+        
+        meme_path = os.path.join(BASE_DIR, "assets", "sfx", "meme.wav")
+        meme_sfx = pygame.mixer.Sound(meme_path)
+        meme_sfx.set_volume(1.0)
+        
+        meme_fish_path = os.path.join(BASE_DIR, "assets", "sfx", "meme_fish.wav")
+        meme_fish_sfx = pygame.mixer.Sound(meme_fish_path)
+        meme_fish_sfx.set_volume(1.0)
+    except pygame.error as e:
+        print(f"Error loading sound files: {e}")
+
+def trigger_jumpscare(meme_fish=False):
+    if meme_fish and meme_fish_sfx:
+        meme_fish_sfx.play()
+    elif meme_sfx:
+        meme_sfx.play()
+
+def play_lobby_sfx():
+    if lobby_sfx:
+        pygame.mixer.init()
+        lobby_sfx.play(-1)
 
 def play_stab_sfx():
-    stab_sfx.play()
+    if stab_sfx:
+        stab_sfx.play()
+
+def stop_lobby_sfx():
+    if lobby_sfx:
+        lobby_sfx.stop()

@@ -16,10 +16,13 @@
             "Crab",
             "Barracuda",
             "Cod",
-            "Bluefin Tuna"
+            "Bluefin Tuna",
+            "Haddock",
+            "Giant Trevally",
+            "Sea Star"
         ],
-        "total_catched": 19,
-        "catched_streak": 0,
+        "total_catched": 32,
+        "catched_streak": 2,
         "unlocked_rods": [
             "Novice Rod",
             "Knife Rod",

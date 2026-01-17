@@ -35,7 +35,7 @@
         { "fish_id": 3, "name": "Octopus", "rarity": "Rare", 
             "FISH_RESILIENCE": 0.6, "PROGRESS_SPD": 0 },
         { "fish_id": 4, "name": "Giant Trevally", "rarity": "Rare", 
-            "FISH_RESILIENCE": -0.1, "PROGRESS_SPD": 0 }
+            "FISH_RESILIENCE": -0.1, "PROGRESS_SPD": -0.1 }
     ],
     "Legendary":[
         { "fish_id": 1, "name": "Great White Shark", "rarity": "Legendary", 

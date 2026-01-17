@@ -8,15 +8,15 @@ from logger import DataLogger
 import pygame
 from utils.scaler import build_scaled_config
 from utils.save_reader import load_save
-from utils.load_audio import lobby_sfx, stop_sfx, load_stab_sfx
+from utils.load_audio import play_lobby_sfx, stop_lobby_sfx, load_sfx
 from gameData.get_info import get_unlocked_rods
 
-load_stab_sfx()
+load_sfx()
 
 def main():
     logger = DataLogger()
     state = "LOBBY"
-    lobby_sfx()
+    play_lobby_sfx()
 
     while state != "QUIT":
         if state == "LOBBY":
@@ -27,7 +27,7 @@ def main():
             
         elif state == "GAME":
             # load player selection rod
-            stop_sfx()
+            stop_lobby_sfx()
             save_data = load_save()
             rod_name = save_data["player"]["rod"]
             axis = save_data["player"]["default"]
@@ -41,7 +41,7 @@ def main():
                 success = run_game_vertical(screen, S, logger, rod_name)
             print("Game Result:", f"🎣 Catch success! You caught the {success[1]} {success[2]}." if success[0] else "❌ Game ended the fish got away...")
             state = "LOBBY"
-            lobby_sfx()
+            play_lobby_sfx()
 
         elif state == "SELECT_ROD":
             get_unlocked_rods()
@@ -56,7 +56,7 @@ def main():
             print("BESTIARY (ยังไม่ทำ)")
             state = "LOBBY"
 
-    stop_sfx()
+    stop_lobby_sfx()
 
 if __name__ == "__main__":
     main()
