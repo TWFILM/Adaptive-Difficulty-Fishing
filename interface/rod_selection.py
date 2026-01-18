@@ -241,7 +241,7 @@ def run_rod_selection(screen, S, unlocked_rods):
             if elapsed < WARNING_DURATION:
                 alpha = max(0, 255 - int((elapsed / WARNING_DURATION) * 255))
 
-                warn_surf = btn_font.render(
+                warn_surf = status_font.render(
                     warning_text, True, (255, 215, 120) if "Unlocked" in warning_text else (255, 90, 90)
                 )
                 warn_surf.set_alpha(alpha)
