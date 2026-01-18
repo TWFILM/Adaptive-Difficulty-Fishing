@@ -5,6 +5,7 @@ from gameData.config import BG_COLOR, FPS
 from gameData.get_info import get_rod_des, get_locked_rod_info
 from utils.save_writer import SaveManager
 from utils.gadgets import Button, RodCard
+from utils.load_audio import play_unlock_sfx, play_warned_sfx
 
 # ── PATH ───────────────────────────
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -91,6 +92,33 @@ def run_rod_selection(screen, S, unlocked_rods):
     start = page_index * PAGE_SIZE
     visible_rods = rod_data[start : start + PAGE_SIZE]
 
+    # ── UNLOCK WARNING CHECK ──────────────────
+    save = SaveManager()
+
+    unlock_queue = []          
+    warning_text = None
+    warning_time = 0
+    WARNING_DURATION = 2500    # ms
+    sound_played = False
+
+    shown = save.data["player"].setdefault("shown_unlock_notice", [])
+
+    for rod_name in unlocked_rods:
+        if rod_name not in shown:
+            unlock_queue.append(f"New Rod Unlocked: {rod_name}!")
+            shown.append(rod_name)
+
+    if unlock_queue:
+        play_unlock_sfx()
+        if warning_text and not sound_played:
+            sound_played = True
+
+        save.save()
+        warning_text = unlock_queue.pop(0)
+        warning_time = pygame.time.get_ticks()
+
+    
+
     # ── LOOP ────────────────────────
     running = True
     while running:
@@ -123,6 +151,7 @@ def run_rod_selection(screen, S, unlocked_rods):
 
                 if chosen_rod["name"] not in unlocked_rods:
                     warning_text = "You must unlock this rod first"
+                    play_warned_sfx()
                     warning_time = pygame.time.get_ticks()
                 else:
                     save.data["player"]["rod"] = chosen_rod["name"]
@@ -208,11 +237,12 @@ def run_rod_selection(screen, S, unlocked_rods):
         # ── WARNING TEXT ──────────────────
         if warning_text:
             elapsed = pygame.time.get_ticks() - warning_time
+
             if elapsed < WARNING_DURATION:
                 alpha = max(0, 255 - int((elapsed / WARNING_DURATION) * 255))
 
                 warn_surf = btn_font.render(
-                    warning_text, True, (255, 90, 90)
+                    warning_text, True, (255, 215, 120) if "Unlocked" in warning_text else (255, 90, 90)
                 )
                 warn_surf.set_alpha(alpha)
 
@@ -222,8 +252,15 @@ def run_rod_selection(screen, S, unlocked_rods):
                         center=(S.WIDTH // 2, int(S.HEIGHT * 0.2))
                     )
                 )
+
             else:
-                warning_text = None
+                # current message done → show next
+                if unlock_queue:
+                    warning_text = unlock_queue.pop(0)
+                    warning_time = pygame.time.get_ticks()
+                else:
+                    warning_text = None
+
         
         # ── CURRENT SELECTION TEXT ─────────
         if current_hover_rod:

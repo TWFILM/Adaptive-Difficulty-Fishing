@@ -1,0 +1,122 @@
+{
+    "Mackerel": {
+        "name": "Mackerel",
+        "desc": "A small, silvery fish with dark blue stripes along its back.",
+        "img": "locked_fish.png"
+    },
+    "Sardine": {
+        "name": "Sardine",
+        "desc": "A tiny, oily fish with shimmering silver scales.",
+        "img": "locked_fish.png"
+    },
+    "Sea Bass": {
+        "name": "Sea Bass",
+        "desc": "A sleek predatory fish with sharp spines along its dorsal fin.",
+        "img": "locked_fish.png"
+    },
+    "Shrimp": {
+        "name": "Shrimp",
+        "desc": "A small translucent crustacean with a curved body and long antennae.",
+        "img": "locked_fish.png"
+    },
+    "Haddock": {
+        "name": "Haddock",
+        "desc": "A white fish with a distinctive dark spot above its pectoral fin.",
+        "img": "locked_fish.png"
+    },
+    "Mullet": {
+        "name": "Mullet",
+        "desc": "A bottom-feeder with a thick-lipped mouth and rounded body.",
+        "img": "locked_fish.png"
+    },
+    "Sea Star": {
+        "name": "Sea Star",
+        "desc": "A spiky creature with five vibrant arms radiating from its center.",
+        "img": "locked_fish.png"
+    },
+    "Cod": {
+        "name": "Cod",
+        "desc": "A large white fish with spotted patterns and three dorsal fins.",
+        "img": "locked_fish.png"
+    },
+    "Crab": {
+        "name": "Crab",
+        "desc": "A hard-shelled crustacean with eight legs and powerful claws.",
+        "img": "locked_fish.png"
+    },
+    "Salmon": {
+        "name": "Salmon",
+        "desc": "A pink-hued fish with spots and a powerful muscular build.",
+        "img": "locked_fish.png"
+    },
+    "Amberjack": {
+        "name": "Amberjack",
+        "desc": "A sleek fish with golden horizontal stripes along its body.",
+        "img": "locked_fish.png"
+    },
+    "Clownfish": {
+        "name": "Clownfish",
+        "desc": "A vibrant orange fish with bold white and black stripes.",
+        "img": "locked_fish.png"
+    },
+    "Bluefin Tuna": {
+        "name": "Bluefin Tuna",
+        "desc": "A massive fish with deep blue coloring and a torpedo-shaped body.",
+        "img": "locked_fish.png"
+    },
+    "Pufferfish": {
+        "name": "Pufferfish",
+        "desc": "A round fish covered in sharp spines that inflates when threatened.",
+        "img": "locked_fish.png"
+    },
+    "Octopus": {
+        "name": "Octopus",
+        "desc": "A soft-bodied creature with eight flexible tentacles and spots.",
+        "img": "locked_fish.png"
+    },
+    "Giant Trevally": {
+        "name": "Giant Trevally",
+        "desc": "A powerful fish with a sleek metallic body and large fins.",
+        "img": "locked_fish.png"
+    },
+    "Great White Shark": {
+        "name": "Great White Shark",
+        "desc": "A massive predator with grey coloring and a distinctive white belly.",
+        "img": "locked_fish.png"
+    },
+    "Flying Fish": {
+        "name": "Flying Fish",
+        "desc": "A streamlined fish with enlarged pectoral fins like wings.",
+        "img": "locked_fish.png"
+    },
+    "Sea Turtle": {
+        "name": "Sea Turtle",
+        "desc": "An ancient reptile with a hard shell and four flippers.",
+        "img": "locked_fish.png"
+    },
+    "Barracuda": {
+        "name": "Barracuda",
+        "desc": "A sleek predator with sharp teeth and a silvery streamlined body.",
+        "img": "locked_fish.png"
+    },
+    "Colossal Squid": {
+        "name": "Colossal Squid",
+        "desc": "A massive deep-sea creature with glowing eyes and enormous tentacles.",
+        "img": "locked_fish.png"
+    },
+    "Orca": {
+        "name": "Orca",
+        "desc": "A massive black and white marine mammal with a distinctive white eye patch.",
+        "img": "locked_fish.png"
+    },
+    "Blue Whale": {
+        "name": "Blue Whale",
+        "desc": "An enormous blue-grey creature, the largest animal to exist.",
+        "img": "locked_fish.png"
+    },
+    "Meme Fish": {
+        "name": "Meme Fish",
+        "desc": "A peculiar creature with an unusual appearance born from internet culture.",
+        "img": "locked_fish.png"
+    }
+}

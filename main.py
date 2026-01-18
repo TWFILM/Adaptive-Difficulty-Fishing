@@ -1,4 +1,5 @@
 # main.py
+from interface.bestiary import run_bestiary
 from interface.game import run_game
 from interface.game_vertical import run_game_vertical
 from interface.lobby import run_lobby
@@ -53,8 +54,12 @@ def main():
             state = run_rod_selection(screen, S, unlocked_rods)
 
         elif state == "FISH_LOG":
-            print("BESTIARY (ยังไม่ทำ)")
-            state = "LOBBY"
+            pygame.init()
+            save_data = load_save()
+            unlocked_fish = save_data["player"]["catched_fish"]
+            S = build_scaled_config()
+            screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
+            state = run_bestiary(screen, S, unlocked_fish)
 
     stop_lobby_sfx()
 

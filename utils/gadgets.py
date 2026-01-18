@@ -1,5 +1,18 @@
 import pygame
 
+from utils.load_audio import play_button_sfx
+
+RARITY_COLORS = {
+    "Common":     (180, 180, 180),
+    "Uncommon":   (120, 220, 120),
+    "Rare":       (100, 180, 255),
+    "Legendary":  (255, 200, 80),
+    "Mythical":   (220, 120, 255),
+    "Meme":       (255, 100, 120),
+    "Locked":     (90, 90, 90)
+}
+
+# ── BUTTON CLASS ──────────────────
 class Button:
     def __init__(self, rect, text, font,
                  bg_color=(70, 70, 70),
@@ -24,12 +37,112 @@ class Button:
         screen.blit(text_surf, text_rect)
 
     def clicked(self, event):
-        return (
-            event.type == pygame.MOUSEBUTTONDOWN and
-            event.button == 1 and
-            self.rect.collidepoint(event.pos)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                play_button_sfx()
+                return True
+        return False
+
+# ── FISH CARD CLASS ────────────────
+class FishCard:
+    def __init__(self, rect, fish_data, font, small_font, image, rarity="Common"):
+        self.rect = pygame.Rect(rect)
+        self.fish = fish_data
+        self.font = font
+        self.small_font = small_font
+        self.rarity = rarity
+
+        # pic area
+        self.pic_size = 72
+        self.pic_w = int(self.pic_size * 1.3)
+        self.pic_h = self.pic_size
+
+        title_y = self.rect.y + 18
+        self.rarity_color = RARITY_COLORS.get(rarity, (180, 180, 180))
+
+        self.image = pygame.transform.smoothscale(
+            image, (self.pic_w, self.pic_h)
         )
-    
+        
+        self.pic_rect = self.image.get_rect(
+            center=(
+                self.rect.centerx,
+                title_y + self.font.get_height() + 10 + self.pic_h // 2
+            )
+        )
+
+    def draw(self, screen):
+        # ── Card background ──
+        pygame.draw.rect(
+            screen, (40, 60, 90),
+            self.rect, border_radius=18
+        )
+
+        # name (center)
+        title = self.font.render(
+            self.fish["name"].upper(),
+            True,
+            self.rarity_color
+        )
+
+        # rarity bar
+        pygame.draw.rect(
+            screen,
+            self.rarity_color,
+            (self.rect.x, self.rect.y, self.rect.width, 6),
+            border_radius=6
+        )
+
+        title_rect = title.get_rect(centerx=self.rect.centerx, y=self.rect.y + 16)
+        screen.blit(title, title_rect)
+
+        # image
+        pygame.draw.rect(screen, (0, 0, 0), self.pic_rect, 2)
+        
+        # draw rarity border
+        pygame.draw.rect(
+            screen,
+            self.rarity_color,
+            self.pic_rect,
+            3,
+            border_radius=6
+        )
+        screen.blit(self.image, self.pic_rect)
+
+
+        # description (center block)
+        self.draw_multiline_text_center(
+            screen,
+            self.fish["desc"].upper(),
+            self.rect.centerx,
+            self.pic_rect.bottom + 12,
+            self.small_font,
+            self.rect.width - 40
+        )
+
+    def draw_multiline_text_center(self, surface, text, center_x, start_y, font, max_width):
+        words = text.split(" ")
+        lines = []
+        line = ""
+
+        for word in words:
+            test = line + word + " "
+            if font.size(test)[0] <= max_width:
+                line = test
+            else:
+                lines.append(line)
+                line = word + " "
+        if line:
+            lines.append(line)
+
+        y = start_y
+        for ln in lines:
+            text_surf = font.render(ln.strip(), True, (220, 220, 220))
+            rect = text_surf.get_rect(centerx=center_x, y=y)
+            surface.blit(text_surf, rect)
+            y += font.get_height() + 4
+
+# ── ROD CARD CLASS ────────────────
 class RodCard:
     def __init__(
         self,

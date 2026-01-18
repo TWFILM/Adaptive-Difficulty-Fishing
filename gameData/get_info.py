@@ -10,6 +10,13 @@ def get_fish_data():
         fish_data = json.load(f)
     return fish_data
 
+def get_locked_fish_info():
+    locked_info = {}
+    path = Path(__file__).parent / "locked_fish_data.json"
+    with open(path, 'r', encoding='utf-8') as f:
+        locked_info = json.load(f)  
+    return locked_info
+
 def get_fish(rarity):
     fish_data = get_fish_data()
     return random.choice(fish_data[rarity])
