@@ -50,6 +50,7 @@ def run_game_vertical(screen, S, logger, rod_name):
         conqueror_active = True
         progress_addition = 0.26
         progress_color = (255, 215, 0)
+        mult = 0.5
     
     if rod_using["name"] == "Anchor Rod":
         is_anchor_active = True
@@ -118,7 +119,7 @@ def run_game_vertical(screen, S, logger, rod_name):
         # ── PLAYER CONTROL ────────────
         if not freeze_active:
             if rod_using["name"] == "Rod of the Conqueror":
-                progress_bar_color = PROGRESS_BAR_COLOR 
+                progress_color = PROGRESS_BAR_COLOR 
                 conqueror_active = False
             if rod_using["name"] == "Meme Rod" and player_bar_height <= S.TRACK_HEIGHT and fish_encounter["name"] != "Meme Fish":
                 player_bar_height += 0.1
@@ -235,7 +236,7 @@ def run_game_vertical(screen, S, logger, rod_name):
 
         # --- Shear Rod fill animation ---
         if knife_active:
-            progress_bar_color = (255, 215, 0)
+            progress_color = (255, 215, 0)
 
             k_dt = clock.get_time() / 1000
             fill_amount = KNIFE_FILL_SPEED * k_dt
@@ -246,7 +247,7 @@ def run_game_vertical(screen, S, logger, rod_name):
                     
             if knife_fill_remaining <= 0:
                 knife_active = False
-                progress_bar_color = PROGRESS_BAR_COLOR
+                progress_color = PROGRESS_BAR_COLOR
 
         if not freeze_active:
             if is_catching:
@@ -287,8 +288,8 @@ def run_game_vertical(screen, S, logger, rod_name):
 
         if knife_active or conqueror_active:
             if conqueror_active:
-                mult =  random.choice([1,1.5, 2, 2.5, 3, 3.5, 4, 4.5])
-                knife_length = int(S.FISH_SIZE * (mult))
+                mult += 0.1
+                knife_length = int(S.WIDTH*2)
                 knife_thickness = int(S.FISH_SIZE * (mult))
                 angle = 0 
             else:
@@ -300,7 +301,7 @@ def run_game_vertical(screen, S, logger, rod_name):
                 (knife_length, knife_thickness),
                 pygame.SRCALPHA
             )
-            knife_surf.fill(progress_bar_color)
+            knife_surf.fill(progress_color)
 
             knife_rotated = pygame.transform.rotate(knife_surf, angle)
            

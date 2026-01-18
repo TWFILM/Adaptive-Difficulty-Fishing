@@ -53,6 +53,7 @@ def run_game(screen, S, logger, rod_name):
         conqueror_active = True
         progress_addition = 0.26
         progress_bar_color = (255, 215, 0)
+        mult = 0.5
 
     # for Shear Rod
     if rod_using["name"] == "Shear Rod":
@@ -319,9 +320,9 @@ def run_game(screen, S, logger, rod_name):
         pygame.draw.rect(screen, FISH_COLOR, (fish_x, bar_y + (S.FISH_SIZE*S.scale), S.FISH_SIZE, S.FISH_SIZE))
         if knife_active or conqueror_active:
             if conqueror_active:
-                mult =  random.choice([1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5])
+                mult += 0.1
                 knife_length = int(S.FISH_SIZE * (mult))
-                knife_thickness = int(S.FISH_SIZE * (mult))
+                knife_thickness = int(S.HEIGHT*2)
                 angle = 0 
             else:
                 knife_length = int(3 * S.scale)

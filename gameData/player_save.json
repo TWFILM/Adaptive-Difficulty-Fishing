@@ -2,29 +2,15 @@
     "player": {
         "rod": "Novice Rod",
         "default": "horizontal",
-        "catched_fish": [
-            "Mackerel",
-            "Amberjack",
-            "Cod",
-            "Mullet",
-            "Great White Shark",
-            "Salmon",
-            "Giant Trevally",
-            "Pufferfish",
-            "Shrimp",
-            "Octopus",
-            "Clownfish"
-        ],
-        "total_catched": 19,
-        "catched_streak": 3,
-        "perfect_catches": 1,
+        "catched_fish": [],
+        "total_catched": 0,
+        "catched_streak": 0,
+        "perfect_catches": 0,
         "unlocked_rods": [
-            "Novice Rod",
-            "Cool Rod"
+            "Novice Rod"
         ],
         "shown_unlock_notice": [
-            "Novice Rod",
-            "Cool Rod"
+            "Novice Rod"
         ]
     }
 }
