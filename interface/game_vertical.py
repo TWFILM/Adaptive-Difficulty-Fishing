@@ -93,7 +93,8 @@ def run_game_vertical(screen, S, logger, rod_name):
         KNIFE_FILL_TOTAL = 0.05
         KNIFE_FILL_SPEED = 0.075   # stop fish movement for 0.75 sec
         knife_checked = False  
-        angle_mode = 1
+        # angle_mode = 1
+        mult = 0.5
 
     knife_active = False
     
@@ -181,7 +182,9 @@ def run_game_vertical(screen, S, logger, rod_name):
                 # ===== Shear Rod logic =====
                 if rod_using["name"] == "Shear Rod" and not knife_active and not knife_checked:
                     if random.random() < 0.25:
-                        angle_mode =random.choice([-1, -0.2,0.2, 1])
+                        # angle_mode =random.choice([-1, -0.2,0.2, 1]) # for old animation
+                        play_stab_sfx()
+                        mult = 0.5
                         knife_active = True
                         knife_checked = True
                         knife_fill_remaining = KNIFE_FILL_TOTAL
@@ -293,9 +296,13 @@ def run_game_vertical(screen, S, logger, rod_name):
                 knife_thickness = int(S.FISH_SIZE * (mult))
                 angle = 0 
             else:
-                knife_length = int(S.FISH_SIZE * 2.5)
-                knife_thickness = int(3 * S.scale)
-                angle = random.choice([15, 30, 60])*angle_mode # for random / \ |
+                mult += 0.1
+                knife_length = int(S.HEIGHT*(2-mult if (2-mult)>=0 else 0))
+                knife_thickness = int(S.FISH_SIZE//mult)
+                angle = 0
+                # knife_length = int(S.FISH_SIZE * 2.5)
+                # knife_thickness = int(3 * S.scale)
+                # angle = random.choice([15, 30, 60])*angle_mode # for random / \ |
 
             knife_surf = pygame.Surface(
                 (knife_length, knife_thickness),

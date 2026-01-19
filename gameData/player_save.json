@@ -1,8 +1,9 @@
 {
     "player": {
-        "rod": "Rod of the Conqueror",
+        "rod": "Shear Rod",
         "default": "horizontal",
-        "catched_fish": [],
+        "catched_fish": [
+        ],
         "total_catched": 0,
         "catched_streak": 0,
         "perfect_catches": 0,
@@ -10,7 +11,7 @@
             "Novice Rod"
         ],
         "shown_unlock_notice": [
-            "Novice Rod"
+    
         ]
     }
 }
