@@ -2,10 +2,16 @@
     "player": {
         "rod": "Novice Rod",
         "default": "horizontal",
-        "catched_fish": [],
-        "total_catched": 0,
-        "catched_streak": 0,
-        "perfect_catches": 0,
+        "catched_fish": [
+            "Pufferfish",
+            "Clownfish",
+            "Cod",
+            "Sea Star",
+            "Shrimp"
+        ],
+        "total_catched": 5,
+        "catched_streak": 5,
+        "perfect_catches": 1,
         "unlocked_rods": [
             "Novice Rod"
         ],

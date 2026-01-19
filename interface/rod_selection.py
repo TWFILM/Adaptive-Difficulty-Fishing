@@ -32,8 +32,8 @@ def run_rod_selection(screen, S, unlocked_rods):
 
     # ── FONTS ───────────────────────
     title_font = pygame.font.Font(FONT_PATH1, 48)
-    card_title_font = pygame.font.Font(FONT_PATH2, 24)
-    card_desc_font = pygame.font.Font(FONT_PATH2, 17)
+    card_title_font = pygame.font.Font(FONT_PATH2, 23)
+    card_desc_font = pygame.font.Font(FONT_PATH2, 16)
     btn_font = pygame.font.Font(FONT_PATH2, 26)
     status_font = pygame.font.Font(FONT_PATH2, 20)
 

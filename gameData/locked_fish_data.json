@@ -1,12 +1,12 @@
 {
     "Mackerel": {
         "name": "Mackerel",
-        "desc": "A small, silvery fish with dark blue stripes along its back.",
+        "desc": "A rounded and torpedo-shaped fish with a slender, keeled tail base.",
         "img": "locked_fish.png"
     },
     "Sardine": {
         "name": "Sardine",
-        "desc": "A tiny, oily fish with shimmering silver scales.",
+        "desc": "A silver coloration fish with darker back, single dorsal fin",
         "img": "locked_fish.png"
     },
     "Sea Bass": {
@@ -46,7 +46,7 @@
     },
     "Salmon": {
         "name": "Salmon",
-        "desc": "A pink-hued fish with spots and a powerful muscular build.",
+        "desc": "A streamlined, torpedo-shaped fish with robust bodies and small fins.",
         "img": "locked_fish.png"
     },
     "Amberjack": {
