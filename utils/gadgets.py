@@ -160,9 +160,12 @@ class RodCard:
         self.selected = selected
         self.image = image
 
-        # reserved area for image
+        # ── IMAGE AREA CONFIG ─────────
         self.IMG_PAD = 24
-        self.IMG_SIZE = 90
+
+        # กล่องสำหรับรูป (ปรับขนาดได้โดยไม่กระทบ text)
+        self.IMG_BOX_W = 110
+        self.IMG_BOX_H = 140
 
     # ── WORD WRAP ───────────────────
     def _render_multiline(self, text, max_width, color):
@@ -178,7 +181,8 @@ class RodCard:
                 lines.append(current)
                 current = word + " "
 
-        lines.append(current)
+        if current:
+            lines.append(current)
 
         return [
             self.small_font.render(line.strip(), True, color)
@@ -196,24 +200,39 @@ class RodCard:
 
         # ── IMAGE AREA ────────────────
         img_x = self.rect.x + self.IMG_PAD
-        img_y = self.rect.y + self.rect.height // 2 - self.IMG_SIZE // 2
+        img_y = self.rect.y + self.rect.height // 2 - self.IMG_BOX_H // 2
 
         if self.image:
-            img = pygame.transform.smoothscale(
-                self.image, (self.IMG_SIZE, self.IMG_SIZE)
+            img = scale_to_fit(
+                self.image,
+                self.IMG_BOX_W,
+                self.IMG_BOX_H
             )
-            screen.blit(img, (img_x, img_y))
+
+            img_rect = img.get_rect(
+                center=(
+                    img_x + self.IMG_BOX_W // 2,
+                    img_y + self.IMG_BOX_H // 2
+                )
+            )
+
+            # shadow
+            # shadow = pygame.Surface(img.get_size(), pygame.SRCALPHA)
+            # shadow.fill((0, 0, 0, 90))
+            # screen.blit(shadow, img_rect.move(4, 4))
+
+            screen.blit(img, img_rect)
+
         else:
-            # placeholder
             pygame.draw.rect(
                 screen,
                 (30, 30, 30),
-                (img_x, img_y, self.IMG_SIZE, self.IMG_SIZE),
+                (img_x, img_y, self.IMG_BOX_W, self.IMG_BOX_H),
                 border_radius=12
             )
 
         # ── TEXT AREA ─────────────────
-        text_x = img_x + self.IMG_SIZE + 24
+        text_x = img_x + self.IMG_BOX_W + 24
         text_width = self.rect.right - text_x - 24
 
         # Title
@@ -230,7 +249,6 @@ class RodCard:
             f"RESILIENCE  {format_percent(self.rod.get('RESILIENCE'))}",
         ]
 
-
         for stat in stats:
             surf = self.small_font.render(stat, True, (210, 210, 210))
             screen.blit(surf, (text_x, y))
@@ -238,7 +256,7 @@ class RodCard:
 
         # Description (auto wrap)
         desc_lines = self._render_multiline(
-            self.rod["desc"],
+            self.rod.get("desc", ""),
             text_width,
             (220, 220, 220)
         )
@@ -257,3 +275,11 @@ def format_number(value):
     if isinstance(value, (int, float)):
         return f"{value:.2f}".rstrip("0").rstrip(".")
     return "N/A"
+
+def scale_to_fit(image, max_w, max_h):
+    w, h = image.get_size()
+    scale = min(max_w / w, max_h / h)
+    return pygame.transform.smoothscale(
+        image,
+        (int(w * scale), int(h * scale))
+    )

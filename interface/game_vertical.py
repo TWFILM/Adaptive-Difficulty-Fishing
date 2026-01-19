@@ -289,6 +289,11 @@ def run_game_vertical(screen, S, logger, rod_name):
              S.FISH_SIZE, S.FISH_SIZE)
         )
 
+        if rod_using["name"] == "Prismatic Rod":
+            if pygame.time.get_ticks() % 1000 < 800 :
+                pygame.draw.rect(screen, (255, 255, 255), (bar_x + (S.BAR_WIDTH // 2 - S.FISH_SIZE // 2), fish_target_y, S.FISH_SIZE, S.FISH_SIZE))
+
+
         if knife_active or conqueror_active:
             if conqueror_active:
                 mult += 0.1

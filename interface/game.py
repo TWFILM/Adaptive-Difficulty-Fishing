@@ -320,6 +320,10 @@ def run_game(screen, S, logger, rod_name):
 
         pygame.draw.rect(screen, BAR_COLOR, (bar_x, bar_y, player_bar_width, S.BAR_HEIGHT))
         pygame.draw.rect(screen, FISH_COLOR, (fish_x, bar_y + (S.FISH_SIZE*S.scale), S.FISH_SIZE, S.FISH_SIZE))
+        if rod_using["name"] == "Prismatic Rod":
+            if pygame.time.get_ticks() % 1000 < 800 :
+                pygame.draw.rect(screen, (255, 255, 255), (fish_target_x, bar_y + (S.FISH_SIZE*S.scale), S.FISH_SIZE, S.FISH_SIZE))
+
         if knife_active or conqueror_active:
             if conqueror_active:
                 mult += 0.1

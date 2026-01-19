@@ -1,7 +1,7 @@
 {
     "Novice Rod": { "name": "Novice Rod", "CONTROLLED": 0, 
             "RESILIENCE": 0, "PROGRESS_SPD": 0 , "LUCK": 0, 
-            "desc": "A basic rod for beginners. Enjoy fishing!", "img": "meme1.png" }      
+            "desc": "A basic rod for beginners. Enjoy fishing!", "img": "novice.png" }      
     ,
     "Cool Rod":
         { "name": "Cool Rod", "CONTROLLED": 0.4, 
@@ -24,8 +24,8 @@
                 "desc": "So heavy..", "img": "meme1.png" }
     ,
     "Prismatic Rod":
-        { "name": "Prismatic Rod", "CONTROLLED": 0.65, 
-            "RESILIENCE": 0.45, "PROGRESS_SPD": 0, "LUCK": 0.8, 
+        { "name": "Prismatic Rod", "CONTROLLED": 0.6, 
+            "RESILIENCE": 0.45, "PROGRESS_SPD": 0, "LUCK": 0.75, 
             "desc": "Prismatic prism shined your rod.", "img": "meme1.png" }
     ,
     "Rod of the Conqueror":
