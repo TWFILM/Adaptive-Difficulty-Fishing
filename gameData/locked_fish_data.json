@@ -44,8 +44,8 @@
         "desc": "A hard-shelled crustacean with eight legs and powerful claws.",
         "img": "locked_fish.png"
     },
-    "Salmon": {
-        "name": "Salmon",
+    "Chinook Salmon": {
+        "name": "Chinook Salmon",
         "desc": "A streamlined, torpedo-shaped fish with robust bodies and small fins.",
         "img": "locked_fish.png"
     },

@@ -30,7 +30,7 @@
     ,
     "Rod of the Conqueror":
         { "name": "Rod of the Conqueror", 
-        "desc": "Unlock by having 100% bestinary completion.",
+        "desc": "Unlock by having 100% bestiary completion.",
         "img": "locked_rod.png" }
     ,
     "Meme Rod" : 

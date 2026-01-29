@@ -144,15 +144,8 @@ class FishCard:
 
 # ── ROD CARD CLASS ────────────────
 class RodCard:
-    def __init__(
-        self,
-        rect,
-        rod_data,
-        font,
-        small_font,
-        selected=False,
-        image=None
-    ):
+    def __init__(self, rect, rod_data, font, small_font,
+                 selected=False, image=None):
         self.rect = pygame.Rect(rect)
         self.rod = rod_data
         self.font = font
@@ -160,111 +153,87 @@ class RodCard:
         self.selected = selected
         self.image = image
 
-        # ── IMAGE AREA CONFIG ─────────
+        # image box
         self.IMG_PAD = 24
-
-        # กล่องสำหรับรูป (ปรับขนาดได้โดยไม่กระทบ text)
         self.IMG_BOX_W = 110
         self.IMG_BOX_H = 140
 
-    # ── WORD WRAP ───────────────────
-    def _render_multiline(self, text, max_width, color):
-        words = text.split(" ")
-        lines = []
-        current = ""
+        self.img_rect = None  # Check if clicked
 
-        for word in words:
-            test = current + word + " "
-            if self.small_font.size(test)[0] <= max_width:
-                current = test
-            else:
-                lines.append(current)
-                current = word + " "
-
-        if current:
-            lines.append(current)
-
-        return [
-            self.small_font.render(line.strip(), True, color)
-            for line in lines
-        ]
-
-    # ── DRAW ────────────────────────
     def draw(self, screen):
         bg = (70, 120, 200) if self.selected else (40, 60, 90)
-        border = (70, 120, 200) if self.selected else None
-
         pygame.draw.rect(screen, bg, self.rect, border_radius=18)
-        if border:
-            pygame.draw.rect(screen, border, self.rect, 3, border_radius=18)
 
-        # ── IMAGE AREA ────────────────
+        # ── IMAGE ───────────────────
         img_x = self.rect.x + self.IMG_PAD
-        img_y = self.rect.y + self.rect.height // 2 - self.IMG_BOX_H // 2
+        img_y = self.rect.centery - self.IMG_BOX_H // 2
 
         if self.image:
-            img = scale_to_fit(
-                self.image,
-                self.IMG_BOX_W,
-                self.IMG_BOX_H
+            img = scale_to_fit(self.image, self.IMG_BOX_W, self.IMG_BOX_H)
+            self.img_rect = img.get_rect(
+                center=(img_x + self.IMG_BOX_W // 2,
+                        img_y + self.IMG_BOX_H // 2)
             )
-
-            img_rect = img.get_rect(
-                center=(
-                    img_x + self.IMG_BOX_W // 2,
-                    img_y + self.IMG_BOX_H // 2
-                )
-            )
-
-            # shadow
-            # shadow = pygame.Surface(img.get_size(), pygame.SRCALPHA)
-            # shadow.fill((0, 0, 0, 90))
-            # screen.blit(shadow, img_rect.move(4, 4))
-
-            screen.blit(img, img_rect)
-
+            screen.blit(img, self.img_rect)
         else:
-            pygame.draw.rect(
-                screen,
-                (30, 30, 30),
-                (img_x, img_y, self.IMG_BOX_W, self.IMG_BOX_H),
-                border_radius=12
-            )
+            self.img_rect = pygame.Rect(img_x, img_y, self.IMG_BOX_W, self.IMG_BOX_H)
+            pygame.draw.rect(screen, (30, 30, 30), self.img_rect, border_radius=8)
 
-        # ── TEXT AREA ─────────────────
+        # ── TEXT ────────────────────
         text_x = img_x + self.IMG_BOX_W + 24
-        text_width = self.rect.right - text_x - 24
 
-        # Title
-        title = self.font.render(
-            self.rod["name"].upper(), True, (240, 240, 240)
-        )
+        title = self.font.render(self.rod["name"].upper(), True, (240, 240, 240))
         screen.blit(title, (text_x, self.rect.y + 18))
 
-        # Stats
         y = self.rect.y + 52
         stats = [
-            f"LUCK        {format_percent(self.rod.get('LUCK'))}",
-            f"CONTROL     {format_number(self.rod.get('CONTROLLED'))}",
-            f"RESILIENCE  {format_percent(self.rod.get('RESILIENCE'))}",
+            f"LUCK        {self.rod.get('LUCK', '?')}",
+            f"CONTROL     {self.rod.get('CONTROLLED', '?')}",
+            f"RESILIENCE  {self.rod.get('RESILIENCE', '?')}",
         ]
-
-        for stat in stats:
-            surf = self.small_font.render(stat, True, (210, 210, 210))
-            screen.blit(surf, (text_x, y))
+        for s in stats:
+            screen.blit(self.small_font.render(s, True, (210, 210, 210)), (text_x, y))
             y += 22
 
-        # Description (auto wrap)
-        desc_lines = self._render_multiline(
+        desc_lines = wrap_text(
             self.rod.get("desc", ""),
-            text_width,
-            (220, 220, 220)
+            self.small_font,
+            self.rect.right - text_x - 24
         )
 
-        desc_y = self.rect.bottom - 20 - len(desc_lines) * 18
-        for line in desc_lines:
-            screen.blit(line, (text_x, desc_y))
-            desc_y += 18
+        dy = self.rect.bottom - 20 - len(desc_lines) * 18
+        for ln in desc_lines:
+            screen.blit(self.small_font.render(ln, True, (220, 220, 220)), (text_x, dy))
+            dy += 18
+
+    def image_clicked(self, event):
+        return (
+            event.type == pygame.MOUSEBUTTONDOWN
+            and self.img_rect
+            and self.img_rect.collidepoint(event.pos)
+        )
+    
+
+
+# ── HELPERS ─────────────────────────
+def scale_to_fit(img, max_w, max_h):
+    w, h = img.get_size()
+    s = min(max_w / w, max_h / h)
+    return pygame.transform.smoothscale(img, (int(w * s), int(h * s)))
+
+def wrap_text(text, font, max_w):
+    words = text.split(" ")
+    lines, line = [], ""
+    for w in words:
+        test = line + w + " "
+        if font.size(test)[0] <= max_w:
+            line = test
+        else:
+            lines.append(line.strip())
+            line = w + " "
+    if line:
+        lines.append(line.strip())
+    return lines
 
 def format_percent(value):
     if isinstance(value, (int, float)):

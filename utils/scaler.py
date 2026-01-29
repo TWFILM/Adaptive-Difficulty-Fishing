@@ -68,3 +68,34 @@ def build_scaled_config(use_default="horizontal"):
     
     return s
 
+
+def prepare_rod_image(rod_img_raw, bar_w, bar_h, orientation="h"):
+    if orientation == "h":
+        scale = bar_w / rod_img_raw.get_width()
+        rod_w = bar_w
+        rod_h = int(rod_img_raw.get_height() * scale)
+    else:
+        scale = bar_h / rod_img_raw.get_height()
+        rod_h = bar_h
+        rod_w = int(rod_img_raw.get_width() * scale)
+
+    return pygame.transform.smoothscale(rod_img_raw, (rod_w, rod_h))
+
+def draw_rod_image(
+    screen,
+    rod_img,
+    bar_x,
+    bar_y,
+    orientation="h",
+    offset=25
+):
+    if orientation == "h":
+        rod_x = bar_x
+        rod_y = bar_y - (rod_img.get_height() // 2) - offset
+    else:
+        rod_x = bar_x - (rod_img.get_width() // 2) - offset
+        rod_y = bar_y
+
+    screen.blit(rod_img, (rod_x, rod_y))
+
+

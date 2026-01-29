@@ -10,6 +10,7 @@ import pygame
 from utils.scaler import build_scaled_config
 from utils.save_reader import load_save
 from utils.load_audio import play_lobby_sfx, stop_lobby_sfx, load_sfx
+from utils.load_img import load_images
 from gameData.get_info import get_unlocked_rods
 
 load_sfx()
@@ -36,6 +37,7 @@ def main():
             pygame.init()
             S = build_scaled_config(axis)   
             screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
+            load_images(rod_name)
             if axis == "horizontal":
                 success = run_game(screen, S, logger, rod_name)
             else:

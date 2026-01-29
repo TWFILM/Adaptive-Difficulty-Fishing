@@ -49,8 +49,11 @@ def run_rod_selection(screen, S, unlocked_rods):
     warning_time = 0
     WARNING_DURATION = 2000
 
+    preview_image = None
+
     # ── CREATE ROD CARDS (ONCE) ─────
     cards = []
+    visible_cards = []
     for i, rod in enumerate(rod_data):
         rect = (
             CARD_X,
@@ -126,6 +129,17 @@ def run_rod_selection(screen, S, unlocked_rods):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return "QUIT"
+            
+            if preview_image:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    preview_image = None
+                continue
+
+            
+            for c in visible_cards:
+                if c.image_clicked(event):
+                    preview_image = c.image
+                    break
 
             if back_btn.clicked(event):
                 if cursor > 0:
@@ -183,7 +197,7 @@ def run_rod_selection(screen, S, unlocked_rods):
                 S.HEIGHT // 2 - CARD_HEIGHT // 2
             ]
 
-
+        visible_cards.clear()
         for i, (rod, y) in enumerate(zip(visible_rods, y_positions)):
             is_selected = (i == cursor)
             rod_name = rod["name"]
@@ -215,9 +229,9 @@ def run_rod_selection(screen, S, unlocked_rods):
                         "desc": locked_info.get(
                             "desc", "Unlock this rod to view details."
                         ),
-                        "LUCK": "?",
-                        "CONTROLLED": "?",
-                        "RESILIENCE": "?"
+                        "LUCK": "N/A",
+                        "CONTROLLED": "N/A",
+                        "RESILIENCE": "N/A"
                     },
                     font=card_title_font,
                     small_font=card_desc_font,
@@ -233,6 +247,7 @@ def run_rod_selection(screen, S, unlocked_rods):
                 )
 
             card.draw(screen)
+            visible_cards.append(card)
       
         # ── WARNING TEXT ──────────────────
         if warning_text:
@@ -283,6 +298,22 @@ def run_rod_selection(screen, S, unlocked_rods):
         back_btn.draw(screen)
         center_btn.draw(screen)
         next_btn.draw(screen)
+
+        if preview_image:
+            overlay = pygame.Surface((S.WIDTH, S.HEIGHT), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 180))
+            screen.blit(overlay, (0, 0))
+
+            big = pygame.transform.smoothscale(
+                preview_image,
+                (int(S.WIDTH * 0.7), int(S.HEIGHT * 0.7))
+            )
+            rect = big.get_rect(center=(S.WIDTH // 2, S.HEIGHT // 2))
+            screen.blit(big, rect)
+
+            screen.blit(card_desc_font.render(
+            f"[Click anywhere to close preview]",
+            True, (200, 200, 200)), ((S.WIDTH // 2 ) - (card_desc_font.size(f"[Click anywhere to close preview]")[0] // 2), S.HEIGHT * 0.87))
 
         pygame.display.flip()
         clock.tick(FPS)

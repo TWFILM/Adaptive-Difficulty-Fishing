@@ -32,3 +32,30 @@ def run_end_screen_meme(screen, clock, duration=4, meme_fish=False):
 
         pygame.display.flip()
         clock.tick(60)
+
+ROD_IMAGES = {}
+
+def load_images(rod_name):
+    global ROD_IMAGES
+
+    try:
+        img_path = os.path.join(
+            BASE_DIR, "assets", "images", f"{rod_name}.png"
+        )
+
+        # fallback path
+        fallback_path = os.path.join(
+            BASE_DIR, "assets", "images", "Novice Rod.png"
+        )
+
+        if os.path.exists(img_path):
+            img = pygame.image.load(img_path).convert_alpha()
+        else:
+            img = pygame.image.load(fallback_path).convert_alpha()
+
+        img = pygame.transform.rotate(img, 110)
+        ROD_IMAGES[rod_name] = img
+
+    except pygame.error as e:
+        print(f"[IMAGE LOAD ERROR] {rod_name}: {e}")
+
