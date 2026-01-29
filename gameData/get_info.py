@@ -99,7 +99,7 @@ def all_caught_fish_legendary():
     save_data = SaveManager()
     caught_fish = save_data.data["player"].get("catched_fish", [])
 
-    fish_data = get_fish_data() 
+    fish_data = get_fish_data()
     count = 0
     for fish in fish_data["Legendary"]:
         if fish["name"] in caught_fish:

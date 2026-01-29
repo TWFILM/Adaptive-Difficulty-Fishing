@@ -19,8 +19,10 @@ def main():
     logger = DataLogger()
     state = "LOBBY"
     play_lobby_sfx()
+    icon_img = pygame.image.load('assets/images/fish.jpg')
 
     while state != "QUIT":
+        pygame.display.set_icon(icon_img)
         if state == "LOBBY":
             pygame.init()
             S = build_scaled_config()   
