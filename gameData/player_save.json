@@ -27,9 +27,9 @@
             "Mackerel",
             "Colossal Squid"
         ],
-        "total_catched": 123,
-        "catched_streak": 0,
-        "perfect_catches": 32,
+        "total_catched": 130,
+        "catched_streak": 2,
+        "perfect_catches": 33,
         "unlocked_rods": [
             "Novice Rod",
             "Prismatic Rod",
@@ -37,7 +37,8 @@
             "Shear Rod",
             "Anchor Rod",
             "Meme Rod",
-            "RU Sure Rod"
+            "RU Sure Rod",
+            "Rod of the Conqueror"
         ],
         "shown_unlock_notice": [
             "Novice Rod",
@@ -46,7 +47,8 @@
             "Shear Rod",
             "Anchor Rod",
             "Meme Rod",
-            "RU Sure Rod"
+            "RU Sure Rod",
+            "Rod of the Conqueror"
         ]
     }
 }

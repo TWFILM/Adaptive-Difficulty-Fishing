@@ -1,4 +1,6 @@
 # main.py
+import os
+os.environ["SDL_AUDIODRIVER"] = "dummy"  # สั่งให้ใช้ไดรเวอร์เสียงจำลอง (ไม่มีเสียง แต่ไม่ Error)
 from interface.bestiary import run_bestiary
 from interface.game import run_game
 from interface.game_vertical import run_game_vertical
