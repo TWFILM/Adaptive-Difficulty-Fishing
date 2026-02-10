@@ -8,9 +8,8 @@ from gameData.config_vertical import *
 from dda import update_fish_speed
 from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
 from utils.load_img import *
-from utils.load_audio import trigger_jumpscare, play_stab_sfx
+from utils.load_audio import trigger_jumpscare, play_stab_sfx, stop_meme_sfx
 from utils.save_writer import SaveManager
-from utils.scaler import draw_rod_image, prepare_rod_image
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
@@ -95,7 +94,9 @@ def run_game_vertical(screen, S, logger, rod_name):
     fish_progress = fish_encounter["PROGRESS_SPD"] + rod_using["PROGRESS_SPD"]
 
     if rod_using["name"] == "Meme Rod":
-        fish_progress = -0.9
+        choices = random.choices([1, 2, 3])
+        if 1 in choices:
+            fish_progress = -0.9  # Meme Rod special passive
 
     # for Shear Rod
     if rod_using["name"] == "Shear Rod":
@@ -132,8 +133,9 @@ def run_game_vertical(screen, S, logger, rod_name):
             if rod_using["name"] == "Rod of the Conqueror":
                 progress_color = PROGRESS_BAR_COLOR 
                 conqueror_active = False
-            if rod_using["name"] == "Meme Rod" and player_bar_height <= S.TRACK_HEIGHT and fish_encounter["name"] != "Meme Fish":
-                player_bar_height += 0.1
+            if rod_using["name"] == "Meme Rod" :
+                if 1 in choices and player_bar_height <= S.TRACK_HEIGHT and fish_encounter["name"] != "Meme Fish":
+                    player_bar_height += player_bar_height * 0.005
             if rod_using["name"] == "Anchor Rod" and is_anchor_active:
                 if is_catching:
                     if player_bar_height > player_bar_height_before*0.3:
@@ -152,14 +154,8 @@ def run_game_vertical(screen, S, logger, rod_name):
 
             if mouse_pressed:
                 bar_force += BAR_FORCE_INC
-                if not is_rotated:
-                    is_rotated = True
-                    rod_img = pygame.transform.flip(rod_img, True, True)
             else:
                 bar_force -= BAR_FORCE_DEC
-                if is_rotated:
-                    is_rotated = False
-                    rod_img = pygame.transform.flip(rod_img, True, True)
 
             bar_force = max(0.0, min(BAR_FORCE_MAX, bar_force))
 
@@ -228,6 +224,11 @@ def run_game_vertical(screen, S, logger, rod_name):
 
             else:
                 fish_y += fish_direction * fish_speed
+                if rod_name == "Meme Rod" and 2 in choices:
+                        fish_x_draw += fish_direction * fish_speed
+                        S.TRACK_Y += fish_direction * fish_speed
+                        S.TRACK_X += fish_direction * fish_speed
+                        bar_x += fish_direction * fish_speed
 
                 # reach target
                 if ((fish_direction == 1 and fish_y >= fish_target_y) or
@@ -410,7 +411,8 @@ def run_game_vertical(screen, S, logger, rod_name):
         pygame.display.flip()
         time.sleep(3)
 
-    if rod_using["name"] == "Meme Rod" and success[0] is True:
+    if rod_using["name"] == "Meme Rod" and success[0] is True and 3 in choices:
+        stop_meme_sfx()
         trigger_jumpscare(meme_fish=False)
         run_end_screen_meme(screen, clock, duration=4, meme_fish=False)
     

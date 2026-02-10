@@ -7,10 +7,11 @@
             "Sea Bass",
             "Shrimp",
             "Bluefin Tuna",
-            "Amberjack"
+            "Amberjack",
+            "Mackerel"
         ],
-        "total_catched": 7,
-        "catched_streak": 3,
+        "total_catched": 9,
+        "catched_streak": 0,
         "perfect_catches": 1,
         "unlocked_rods": [
             "Novice Rod"

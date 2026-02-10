@@ -9,7 +9,7 @@ from gameData.config import *
 from dda import update_fish_speed
 from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
 from utils.load_img import *
-from utils.load_audio import trigger_jumpscare, play_stab_sfx
+from utils.load_audio import trigger_jumpscare, play_stab_sfx, stop_meme_sfx
 from utils.save_writer import SaveManager
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -51,6 +51,14 @@ def run_game(screen, S, logger, rod_name):
     fish_speed = 1.0
     progress = 0
     progress_bar_color = PROGRESS_BAR_COLOR
+    
+    # the fish you are catching
+    fish_encounter = get_fish(get_random_rarity(rod_using["name"]))
+    # print(fish_encounter)
+
+    fish_resilience = fish_encounter["FISH_RESILIENCE"]+rod_using["RESILIENCE"]
+    fish_progress = fish_encounter["PROGRESS_SPD"]+rod_using["PROGRESS_SPD"]
+
     # for Rod of the Conqueror
     progress_addition = 0
     conqueror_active = False
@@ -75,6 +83,13 @@ def run_game(screen, S, logger, rod_name):
     if rod_using["name"] == "Anchor Rod":
         is_anchor_active = True
         player_bar_width_before = S.BAR_WIDTH+(rod_using["CONTROLLED"]*S.BAR_WIDTH)
+
+    # for meme rod
+    if rod_using["name"] == "Meme Rod":
+        choices = random.choices([1, 2, 3])
+        print("Meme Rod Choices:", choices)
+        if 1 in choices:
+            fish_progress = -0.9  # Meme Rod special passive
     
     # random fish movement
     fish_x = (S.TRACK_X + S.TRACK_WIDTH // 2 ) - (S.FISH_SIZE // 2)
@@ -100,15 +115,6 @@ def run_game(screen, S, logger, rod_name):
 
     BAR_BOUNCE_DAMP = 0.5   
     
-    # the fish you are catching
-    fish_encounter = get_fish(get_random_rarity(rod_using["name"]))
-    # print(fish_encounter)
-
-    fish_resilience = fish_encounter["FISH_RESILIENCE"]+rod_using["RESILIENCE"]
-    fish_progress = fish_encounter["PROGRESS_SPD"]+rod_using["PROGRESS_SPD"]
-    if rod_using["name"] == "Meme Rod":
-        fish_progress = -0.9  # Meme Rod special passive
-
     success = [False, "None", "None"]
     is_perfect_catch = True
     running = True
@@ -132,8 +138,9 @@ def run_game(screen, S, logger, rod_name):
                 progress_bar_color = PROGRESS_BAR_COLOR 
                 conqueror_active = False
             # Meme Rod's Secret Passive
-            if rod_using["name"] == "Meme Rod" and player_bar_width <= S.TRACK_WIDTH and fish_encounter["name"] != "Meme Fish":
-                player_bar_width += 0.1
+            if rod_using["name"] == "Meme Rod" :
+                if 1 in choices and player_bar_width <= S.TRACK_WIDTH and fish_encounter["name"] != "Meme Fish":
+                    player_bar_width += player_bar_width * 0.005
                  
             if rod_using["name"] == "Anchor Rod" and is_anchor_active:
                 if is_catching:
@@ -245,6 +252,11 @@ def run_game(screen, S, logger, rod_name):
             else:
                 if not knife_active:
                     fish_x += fish_direction * fish_speed
+                    if rod_name == "Meme Rod" and 2 in choices:
+                        fish_y_draw += fish_direction * fish_speed
+                        S.TRACK_Y += fish_direction * fish_speed
+                        S.TRACK_X += fish_direction * fish_speed
+                        bar_y += fish_direction * fish_speed
 
                     # check reach target
                     if (
@@ -441,7 +453,8 @@ def run_game(screen, S, logger, rod_name):
         time.sleep(2)
 
     # Meme Rod only!
-    if rod_using["name"] == "Meme Rod" and success[0] is True:
+    if rod_using["name"] == "Meme Rod" and success[0] is True and 3 in choices:
+        stop_meme_sfx()
         trigger_jumpscare(meme_fish=False)
         run_end_screen_meme(screen, clock, duration=4, meme_fish=False)
     

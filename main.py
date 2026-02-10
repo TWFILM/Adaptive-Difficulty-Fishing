@@ -1,6 +1,6 @@
 # main.py
 import os
-os.environ["SDL_AUDIODRIVER"] = "dummy"  # สั่งให้ใช้ไดรเวอร์เสียงจำลอง (ไม่มีเสียง แต่ไม่ Error)
+# os.environ["SDL_AUDIODRIVER"] = "dummy"  # สั่งให้ใช้ไดรเวอร์เสียงจำลอง (ไม่มีเสียง แต่ไม่ Error)
 from interface.bestiary import run_bestiary
 from interface.game import run_game
 from interface.game_vertical import run_game_vertical
@@ -11,8 +11,7 @@ from logger import DataLogger
 import pygame
 from utils.scaler import build_scaled_config
 from utils.save_reader import load_save
-from utils.load_audio import play_lobby_sfx, stop_lobby_sfx, load_sfx
-from utils.load_img import load_images
+from utils.load_audio import play_lobby_sfx, stop_lobby_sfx, load_sfx, play_meme_sfx
 from gameData.get_info import get_unlocked_rods
 
 load_sfx()
@@ -21,10 +20,10 @@ def main():
     logger = DataLogger()
     state = "LOBBY"
     play_lobby_sfx()
-    # icon_img = pygame.image.load('assets/images/fish.jpg')
+    icon_img = pygame.image.load('assets/images/fish.jpg')
 
     while state != "QUIT":
-        # pygame.display.set_icon(icon_img)
+        pygame.display.set_icon(icon_img)
         if state == "LOBBY":
             pygame.init()
             S = build_scaled_config()   
@@ -41,6 +40,8 @@ def main():
             pygame.init()
             S = build_scaled_config(axis)   
             screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
+            if rod_name == "Meme Rod":
+                play_meme_sfx()
             if axis == "horizontal":
                 success = run_game(screen, S, logger, rod_name)
             else:
