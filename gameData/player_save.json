@@ -3,10 +3,14 @@
         "rod": "Novice Rod",
         "default": "horizontal",
         "catched_fish": [
-            "Mullet"
+            "Mullet",
+            "Sea Bass",
+            "Shrimp",
+            "Bluefin Tuna",
+            "Amberjack"
         ],
-        "total_catched": 2,
-        "catched_streak": 0,
+        "total_catched": 7,
+        "catched_streak": 3,
         "perfect_catches": 1,
         "unlocked_rods": [
             "Novice Rod"

@@ -180,14 +180,14 @@ def run_bestiary(screen, S, unlocked_fish):
 
             big = pygame.transform.smoothscale(
                 preview_image,
-                (int(S.WIDTH * 0.9), int(S.HEIGHT * 0.7))
+                (int(S.WIDTH * 0.97), int(S.HEIGHT * 0.7))
             )
             rect = big.get_rect(center=(S.WIDTH // 2, S.HEIGHT // 2))
             screen.blit(big, rect)
 
-            screen.blit(desc_font.render(
+            screen.blit(card_font.render(
             f"[Click anywhere to close preview]",
-            True, (200, 200, 200)), ((S.WIDTH // 2 ) - (desc_font.size(f"[Click anywhere to close preview]")[0] // 2), S.HEIGHT * 0.87))
+            True, (200, 200, 200)), ((S.WIDTH // 2 ) - (card_font.size(f"[Click anywhere to close preview]")[0] // 2), S.HEIGHT * 0.87))
 
         pygame.display.flip()
         clock.tick(FPS)
