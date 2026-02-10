@@ -208,7 +208,7 @@ def run_rod_selection(screen, S, unlocked_rods):
 
             if rod_name in unlocked_rods:
                 image_path = os.path.join(
-                    ROOT_DIR, "assets", "images", rod.get("img", "default.png")
+                    ROOT_DIR, "assets", "images", "rods", rod.get("img", "default.png")
                 )
 
                 card = RodCard(
@@ -240,7 +240,7 @@ def run_rod_selection(screen, S, unlocked_rods):
                         os.path.join(
                             ROOT_DIR,
                             "assets",
-                            "images",
+                            "images", "rods",
                             locked_info.get("img", "locked_rod.png")
                         )
                     ).convert_alpha()

@@ -23,7 +23,7 @@ BAR_MIN_Y = TRACK_Y
 BAR_MAX_Y = TRACK_Y + TRACK_HEIGHT - BAR_HEIGHT
 
 # ── FISH ───────────────────────────
-FISH_SIZE = 26
+FISH_SIZE = 10
 
 # ── PROGRESS BAR (VERTICAL) ─────────
 PROGRESS_BAR_WIDTH = 18

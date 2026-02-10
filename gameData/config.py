@@ -23,7 +23,7 @@ BAR_MIN_X = TRACK_X
 BAR_MAX_X = TRACK_X + TRACK_WIDTH - BAR_WIDTH
 
 # ── FISH ───────────────────────────
-FISH_SIZE = 20
+FISH_SIZE = 10
 
 # ── PROGRESS BAR ───────────────────
 PROGRESS_BAR_WIDTH = int(TRACK_WIDTH * 0.6)

@@ -11,7 +11,6 @@ from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
 from utils.load_img import *
 from utils.load_audio import trigger_jumpscare, play_stab_sfx
 from utils.save_writer import SaveManager
-from utils.scaler import draw_rod_image, prepare_rod_image
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
@@ -42,10 +41,11 @@ def run_game(screen, S, logger, rod_name):
     bar_x = S.TRACK_X + S.TRACK_WIDTH // 2 - player_bar_width // 2
     bar_y = S.TRACK_Y
 
-    rod_img_raw = ROD_IMAGES.get(rod_using["name"])
-    rod_img = prepare_rod_image(rod_img_raw, player_bar_width, S.BAR_HEIGHT, orientation="h")
-    is_rotated = False  # for clicking flip img
-    
+    EXTRA_HEIGHT = 10  # ปรับตามที่ต้องการ
+
+    fish_height = S.BAR_HEIGHT + EXTRA_HEIGHT
+    fish_y_draw = S.TRACK_Y - EXTRA_HEIGHT // 2
+
     encounter_start_time = time.time()
 
     fish_speed = 1.0
@@ -74,7 +74,6 @@ def run_game(screen, S, logger, rod_name):
     # For Anchor Rod
     if rod_using["name"] == "Anchor Rod":
         is_anchor_active = True
-        img_before = prepare_rod_image(rod_img_raw, player_bar_width, S.BAR_HEIGHT, orientation="h")
         player_bar_width_before = S.BAR_WIDTH+(rod_using["CONTROLLED"]*S.BAR_WIDTH)
     
     # random fish movement
@@ -141,14 +140,11 @@ def run_game(screen, S, logger, rod_name):
                     if player_bar_width > player_bar_width_before*0.4:
                         player_bar_width -= 0.25
                         fish_progress += 0.0003
-                        rod_img = prepare_rod_image(rod_img_raw, player_bar_width, S.BAR_HEIGHT, orientation="h")
-                        if is_rotated:
-                            rod_img = pygame.transform.flip(rod_img, True, True)
+                        
                 else:
                     is_anchor_active = False
                     fish_progress = fish_encounter["PROGRESS_SPD"]+rod_using["PROGRESS_SPD"]
                     player_bar_width = player_bar_width_before
-                    rod_img = img_before
                 
             if fish_encounter["name"] == "Meme Fish" and player_bar_width >= 0 and rod_using["name"] != "Meme Rod":
                 player_bar_width -= 0.25
@@ -158,15 +154,10 @@ def run_game(screen, S, logger, rod_name):
             if mouse_pressed:
                 # continue increasing when you clicked mouse
                 bar_force += BAR_FORCE_INC
-                if not is_rotated:
-                    is_rotated = True
-                    rod_img = pygame.transform.flip(rod_img, True, True)
+                
             else:
                 # decrease force that drags player bar to the left
                 bar_force -= BAR_FORCE_DEC
-                if is_rotated:
-                    is_rotated = False
-                    rod_img = pygame.transform.flip(rod_img, True, True)
 
             # clamp
             bar_force = max(0.0, min(BAR_FORCE_MAX, bar_force))
@@ -336,10 +327,10 @@ def run_game(screen, S, logger, rod_name):
         )
 
         pygame.draw.rect(screen, BAR_COLOR, (bar_x, bar_y, player_bar_width, S.BAR_HEIGHT))
-        pygame.draw.rect(screen, FISH_COLOR, (fish_x, bar_y + (S.FISH_SIZE*S.scale), S.FISH_SIZE, S.FISH_SIZE))
+        pygame.draw.rect(screen, FISH_COLOR, (fish_x, fish_y_draw, S.FISH_SIZE, fish_height), border_radius=3)
         if rod_using["name"] == "Prismatic Rod":
             if pygame.time.get_ticks() % 1000 < 800 :
-                pygame.draw.rect(screen, (255, 255, 255), (fish_target_x, bar_y + (S.FISH_SIZE*S.scale), S.FISH_SIZE, S.FISH_SIZE))
+                pygame.draw.rect(screen, (255, 255, 255), (fish_target_x, bar_y + (S.TRACK_HEIGHT//2) - S.FISH_SIZE, S.FISH_SIZE, S.FISH_SIZE))
 
         if knife_active or conqueror_active:
             if conqueror_active:
@@ -396,15 +387,6 @@ def run_game(screen, S, logger, rod_name):
                 int(S.PROGRESS_BAR_WIDTH * progress),
                 S.PROGRESS_BAR_HEIGHT
             )
-        )
-
-        # ── ROD IMAGE (on top) ────────────
-        draw_rod_image(
-            screen,
-            rod_img,
-            bar_x,
-            bar_y,
-            orientation="h"
         )
 
 

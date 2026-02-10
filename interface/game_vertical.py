@@ -73,6 +73,15 @@ def run_game_vertical(screen, S, logger, rod_name):
             S.BAR_MIN_Y + (S.FISH_SIZE+10),
             min(S.BAR_MAX_Y + S.BAR_HEIGHT - (S.FISH_SIZE+10), fish_target_y)
         )
+    
+    EXTRA_WIDTH = 10  
+    fish_width = S.TRACK_WIDTH + EXTRA_WIDTH
+
+    fish_x_draw = (
+        bar_x
+        + (S.BAR_WIDTH // 2 - fish_width // 2)
+    )
+
 
     fish_waiting = False
     resilient_timer = 0.0
@@ -302,9 +311,9 @@ def run_game_vertical(screen, S, logger, rod_name):
         )
 
         pygame.draw.rect(
-            screen, FISH_COLOR,
-            (bar_x + (S.BAR_WIDTH // 2 - S.FISH_SIZE // 2), fish_y,
-             S.FISH_SIZE, S.FISH_SIZE)
+            screen,
+            FISH_COLOR,
+            (fish_x_draw, fish_y, fish_width, S.FISH_SIZE), border_radius=3
         )
 
         if rod_using["name"] == "Prismatic Rod":

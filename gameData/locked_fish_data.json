@@ -2,52 +2,52 @@
     "Mackerel": {
         "name": "Mackerel",
         "desc": "A rounded and torpedo-shaped fish with a slender, keeled tail base.",
-        "img": "locked_fish.png"
+        "img": "Mackerel_locked.png"
     },
     "Sardine": {
         "name": "Sardine",
         "desc": "A silver coloration fish with darker back, single dorsal fin",
-        "img": "locked_fish.png"
+        "img": "Sardine_locked.png"
     },
     "Sea Bass": {
         "name": "Sea Bass",
         "desc": "A sleek predatory fish with sharp spines along its dorsal fin.",
-        "img": "locked_fish.png"
+        "img": "Sea_Bass_locked.png"
     },
     "Shrimp": {
         "name": "Shrimp",
         "desc": "A small translucent crustacean with a curved body and long antennae.",
-        "img": "locked_fish.png"
+        "img": "Shrimp_locked.png"
     },
     "Haddock": {
         "name": "Haddock",
         "desc": "A white fish with a distinctive dark spot above its pectoral fin.",
-        "img": "locked_fish.png"
+        "img": "Haddock_locked.png"
     },
     "Mullet": {
         "name": "Mullet",
         "desc": "A bottom-feeder with a thick-lipped mouth and rounded body.",
-        "img": "locked_fish.png"
+        "img": "Mullet_locked.png"
     },
     "Sea Star": {
         "name": "Sea Star",
         "desc": "A spiky creature with five vibrant arms radiating from its center.",
-        "img": "locked_fish.png"
+        "img": "Sea_Star_locked.png"
     },
     "Cod": {
         "name": "Cod",
         "desc": "A large white fish with spotted patterns and three dorsal fins.",
-        "img": "locked_fish.png"
+        "img": "Cod_locked.png"
     },
     "Crab": {
         "name": "Crab",
         "desc": "A hard-shelled crustacean with eight legs and powerful claws.",
-        "img": "locked_fish.png"
+        "img": "Crab_locked.png"
     },
     "Chinook Salmon": {
         "name": "Chinook Salmon",
         "desc": "A streamlined, torpedo-shaped fish with robust bodies and small fins.",
-        "img": "locked_fish.png"
+        "img": "Chinook_Salmon_locked.png"
     },
     "Amberjack": {
         "name": "Amberjack",
