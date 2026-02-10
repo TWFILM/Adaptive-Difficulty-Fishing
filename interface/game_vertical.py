@@ -38,11 +38,7 @@ def run_game_vertical(screen, S, logger, rod_name):
     bar_y = S.TRACK_Y + S.TRACK_HEIGHT // 2 - player_bar_height // 2
     bar_x = S.TRACK_X
 
-    rod_img_raw = ROD_IMAGES.get(rod_using["name"])
-    rod_img_raw = pygame.transform.rotate(rod_img_raw, 90)
-    rod_img = prepare_rod_image(rod_img_raw, S.BAR_WIDTH, player_bar_height, orientation="v")
-    is_rotated = False
-
+    
     encounter_start_time = time.time()
 
     # ── PROGRESS ─────────────────────
@@ -59,7 +55,6 @@ def run_game_vertical(screen, S, logger, rod_name):
     
     if rod_using["name"] == "Anchor Rod":
         is_anchor_active = True
-        img_before = prepare_rod_image(rod_img_raw, S.BAR_WIDTH, player_bar_height, orientation="v")
         player_bar_height_before = S.BAR_HEIGHT + (rod_using["CONTROLLED"] * S.BAR_HEIGHT)
 
     # ── FISH ─────────────────────────
@@ -144,13 +139,9 @@ def run_game_vertical(screen, S, logger, rod_name):
                     if player_bar_height > player_bar_height_before*0.3:
                         player_bar_height -= 0.25
                         fish_progress += 0.0003
-                        rod_img = prepare_rod_image(rod_img_raw, S.BAR_WIDTH, player_bar_height, orientation="v")
-                        if is_rotated:
-                            rod_img = pygame.transform.flip(rod_img, True, True)
                 
                 else:
                     is_anchor_active = False
-                    rod_img = img_before
                     fish_progress = fish_encounter["PROGRESS_SPD"]+rod_using["PROGRESS_SPD"]
                     player_bar_height = player_bar_height_before
 
@@ -366,15 +357,6 @@ def run_game_vertical(screen, S, logger, rod_name):
              S.PROGRESS_BAR_WIDTH,
              S.PROGRESS_BAR_HEIGHT * progress)
         )
-
-        draw_rod_image(
-            screen,
-            rod_img,
-            bar_x,
-            bar_y,
-            orientation="v"
-        )
-
 
         if fish_progress != 0:
             color = (0, 255, 0) if fish_progress > 0 else (255, 80, 80)
