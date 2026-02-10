@@ -308,7 +308,17 @@ def run_rod_selection(screen, S, unlocked_rods):
                 preview_image,
                 (int(S.WIDTH * 0.7), int(S.HEIGHT * 0.7))
             )
-            rect = big.get_rect(center=(S.WIDTH // 2, S.HEIGHT // 2))
+
+            mx, my = pygame.mouse.get_pos()
+            cx, cy = S.WIDTH // 2, S.HEIGHT // 2
+            dx = (mx - cx) * 0.03
+            dy = (my - cy) * 0.03
+
+            rect = big.get_rect(center=(cx + dx, cy + dy))
+
+            shadow = pygame.Surface(big.get_size(), pygame.SRCALPHA)
+            screen.blit(shadow, rect.move(12, 14))
+
             screen.blit(big, rect)
 
             screen.blit(card_desc_font.render(
