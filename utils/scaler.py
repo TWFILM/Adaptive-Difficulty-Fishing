@@ -6,23 +6,20 @@ import gameData.config_vertical as V
 class ScaledConfig:
     pass
 
-
-def build_scaled_config(use_default="horizontal"):
-    info = pygame.display.Info()
-
+# fixed width and height is adjustable
+def build_scaled_config(use_default="horizontal", fixed_width=600, fixed_height=800):
     base = H if use_default == "horizontal" else V
 
     scale = min(
-        info.current_w / base.WIDTH,
-        info.current_h / base.HEIGHT
+        fixed_width / base.WIDTH,
+        fixed_height / base.HEIGHT
     )
 
     s = ScaledConfig()
     
-
-    # screen
-    s.WIDTH = int(base.WIDTH * scale)
-    s.HEIGHT = int(base.HEIGHT * scale)
+    # screen (Fixed)
+    s.WIDTH = fixed_width
+    s.HEIGHT = fixed_height
 
     # bar
     s.BAR_WIDTH = int(base.BAR_WIDTH * scale)

@@ -43,7 +43,7 @@ def run_rod_selection(screen, S, unlocked_rods):
     CARD_X = (S.WIDTH - CARD_WIDTH) // 2
 
     START_Y = int(S.HEIGHT * 0.25)
-    GAP = int(S.HEIGHT * 0.05 * S.scale)
+    GAP = int(S.HEIGHT * 0.05) * S.scale
 
     warning_text = ""
     warning_time = 0
