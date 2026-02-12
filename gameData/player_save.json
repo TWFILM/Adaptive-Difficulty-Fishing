@@ -3,21 +3,26 @@
         "rod": "Novice Rod",
         "default": "horizontal",
         "catched_fish": [
-            "Mullet",
-            "Sea Bass",
-            "Shrimp",
-            "Bluefin Tuna",
-            "Amberjack",
-            "Mackerel"
+            "Octopus",
+            "Clownfish",
+            "Sea Star"
         ],
-        "total_catched": 9,
-        "catched_streak": 0,
-        "perfect_catches": 1,
+        "total_catched": 300,
+        "catched_streak": 20,
+        "perfect_catches": 100,
         "unlocked_rods": [
-            "Novice Rod"
+            "Novice Rod",
+            "Cool Rod",
+            "RU Sure Rod",
+            "Shear Rod",
+            "Anchor Rod"
         ],
         "shown_unlock_notice": [
-            "Novice Rod"
+            "Novice Rod",
+            "Cool Rod",
+            "RU Sure Rod",
+            "Shear Rod",
+            "Anchor Rod"
         ]
     }
 }
