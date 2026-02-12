@@ -30,10 +30,10 @@ def run_bestiary(screen, S, unlocked_fish):
     clock = pygame.time.Clock()
 
     # fonts
-    title_font = pygame.font.Font(FONT_PATH1, 48) * S.scale // 1
-    card_font = pygame.font.Font(FONT_PATH2, 16) * S.scale // 1
-    desc_font = pygame.font.Font(FONT_PATH2, 12) * S.scale // 1
-    btn_font = pygame.font.Font(FONT_PATH2, 26) * S.scale // 1
+    title_font = pygame.font.Font(FONT_PATH1, int(48*S.scale))
+    card_font = pygame.font.Font(FONT_PATH2, int(16*S.scale)) 
+    desc_font = pygame.font.Font(FONT_PATH2, int(12*S.scale)) 
+    btn_font = pygame.font.Font(FONT_PATH2, int(26*S.scale)) 
 
     # data
     FISH_DATA = get_fish_data()
@@ -41,8 +41,8 @@ def run_bestiary(screen, S, unlocked_fish):
     fish_list = list(FISH_DATA.values())
 
     # layout
-    CARD_W = int(S.WIDTH * 0.42) * S.scale // 1 
-    CARD_H = int(S.HEIGHT * 0.25) * S.scale // 1
+    CARD_W = int(S.WIDTH * 0.42)
+    CARD_H = int(S.HEIGHT * 0.25)
 
     GAP_X = 26
     GAP_Y = 26

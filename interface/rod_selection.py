@@ -31,15 +31,15 @@ def run_rod_selection(screen, S, unlocked_rods):
     clock = pygame.time.Clock()
 
     # ── FONTS ───────────────────────
-    title_font = pygame.font.Font(FONT_PATH1, 48) * S.scale // 1
-    card_title_font = pygame.font.Font(FONT_PATH2, 23) * S.scale // 1
-    card_desc_font = pygame.font.Font(FONT_PATH2, 16) * S.scale // 1
-    btn_font = pygame.font.Font(FONT_PATH2, 26) * S.scale // 1
-    status_font = pygame.font.Font(FONT_PATH2, 20) * S.scale // 1
+    title_font = pygame.font.Font(FONT_PATH1, int(48*S.scale))
+    card_title_font = pygame.font.Font(FONT_PATH2, int(23*S.scale))
+    card_desc_font = pygame.font.Font(FONT_PATH2, int(16*S.scale))
+    btn_font = pygame.font.Font(FONT_PATH2, int(26*S.scale)) 
+    status_font = pygame.font.Font(FONT_PATH2, int(20*S.scale))
 
     # ── LAYOUT ──────────────────────
-    CARD_WIDTH = int(S.WIDTH * 0.8) * S.scale // 1 
-    CARD_HEIGHT = int(S.HEIGHT * 0.22) * S.scale // 1
+    CARD_WIDTH = int(S.WIDTH * 0.8)
+    CARD_HEIGHT = int(S.HEIGHT * 0.22)
     CARD_X = (S.WIDTH - CARD_WIDTH) // 2
 
     START_Y = int(S.HEIGHT * 0.25)
