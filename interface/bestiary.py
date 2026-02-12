@@ -41,11 +41,11 @@ def run_bestiary(screen, S, unlocked_fish):
     fish_list = list(FISH_DATA.values())
 
     # layout
-    CARD_W = int(S.WIDTH * 0.42)
-    CARD_H = int(S.HEIGHT * 0.25)
+    CARD_W = int(S.WIDTH * (0.42 * S.scale))
+    CARD_H = int(S.HEIGHT * (0.25 * S.scale))
 
-    GAP_X = 26
-    GAP_Y = 26
+    GAP_X = 26 * S.scale
+    GAP_Y = 26 * S.scale
 
     START_X = (S.WIDTH - (CARD_W * 2 + GAP_X)) // 2
     START_Y = int(S.HEIGHT * 0.22)
