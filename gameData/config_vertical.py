@@ -43,10 +43,10 @@ PROGRESS_DOWN_RATE = 0.002
 FPS = 60
 
 BAR_MAX_SPEED = 8.0
-BAR_FRICTION = 0.94             # inertia control
+BAR_FRICTION = 0.93             # inertia control
 
-BAR_FORCE_INC = 0.03
-BAR_FORCE_DEC = 0.03
+BAR_FORCE_INC = 0.035
+BAR_FORCE_DEC = 0.035
 BAR_FORCE_MAX = 0.9
 
 # pull bar DOWN (vertical equivalent of DRIFT_LEFT)

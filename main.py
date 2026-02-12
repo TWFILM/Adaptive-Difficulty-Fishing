@@ -13,21 +13,28 @@ from utils.scaler import build_scaled_config
 from utils.save_reader import load_save
 from utils.load_audio import play_lobby_sfx, stop_lobby_sfx, load_sfx, play_meme_sfx
 from gameData.get_info import get_unlocked_rods
+from utils.load_img import load_icon_image
 
 load_sfx()
+
 
 def main():
     logger = DataLogger()
     state = "LOBBY"
     play_lobby_sfx()
-    icon_img = pygame.image.load('assets/images/fish.jpg')
+    
+    S = build_scaled_config()   
+    screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
+
+    icon_img = load_icon_image()
+
+    pygame.display.set_icon(icon_img)
+    
 
     while state != "QUIT":
-        pygame.display.set_icon(icon_img)
+        
         if state == "LOBBY":
             pygame.init()
-            S = build_scaled_config()   
-            screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
             state = run_lobby(screen, S)
             
         elif state == "GAME":
@@ -55,16 +62,12 @@ def main():
             pygame.init()
             save_data = load_save()
             unlocked_rods = save_data["player"]["unlocked_rods"]
-            S = build_scaled_config()   
-            screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
             state = run_rod_selection(screen, S, unlocked_rods)
 
         elif state == "FISH_LOG":
             pygame.init()
             save_data = load_save()
             unlocked_fish = save_data["player"]["catched_fish"]
-            S = build_scaled_config()
-            screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
             state = run_bestiary(screen, S, unlocked_fish)
 
     stop_lobby_sfx()

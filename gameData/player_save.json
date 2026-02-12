@@ -5,24 +5,31 @@
         "catched_fish": [
             "Octopus",
             "Clownfish",
-            "Sea Star"
+            "Sea Star",
+            "Chinook Salmon",
+            "Amberjack",
+            "Bluefin Tuna",
+            "Great White Shark",
+            "Haddock"
         ],
-        "total_catched": 300,
-        "catched_streak": 20,
+        "total_catched": 307,
+        "catched_streak": 0,
         "perfect_catches": 100,
         "unlocked_rods": [
             "Novice Rod",
             "Cool Rod",
             "RU Sure Rod",
             "Shear Rod",
-            "Anchor Rod"
+            "Anchor Rod",
+            "Meme Rod"
         ],
         "shown_unlock_notice": [
             "Novice Rod",
             "Cool Rod",
             "RU Sure Rod",
             "Shear Rod",
-            "Anchor Rod"
+            "Anchor Rod",
+            "Meme Rod"
         ]
     }
 }

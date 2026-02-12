@@ -41,7 +41,7 @@ def run_game(screen, S, logger, rod_name):
     bar_x = S.TRACK_X + S.TRACK_WIDTH // 2 - player_bar_width // 2
     bar_y = S.TRACK_Y
 
-    EXTRA_HEIGHT = 10  # ปรับตามที่ต้องการ
+    EXTRA_HEIGHT = 10  
 
     fish_height = S.BAR_HEIGHT + EXTRA_HEIGHT
     fish_y_draw = S.TRACK_Y - EXTRA_HEIGHT // 2
