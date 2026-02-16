@@ -28,7 +28,7 @@ def run_game(screen, S, logger, rod_name):
     screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
     pygame.display.set_caption("DDA Experiment")
     clock = pygame.time.Clock()
-    font = pygame.font.Font(FONT_PATH1, 18)
+    font = pygame.font.Font(FONT_PATH1, int(18 * S.scale))
 
     # LOAD SAVE DATA
     save = SaveManager()
@@ -422,7 +422,7 @@ def run_game(screen, S, logger, rod_name):
 
         screen.blit(font.render(
             f"Speed: {fish_speed:.2f} | Catching: {is_catching} | Catched Streak: {CATCHED_STREAK}",
-            True, (200, 200, 200)), (10, 10))
+            True, (200, 200, 200)), (S.WIDTH * 0.02, S.HEIGHT * 0.02))
 
         pygame.display.flip()
         clock.tick(FPS)

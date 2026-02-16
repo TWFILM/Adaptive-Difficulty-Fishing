@@ -43,6 +43,56 @@ class Button:
                 return True
         return False
 
+# ── SWITCH BUTTON ─────────────────────────────
+class Switch:
+    def __init__(self, rect, left_text, right_text, font, initial=True):
+        self.rect = pygame.Rect(rect)
+        self.left_text = left_text
+        self.right_text = right_text
+        self.font = font
+        self.value = initial  # True = left, False = right
+
+        self.bg_color = (70, 70, 70)
+        self.active_color = (120, 120, 120)
+        self.text_color = (255, 255, 255)
+
+    def clicked(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                self.value = not self.value
+                return True
+        return False
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.bg_color, self.rect, border_radius=30)
+
+        half_w = self.rect.width // 2
+
+        active_rect = pygame.Rect(
+            self.rect.x if self.value else self.rect.x + half_w,
+            self.rect.y,
+            half_w,
+            self.rect.height
+        )
+
+        pygame.draw.rect(screen, self.active_color, active_rect, border_radius=30)
+
+        left_surf = self.font.render(self.left_text, True, self.text_color)
+        right_surf = self.font.render(self.right_text, True, self.text_color)
+
+        screen.blit(
+            left_surf,
+            left_surf.get_rect(center=(self.rect.x + half_w // 2,
+                                       self.rect.centery))
+        )
+
+        screen.blit(
+            right_surf,
+            right_surf.get_rect(center=(self.rect.x + half_w + half_w // 2,
+                                       self.rect.centery))
+        )
+
+
 # ── FISH CARD CLASS ────────────────
 class FishCard:
     def __init__(self, rect, fish_data, font, small_font,

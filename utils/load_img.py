@@ -3,7 +3,7 @@ import pygame
 import time
 import os
 import random
-from gameData.config import WIDTH, HEIGHT
+from gameData.config import BASE_WIDTH, BASE_HEIGHT
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -15,11 +15,11 @@ def run_end_screen_meme(screen, clock, duration=4, meme_fish=False):
 
 
     end_image = pygame.image.load(image_path).convert_alpha()
-    end_image = pygame.transform.scale(end_image, (WIDTH, HEIGHT))
+    end_image = pygame.transform.scale(end_image, (BASE_WIDTH, BASE_HEIGHT))
 
     start_time = time.time()
     image_rect = end_image.get_rect(
-        center=(WIDTH // 2, HEIGHT // 2)
+        center=(BASE_WIDTH // 2, BASE_HEIGHT // 2)
     )
     while time.time() - start_time < duration:
         for event in pygame.event.get():

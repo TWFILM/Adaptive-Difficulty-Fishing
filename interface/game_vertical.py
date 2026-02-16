@@ -4,7 +4,7 @@ import random
 import time
 import os
 
-from gameData.config_vertical import *
+from gameData.config import *
 from dda import update_fish_speed
 from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
 from utils.load_img import *
@@ -371,7 +371,7 @@ def run_game_vertical(screen, S, logger, rod_name):
             text_rect = text_surface.get_rect(
                 center=(
                     S.WIDTH // 2,
-                    S.PROGRESS_BAR_Y + S.PROGRESS_BAR_HEIGHT + 15
+                    S.TRACK_HEIGHT + S.TRACK_Y + 18 * S.scale
                 )
             )
 
@@ -388,7 +388,7 @@ def run_game_vertical(screen, S, logger, rod_name):
     if success[0]:
         screen.blit(font.render(
             f"You caught the {fish_encounter['rarity']} {fish_encounter['name']}!",
-            True, (200, 200, 200)), ((S.WIDTH // 2 ) - (font.size(f"You caught the {fish_encounter['rarity']} {fish_encounter['name']}!")[0] // 2), S.HEIGHT * 0.1))
+            True, (200, 200, 200)), ((S.WIDTH // 2 ) - (font.size(f"You caught the {fish_encounter['rarity']} {fish_encounter['name']}!")[0] // 2), S.HEIGHT * 0.09))
         
         if not fish_encounter["name"] in save.data["player"]["catched_fish"]:
             save.data["player"]["catched_fish"].append(fish_encounter["name"])
