@@ -1,6 +1,6 @@
 {
     "player": {
-        "rod": "Meme Rod",
+        "rod": "Anchor Rod",
         "default": "horizontal",
         "catched_fish": [
             "Pufferfish",
@@ -27,8 +27,8 @@
             "Mackerel",
             "Colossal Squid"
         ],
-        "total_catched": 130,
-        "catched_streak": 2,
+        "total_catched": 131,
+        "catched_streak": 1,
         "perfect_catches": 33,
         "unlocked_rods": [
             "Novice Rod",
