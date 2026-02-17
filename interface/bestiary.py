@@ -30,28 +30,30 @@ def run_bestiary(screen, S, unlocked_fish):
     clock = pygame.time.Clock()
 
     # fonts
-    title_font = pygame.font.Font(FONT_PATH1, 48)
-    card_font = pygame.font.Font(FONT_PATH2, 16)
-    desc_font = pygame.font.Font(FONT_PATH2, 12)
-    btn_font = pygame.font.Font(FONT_PATH2, 26)
+    title_font = pygame.font.Font(FONT_PATH1, int(48*S.scale))
+    card_font = pygame.font.Font(FONT_PATH2, int(16*S.scale)) 
+    desc_font = pygame.font.Font(FONT_PATH2, int(12*S.scale)) 
+    btn_font = pygame.font.Font(FONT_PATH2, int(26*S.scale)) 
 
     # data
-    FISH_DATA = get_fish_data()          # dict
-    LOCKED_INFO = get_locked_fish_info() # dict
+    FISH_DATA = get_fish_data()
+    LOCKED_INFO = get_locked_fish_info()
     fish_list = list(FISH_DATA.values())
 
     # layout
     CARD_W = int(S.WIDTH * 0.42)
     CARD_H = int(S.HEIGHT * 0.25)
 
-    GAP_X = 26
-    GAP_Y = 26
+    GAP_X = 26 * S.scale
+    GAP_Y = 26 * S.scale
 
     START_X = (S.WIDTH - (CARD_W * 2 + GAP_X)) // 2
     START_Y = int(S.HEIGHT * 0.22)
 
     PAGE_SIZE = 4
     page = 0
+
+    preview_image = None
 
     # buttons
     back_btn = Button(
@@ -72,38 +74,45 @@ def run_bestiary(screen, S, unlocked_fish):
         font=btn_font
     )
 
-    # ── PRELOAD CARDS (IMPORTANT) ────
+    # ── CREATE FISH CARDS (ONCE) ─────
     cards = []
 
-    for rarity_group in fish_list: 
-        for fish in rarity_group:            
+    for rarity_group in fish_list:
+        for fish in rarity_group:
             name = fish["name"]
 
             if name in unlocked_fish:
-                img_path = os.path.join(
-                    ROOT_DIR, "assets", "images", fish.get("img", "default.png")
-                )
                 data = fish
-            else:
-                locked = LOCKED_INFO.get(name, {})
                 img_path = os.path.join(
-                    ROOT_DIR, "assets", "images",
-                    locked.get("img", "locked_fish.png")
+                    ROOT_DIR, "assets", "images", "fishes",
+                    fish.get("img", "default.png")
                 )
+            else:
+                locked_info = LOCKED_INFO.get(name, {})
                 data = {
                     "name": "LOCKED FISH",
-                    "desc": locked.get(
+                    "desc": locked_info.get(
                         "desc", "Catch this fish to unlock information."
                     ),
                     "rarity": "Locked"
                 }
+                img_path = os.path.join(
+                    ROOT_DIR, "assets", "images", "fishes",
+                    locked_info.get("img", "locked_fish.png")
+                )
 
             image = pygame.image.load(img_path).convert_alpha()
 
-            cards.append({
-                "data": data,
-                "image": image
-            })
+            cards.append(
+                FishCard(
+                    rect=(0, 0, CARD_W, CARD_H),  # set ตอน draw
+                    fish_data=data,
+                    font=card_font,
+                    small_font=desc_font,
+                    image=image,
+                    rarity=data.get("rarity", "Common")
+                )
+            )
 
     # ── LOOP ────────────────────────
     running = True
@@ -113,52 +122,72 @@ def run_bestiary(screen, S, unlocked_fish):
                 pygame.quit()
                 return "QUIT"
 
-            if back_btn.clicked(event):
-                if page > 0:
-                    page -= 1
+            # close preview
+            if preview_image:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    preview_image = None
+                continue
 
-            if next_btn.clicked(event):
-                if (page + 1) * PAGE_SIZE < len(cards):
-                    page += 1
+            start = page * PAGE_SIZE
+            visible = cards[start:start + PAGE_SIZE]
+
+            # click image → preview
+            for c in visible:
+                if c.image_clicked(event):
+                    preview_image = c.image
+                    break
+
+            if back_btn.clicked(event) and page > 0:
+                page -= 1
+
+            if next_btn.clicked(event) and (page + 1) * PAGE_SIZE < len(cards):
+                page += 1
 
             if center_btn.clicked(event):
                 return "LOBBY"
 
-        # draw
+        # ── DRAW ─────────────────────
         screen.fill(BG_COLOR)
 
-        # title
         title = title_font.render("Bestiary", True, (240, 240, 240))
         screen.blit(
             title,
             title.get_rect(center=(S.WIDTH // 2, S.HEIGHT * 0.12))
         )
 
-        # cards
         start = page * PAGE_SIZE
         visible = cards[start:start + PAGE_SIZE]
 
-        for i, item in enumerate(visible):
+        for i, card in enumerate(visible):
             col = i % 2
             row = i // 2
 
             x = START_X + col * (CARD_W + GAP_X)
             y = START_Y + row * (CARD_H + GAP_Y)
 
-            card = FishCard(
-                rect=(x, y, CARD_W, CARD_H),
-                fish_data=item["data"],
-                font=card_font,
-                small_font=desc_font,
-                image=item["image"],
-                rarity=item["data"].get("rarity", "Common")
-            )
+            card.rect.topleft = (x, y)
             card.draw(screen)
 
-        # buttons
         back_btn.draw(screen)
         center_btn.draw(screen)
         next_btn.draw(screen)
+
+        # preview overlay
+        if preview_image:
+            overlay = pygame.Surface((S.WIDTH, S.HEIGHT), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 180))
+            screen.blit(overlay, (0, 0))
+
+            big = pygame.transform.smoothscale(
+                preview_image,
+                (int(S.WIDTH * 0.97), int(S.HEIGHT * 0.7))
+            )
+            rect = big.get_rect(center=(S.WIDTH // 2, S.HEIGHT // 2))
+            screen.blit(big, rect)
+
+            screen.blit(card_font.render(
+            f"[Click anywhere to close preview]",
+            True, (200, 200, 200)), ((S.WIDTH // 2 ) - (card_font.size(f"[Click anywhere to close preview]")[0] // 2), S.HEIGHT * 0.87))
 
         pygame.display.flip()
         clock.tick(FPS)

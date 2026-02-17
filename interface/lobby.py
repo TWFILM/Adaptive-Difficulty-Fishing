@@ -28,30 +28,36 @@ def run_lobby(screen, S):
     pygame.display.set_caption("Fishing Lobby")
     clock = pygame.time.Clock()
 
-    title_font = pygame.font.Font(FONT_PATH1, 42)
-    btn_font = pygame.font.Font(FONT_PATH2, 26)
+    title_font = pygame.font.Font(FONT_PATH1, int(42 * S.scale))
+    btn_font = pygame.font.Font(FONT_PATH2, int(24 * S.scale))
 
     # --- Buttons ---
     play_btn = Button(
-        rect=(S.WIDTH//2 - 100, S.HEIGHT//2 - 45, 200, 50),
+        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 - 90 * S.scale, 200 * S.scale, 50 * S.scale),
         text="PLAY",
         font=btn_font
     )
 
     rod_btn = Button(
-        rect=(S.WIDTH//2 - 100, S.HEIGHT//2 + 30, 200, 50),
+        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 - 20 * S.scale, 200 * S.scale, 50 * S.scale),
         text="SELECT ROD",
         font=btn_font
     )
 
     log_btn = Button(
-        rect=(S.WIDTH//2 - 100, S.HEIGHT//2 + 100, 200, 50),
+        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 + 50 * S.scale, 200 * S.scale, 50 * S.scale),
         text="BESTIARY",
         font=btn_font
     )
 
+    settings_btn = Button(
+        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 + 120 * S.scale, 200 * S.scale, 50 * S.scale),
+        text="SETTINGS",
+        font=btn_font
+    )
+
     quit_btn = Button(
-        rect=(S.WIDTH//2 - 100, S.HEIGHT//2 + 170, 200, 50),
+        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 + 190 * S.scale, 200 * S.scale, 50 * S.scale),
         text="QUIT",
         font=btn_font
     )
@@ -70,6 +76,9 @@ def run_lobby(screen, S):
 
             if log_btn.clicked(event):
                 return "FISH_LOG"
+            
+            if settings_btn.clicked(event):
+                return "SETTINGS"
 
             if quit_btn.clicked(event):
                 return "QUIT"
@@ -78,12 +87,13 @@ def run_lobby(screen, S):
 
         # --- Title ---
         title = title_font.render("Fishing DDA", True, (230, 230, 230))
-        screen.blit(title, title.get_rect(center=(S.WIDTH//2, S.HEIGHT//2 - 130)))
+        screen.blit(title, title.get_rect(center=(S.WIDTH//2, S.HEIGHT//2 - 180 * S.scale)))
 
         # --- Draw Buttons ---
         play_btn.draw(screen)
         rod_btn.draw(screen)
         log_btn.draw(screen)
+        settings_btn.draw(screen)
         quit_btn.draw(screen)
 
         pygame.display.flip()

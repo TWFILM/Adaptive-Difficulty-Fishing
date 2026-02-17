@@ -24,3 +24,5 @@ Thumbs.db
 # --- Project Specific Generated Files ---
 dda_result.csv
 dda_graph.png
+
+gameData/player_save.json

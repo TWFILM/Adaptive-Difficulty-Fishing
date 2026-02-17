@@ -13,9 +13,10 @@ meme_fish_sfx = None
 unlock_sfx = None
 button_sfx = None
 warned_sfx = None
+meme_rod_sfx = None
 
 def load_sfx():
-    global stab_sfx, lobby_sfx, meme_sfx, meme_fish_sfx, unlock_sfx, button_sfx, warned_sfx
+    global stab_sfx, lobby_sfx, meme_sfx, meme_fish_sfx, unlock_sfx, button_sfx, warned_sfx, meme_rod_sfx
     
     try:
         lobby_path = os.path.join(BASE_DIR, "assets", "sfx", "monplaisir.wav")
@@ -27,7 +28,7 @@ def load_sfx():
         
         meme_path = os.path.join(BASE_DIR, "assets", "sfx", "meme.wav")
         meme_sfx = pygame.mixer.Sound(meme_path)
-        meme_sfx.set_volume(1.0)
+        meme_sfx.set_volume(2.0)
         
         meme_fish_path = os.path.join(BASE_DIR, "assets", "sfx", "meme_fish.wav")
         meme_fish_sfx = pygame.mixer.Sound(meme_fish_path)
@@ -44,6 +45,10 @@ def load_sfx():
         warned_path = os.path.join(BASE_DIR, "assets", "sfx", "warned.wav")
         warned_sfx = pygame.mixer.Sound(warned_path)
         warned_sfx.set_volume(1.0)
+
+        meme_rod_path = os.path.join(BASE_DIR, "assets", "sfx", "meme_effect.wav")
+        meme_rod_sfx = pygame.mixer.Sound(meme_rod_path)
+        meme_rod_sfx.set_volume(1.0)
     except pygame.error as e:
         print(f"Error loading sound files: {e}")
 
@@ -77,3 +82,12 @@ def play_button_sfx():
 def play_warned_sfx():
     if warned_sfx:
         warned_sfx.play()
+
+def play_meme_sfx():
+    if meme_rod_sfx:
+        pygame.mixer.init()
+        meme_rod_sfx.play(-1)
+
+def stop_meme_sfx():
+    if meme_rod_sfx:
+        meme_rod_sfx.stop()

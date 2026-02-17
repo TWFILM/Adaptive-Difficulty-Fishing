@@ -43,49 +43,87 @@ class Button:
                 return True
         return False
 
+# ── SWITCH BUTTON ─────────────────────────────
+class Switch:
+    def __init__(self, rect, left_text, right_text, font, initial=True):
+        self.rect = pygame.Rect(rect)
+        self.left_text = left_text
+        self.right_text = right_text
+        self.font = font
+        self.value = initial  # True = left, False = right
+
+        self.bg_color = (70, 70, 70)
+        self.active_color = (120, 120, 120)
+        self.text_color = (255, 255, 255)
+
+    def clicked(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                self.value = not self.value
+                return True
+        return False
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.bg_color, self.rect, border_radius=30)
+
+        half_w = self.rect.width // 2
+
+        active_rect = pygame.Rect(
+            self.rect.x if self.value else self.rect.x + half_w,
+            self.rect.y,
+            half_w,
+            self.rect.height
+        )
+
+        pygame.draw.rect(screen, self.active_color, active_rect, border_radius=30)
+
+        left_surf = self.font.render(self.left_text, True, self.text_color)
+        right_surf = self.font.render(self.right_text, True, self.text_color)
+
+        screen.blit(
+            left_surf,
+            left_surf.get_rect(center=(self.rect.x + half_w // 2,
+                                       self.rect.centery))
+        )
+
+        screen.blit(
+            right_surf,
+            right_surf.get_rect(center=(self.rect.x + half_w + half_w // 2,
+                                       self.rect.centery))
+        )
+
+
 # ── FISH CARD CLASS ────────────────
 class FishCard:
-    def __init__(self, rect, fish_data, font, small_font, image, rarity="Common"):
+    def __init__(self, rect, fish_data, font, small_font,
+                 image=None, rarity="Common"):
         self.rect = pygame.Rect(rect)
         self.fish = fish_data
         self.font = font
         self.small_font = small_font
+        self.image = image
         self.rarity = rarity
 
-        # pic area
-        self.pic_size = 72
-        self.pic_w = int(self.pic_size * 1.3)
-        self.pic_h = self.pic_size
-
-        title_y = self.rect.y + 18
+        # ── RARITY COLOR ─────────────────
         self.rarity_color = RARITY_COLORS.get(rarity, (180, 180, 180))
 
-        self.image = pygame.transform.smoothscale(
-            image, (self.pic_w, self.pic_h)
-        )
-        
-        self.pic_rect = self.image.get_rect(
-            center=(
-                self.rect.centerx,
-                title_y + self.font.get_height() + 10 + self.pic_h // 2
-            )
-        )
+        # ── IMAGE BOX CONFIG  ─────────
+        self.IMG_BOX_W = 120     
+        self.IMG_BOX_H = 90
+        self.IMG_PAD_TOP = 40
+
+        self.img_rect = None     #  click 
 
     def draw(self, screen):
-        # ── Card background ──
+        # ── CARD BACKGROUND ──────────────
         pygame.draw.rect(
-            screen, (40, 60, 90),
-            self.rect, border_radius=18
+            screen,
+            (40, 60, 90),
+            self.rect,
+            border_radius=18
         )
 
-        # name (center)
-        title = self.font.render(
-            self.fish["name"].upper(),
-            True,
-            self.rarity_color
-        )
-
-        # rarity bar
+        # ── RARITY BAR ───────────────────
         pygame.draw.rect(
             screen,
             self.rarity_color,
@@ -93,54 +131,102 @@ class FishCard:
             border_radius=6
         )
 
-        title_rect = title.get_rect(centerx=self.rect.centerx, y=self.rect.y + 16)
+        # ── TITLE  ────────────────────────
+        title = self.font.render(
+            self.fish["name"].upper(),
+            True,
+            self.rarity_color
+        )
+        title_rect = title.get_rect(
+            centerx=self.rect.centerx,
+            y=self.rect.y + 14
+        )
         screen.blit(title, title_rect)
 
-        # image
-        pygame.draw.rect(screen, (0, 0, 0), self.pic_rect, 2)
-        
-        # draw rarity border
-        pygame.draw.rect(
-            screen,
-            self.rarity_color,
-            self.pic_rect,
-            3,
-            border_radius=6
-        )
-        screen.blit(self.image, self.pic_rect)
+        # ── IMAGE AREA  ─
+        img_x = self.rect.centerx - self.IMG_BOX_W // 2
+        img_y = self.rect.y + self.IMG_PAD_TOP
 
+        if self.image:
+            img = scale_to_fit(
+                self.image,
+                self.IMG_BOX_W,
+                self.IMG_BOX_H
+            )
+            self.img_rect = img.get_rect(
+                center=(
+                    self.rect.centerx,
+                    img_y + self.IMG_BOX_H // 2
+                )
+            )
 
-        # description (center block)
+            # border
+            pygame.draw.rect(
+                screen,
+                self.rarity_color,
+                self.img_rect.inflate(6, 6),
+                3,
+                border_radius=8
+            )
+
+            screen.blit(img, self.img_rect)
+        else:
+            self.img_rect = pygame.Rect(
+                img_x, img_y,
+                self.IMG_BOX_W,
+                self.IMG_BOX_H
+            )
+            pygame.draw.rect(
+                screen,
+                (30, 30, 30),
+                self.img_rect,
+                border_radius=8
+            )
+
+        # ── DESCRIPTION ─
+        desc_y = self.img_rect.bottom + 12
         self.draw_multiline_text_center(
             screen,
-            self.fish["desc"].upper(),
+            self.fish.get("desc", "").upper(),
             self.rect.centerx,
-            self.pic_rect.bottom + 12,
+            desc_y,
             self.small_font,
-            self.rect.width - 40
+            self.rect.width - 32
         )
 
-    def draw_multiline_text_center(self, surface, text, center_x, start_y, font, max_width):
-        words = text.split(" ")
-        lines = []
-        line = ""
+    # ── CLICK CHECK ─────────────────
+    def image_clicked(self, event):
+        return (
+            event.type == pygame.MOUSEBUTTONDOWN
+            and self.img_rect
+            and self.img_rect.collidepoint(event.pos)
+        )
 
-        for word in words:
-            test = line + word + " "
+    # ── TEXT WRAP CENTER ─────────────────
+    def draw_multiline_text_center(
+        self, surface, text, center_x, start_y, font, max_width
+    ):
+        words = text.split(" ")
+        lines, line = [], ""
+
+        for w in words:
+            test = line + w + " "
             if font.size(test)[0] <= max_width:
                 line = test
             else:
                 lines.append(line)
-                line = word + " "
+                line = w + " "
+
         if line:
             lines.append(line)
 
         y = start_y
         for ln in lines:
-            text_surf = font.render(ln.strip(), True, (220, 220, 220))
-            rect = text_surf.get_rect(centerx=center_x, y=y)
-            surface.blit(text_surf, rect)
+            surf = font.render(ln.strip(), True, (220, 220, 220))
+            rect = surf.get_rect(centerx=center_x, y=y)
+            surface.blit(surf, rect)
             y += font.get_height() + 4
+
 
 # ── ROD CARD CLASS ────────────────
 class RodCard:
@@ -187,9 +273,9 @@ class RodCard:
 
         y = self.rect.y + 52
         stats = [
-            f"LUCK        {self.rod.get('LUCK', '?')}",
-            f"CONTROL     {self.rod.get('CONTROLLED', '?')}",
-            f"RESILIENCE  {self.rod.get('RESILIENCE', '?')}",
+            f"LUCK        {self.rod.get('LUCK', 'N/A')}",
+            f"CONTROL     {self.rod.get('CONTROLLED', 'N/A')}",
+            f"RESILIENCE  {self.rod.get('RESILIENCE', 'N/A')}",
         ]
         for s in stats:
             screen.blit(self.small_font.render(s, True, (210, 210, 210)), (text_x, y))

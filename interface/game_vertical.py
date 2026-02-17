@@ -4,13 +4,12 @@ import random
 import time
 import os
 
-from gameData.config_vertical import *
-from dda import update_fish_speed
+from gameData.config import *
+from dda import DDAManager, update_fish_speed
 from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
 from utils.load_img import *
-from utils.load_audio import trigger_jumpscare, play_stab_sfx
+from utils.load_audio import trigger_jumpscare, play_stab_sfx, stop_meme_sfx
 from utils.save_writer import SaveManager
-from utils.scaler import draw_rod_image, prepare_rod_image
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
@@ -20,10 +19,10 @@ FONT_PATH = os.path.join(
 )
 
 
-def run_game_vertical(screen, S, logger, rod_name):
+def run_game_vertical(screen, S, logger, rod_name, difficulty_mode="DDA"):
     pygame.init()
     screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
-    pygame.display.set_caption("DDA Experiment (Vertical)")
+    pygame.display.set_caption(f"DDA Experiment - Mode: {difficulty_mode}") 
     clock = pygame.time.Clock()
     font = pygame.font.Font(FONT_PATH, int(18 * S.scale))
 
@@ -38,11 +37,7 @@ def run_game_vertical(screen, S, logger, rod_name):
     bar_y = S.TRACK_Y + S.TRACK_HEIGHT // 2 - player_bar_height // 2
     bar_x = S.TRACK_X
 
-    rod_img_raw = ROD_IMAGES.get(rod_using["name"])
-    rod_img_raw = pygame.transform.rotate(rod_img_raw, 90)
-    rod_img = prepare_rod_image(rod_img_raw, S.BAR_WIDTH, player_bar_height, orientation="v")
-    is_rotated = False
-
+    
     encounter_start_time = time.time()
 
     # ── PROGRESS ─────────────────────
@@ -59,13 +54,26 @@ def run_game_vertical(screen, S, logger, rod_name):
     
     if rod_using["name"] == "Anchor Rod":
         is_anchor_active = True
-        img_before = prepare_rod_image(rod_img_raw, S.BAR_WIDTH, player_bar_height, orientation="v")
         player_bar_height_before = S.BAR_HEIGHT + (rod_using["CONTROLLED"] * S.BAR_HEIGHT)
 
+    # ── FISH DATA ────────────────────
+    fish_encounter = get_fish(get_random_rarity(rod_using["name"]))
+    fish_resilience = fish_encounter["FISH_RESILIENCE"] + rod_using["RESILIENCE"]
+    fish_progress = fish_encounter["PROGRESS_SPD"] + rod_using["PROGRESS_SPD"]
+
+    # --- DDA MANAGER SETUP ---
+    dda_manager = None
+    if difficulty_mode == "DDA":
+        dda_manager = DDAManager(fish_resilience=fish_resilience, fish_progress=fish_progress)
+        # Use a neutral starting speed for DDA mode, the manager will adjust it
+        fish_speed = 1.5
+    else:
+        # Fallback for non-DDA modes
+        fish_speed = {"EASY": 1.0, "MEDIUM": 2.0, "HARD": 3.0}.get(difficulty_mode, 1.0)
+    
     # ── FISH ─────────────────────────
     fish_y = S.TRACK_Y + S.TRACK_HEIGHT // 2 - S.FISH_SIZE // 2
     fish_direction = random.choice([-1, 1])
-    fish_speed = random.uniform(FISH_MIN_SPEED, FISH_MAX_SPEED)
 
     distance = random.randint(FISH_MOVE_MIN_DIST, FISH_MOVE_MAX_DIST)
     fish_target_y = fish_y + fish_direction * distance
@@ -73,6 +81,15 @@ def run_game_vertical(screen, S, logger, rod_name):
             S.BAR_MIN_Y + (S.FISH_SIZE+10),
             min(S.BAR_MAX_Y + S.BAR_HEIGHT - (S.FISH_SIZE+10), fish_target_y)
         )
+    
+    EXTRA_WIDTH = 10  
+    fish_width = S.TRACK_WIDTH + EXTRA_WIDTH
+
+    fish_x_draw = (
+        bar_x
+        + (S.BAR_WIDTH // 2 - fish_width // 2)
+    )
+
 
     fish_waiting = False
     resilient_timer = 0.0
@@ -91,7 +108,9 @@ def run_game_vertical(screen, S, logger, rod_name):
     fish_progress = fish_encounter["PROGRESS_SPD"] + rod_using["PROGRESS_SPD"]
 
     if rod_using["name"] == "Meme Rod":
-        fish_progress = -0.9
+        choices = random.choices([1, 2, 3])
+        if 1 in choices:
+            fish_progress = -0.9  # Meme Rod special passive
 
     # for Shear Rod
     if rod_using["name"] == "Shear Rod":
@@ -128,20 +147,17 @@ def run_game_vertical(screen, S, logger, rod_name):
             if rod_using["name"] == "Rod of the Conqueror":
                 progress_color = PROGRESS_BAR_COLOR 
                 conqueror_active = False
-            if rod_using["name"] == "Meme Rod" and player_bar_height <= S.TRACK_HEIGHT and fish_encounter["name"] != "Meme Fish":
-                player_bar_height += 0.1
+            if rod_using["name"] == "Meme Rod" :
+                if 1 in choices and player_bar_height <= S.TRACK_HEIGHT and fish_encounter["name"] != "Meme Fish":
+                    player_bar_height += player_bar_height * 0.005
             if rod_using["name"] == "Anchor Rod" and is_anchor_active:
                 if is_catching:
                     if player_bar_height > player_bar_height_before*0.3:
                         player_bar_height -= 0.25
                         fish_progress += 0.0003
-                        rod_img = prepare_rod_image(rod_img_raw, S.BAR_WIDTH, player_bar_height, orientation="v")
-                        if is_rotated:
-                            rod_img = pygame.transform.flip(rod_img, True, True)
                 
                 else:
                     is_anchor_active = False
-                    rod_img = img_before
                     fish_progress = fish_encounter["PROGRESS_SPD"]+rod_using["PROGRESS_SPD"]
                     player_bar_height = player_bar_height_before
 
@@ -152,14 +168,8 @@ def run_game_vertical(screen, S, logger, rod_name):
 
             if mouse_pressed:
                 bar_force += BAR_FORCE_INC
-                if not is_rotated:
-                    is_rotated = True
-                    rod_img = pygame.transform.flip(rod_img, True, True)
             else:
                 bar_force -= BAR_FORCE_DEC
-                if is_rotated:
-                    is_rotated = False
-                    rod_img = pygame.transform.flip(rod_img, True, True)
 
             bar_force = max(0.0, min(BAR_FORCE_MAX, bar_force))
 
@@ -191,7 +201,7 @@ def run_game_vertical(screen, S, logger, rod_name):
                 bar_bounced_top = False
                 bar_bounced_bottom = False
 
-        # ── Fish Movement (Vertical, same like horizontal) ──
+        # ── Fish Movement (Vertical, DDA-enabled) ──
         if not freeze_active:
             if fish_waiting:
                 resilient_timer += clock.get_time() / 1000
@@ -199,35 +209,56 @@ def run_game_vertical(screen, S, logger, rod_name):
                 # ===== Shear Rod logic =====
                 if rod_using["name"] == "Shear Rod" and not knife_active and not knife_checked:
                     if random.random() < 0.25:
-                        # angle_mode =random.choice([-1, -0.2,0.2, 1]) # for old animation
                         play_stab_sfx()
                         mult = 0.5
                         knife_active = True
                         knife_checked = True
                         knife_fill_remaining = KNIFE_FILL_TOTAL
                         resilient_timer = 0
-                        fish_waiting = True   # fish stop moving
+                        fish_waiting = True
 
-                if resilient_timer >= fish_resilience:
+                # In DDA mode, get resilience from the manager, otherwise use the static value
+                current_resilience = dda_manager.get_modified_resilience() if dda_manager else fish_resilience
+
+                if resilient_timer >= current_resilience:
                     resilient_timer = 0
                     fish_waiting = False
-
                     fish_direction = random.choice([-1, 1])
-                    fish_speed = random.uniform(
-                        FISH_MIN_SPEED + (fish_resilience * -1),
-                        FISH_MAX_SPEED + (fish_resilience * -1)
-                    )
 
                     distance = random.randint(FISH_MOVE_MIN_DIST, FISH_MOVE_MAX_DIST)
-
                     fish_target_y = fish_y + fish_direction * distance
                     fish_target_y = max(
                         S.BAR_MIN_Y + (S.FISH_SIZE+10),
                         min(S.BAR_MAX_Y + S.BAR_HEIGHT - (S.FISH_SIZE+10), fish_target_y)
                     )
-
             else:
+                # >>>>>>>>>>>> CHAOS LOGIC START <<<<<<<<<<<<
+                if difficulty_mode in ["DDA", "HARD", "MEDIUM"]:
+                    if dda_manager:
+                        chaos_chance = dda_manager.get_chaos_chance()
+                    else: # Fallback to original logic for non-DDA modes
+                        chaos_chance = 0.02 if difficulty_mode == "HARD" else 0.01
+                    
+                    if random.random() < chaos_chance:
+                        # 40% chance to stop, 60% chance to juke
+                        if random.random() < 0.4: 
+                            fish_waiting = True
+                            resilient_timer = 0 
+                        else: # Juke!
+                            fish_direction *= -1
+                            distance = random.randint(50, 150) # Short, sharp movement
+                            fish_target_y = fish_y + fish_direction * distance
+                            fish_target_y = max(S.BAR_MIN_Y + (S.FISH_SIZE+10), min(S.BAR_MAX_Y + S.BAR_HEIGHT - (S.FISH_SIZE+10), fish_target_y))
+                            # Small speed burst on juke
+                            fish_speed = min(3.5, fish_speed * 1.3)
+                # >>>>>>>>>>>> CHAOS LOGIC END <<<<<<<<<<<<
+                
                 fish_y += fish_direction * fish_speed
+                if rod_name == "Meme Rod" and 2 in choices:
+                        fish_x_draw += fish_direction * fish_speed
+                        S.TRACK_Y += fish_direction * fish_speed
+                        S.TRACK_X += fish_direction * fish_speed
+                        bar_x += fish_direction * fish_speed
 
                 # reach target
                 if ((fish_direction == 1 and fish_y >= fish_target_y) or
@@ -269,13 +300,19 @@ def run_game_vertical(screen, S, logger, rod_name):
                 knife_active = False
                 progress_color = PROGRESS_BAR_COLOR
 
+        # --- Progression Logic (DDA-enabled) ---
         if not freeze_active:
             if is_catching:
-                progress += PROGRESS_UP_RATE + (fish_progress * PROGRESS_UP_RATE)
+                # Use DDA-modified progress rate if available
+                current_fish_progress = dda_manager.get_modified_progress() if dda_manager else fish_progress
+                base_gain = PROGRESS_UP_RATE * (1.0 + current_fish_progress)
+                actual_gain = max(PROGRESS_UP_RATE * 0.1, base_gain) # Min gain guarantee
+                progress += actual_gain
             else:
                 progress -= PROGRESS_DOWN_RATE
                 is_perfect_catch = False
-
+                actual_gain = -PROGRESS_DOWN_RATE
+        
         progress = max(0.0, min(1.0, progress))
 
         if progress >= 1.0:
@@ -284,7 +321,14 @@ def run_game_vertical(screen, S, logger, rod_name):
         elif progress <= 0:
             running = False
 
-        fish_speed = update_fish_speed(is_catching, fish_speed)
+        # --- DDA UPDATES ---
+        if dda_manager:
+            dda_manager.update(is_catching)
+            fish_speed = dda_manager.adjust_fish_speed(fish_speed, is_catching)
+        else:
+            # Legacy speed update for non-DDA modes
+            fish_speed = update_fish_speed(is_catching, fish_speed)
+
         logger.log(player_bar_height, fish_speed, is_catching)
 
         # ── RENDER ────────────────────
@@ -302,9 +346,9 @@ def run_game_vertical(screen, S, logger, rod_name):
         )
 
         pygame.draw.rect(
-            screen, FISH_COLOR,
-            (bar_x + (S.BAR_WIDTH // 2 - S.FISH_SIZE // 2), fish_y,
-             S.FISH_SIZE, S.FISH_SIZE)
+            screen,
+            FISH_COLOR,
+            (fish_x_draw, fish_y, fish_width, S.FISH_SIZE), border_radius=3
         )
 
         if rod_using["name"] == "Prismatic Rod":
@@ -358,15 +402,6 @@ def run_game_vertical(screen, S, logger, rod_name):
              S.PROGRESS_BAR_HEIGHT * progress)
         )
 
-        draw_rod_image(
-            screen,
-            rod_img,
-            bar_x,
-            bar_y,
-            orientation="v"
-        )
-
-
         if fish_progress != 0:
             color = (0, 255, 0) if fish_progress > 0 else (255, 80, 80)
 
@@ -379,7 +414,7 @@ def run_game_vertical(screen, S, logger, rod_name):
             text_rect = text_surface.get_rect(
                 center=(
                     S.WIDTH // 2,
-                    S.PROGRESS_BAR_Y + S.PROGRESS_BAR_HEIGHT + 15
+                    S.TRACK_HEIGHT + S.TRACK_Y + 18 * S.scale
                 )
             )
 
@@ -396,7 +431,7 @@ def run_game_vertical(screen, S, logger, rod_name):
     if success[0]:
         screen.blit(font.render(
             f"You caught the {fish_encounter['rarity']} {fish_encounter['name']}!",
-            True, (200, 200, 200)), ((S.WIDTH // 2 ) - (font.size(f"You caught the {fish_encounter['rarity']} {fish_encounter['name']}!")[0] // 2), S.HEIGHT * 0.1))
+            True, (200, 200, 200)), ((S.WIDTH // 2 ) - (font.size(f"You caught the {fish_encounter['rarity']} {fish_encounter['name']}!")[0] // 2), S.HEIGHT * 0.09))
         
         if not fish_encounter["name"] in save.data["player"]["catched_fish"]:
             save.data["player"]["catched_fish"].append(fish_encounter["name"])
@@ -419,7 +454,8 @@ def run_game_vertical(screen, S, logger, rod_name):
         pygame.display.flip()
         time.sleep(3)
 
-    if rod_using["name"] == "Meme Rod" and success[0] is True:
+    if rod_using["name"] == "Meme Rod" and success[0] is True and 3 in choices:
+        stop_meme_sfx()
         trigger_jumpscare(meme_fish=False)
         run_end_screen_meme(screen, clock, duration=4, meme_fish=False)
     

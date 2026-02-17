@@ -31,11 +31,11 @@ def run_rod_selection(screen, S, unlocked_rods):
     clock = pygame.time.Clock()
 
     # ── FONTS ───────────────────────
-    title_font = pygame.font.Font(FONT_PATH1, 48)
-    card_title_font = pygame.font.Font(FONT_PATH2, 23)
-    card_desc_font = pygame.font.Font(FONT_PATH2, 16)
-    btn_font = pygame.font.Font(FONT_PATH2, 26)
-    status_font = pygame.font.Font(FONT_PATH2, 20)
+    title_font = pygame.font.Font(FONT_PATH1, int(48*S.scale))
+    card_title_font = pygame.font.Font(FONT_PATH2, int(23*S.scale))
+    card_desc_font = pygame.font.Font(FONT_PATH2, int(16*S.scale))
+    btn_font = pygame.font.Font(FONT_PATH2, int(26*S.scale)) 
+    status_font = pygame.font.Font(FONT_PATH2, int(20*S.scale))
 
     # ── LAYOUT ──────────────────────
     CARD_WIDTH = int(S.WIDTH * 0.8)
@@ -43,7 +43,7 @@ def run_rod_selection(screen, S, unlocked_rods):
     CARD_X = (S.WIDTH - CARD_WIDTH) // 2
 
     START_Y = int(S.HEIGHT * 0.25)
-    GAP = int(S.HEIGHT * 0.05)
+    GAP = int(S.HEIGHT * 0.05) * S.scale
 
     warning_text = ""
     warning_time = 0
@@ -208,7 +208,7 @@ def run_rod_selection(screen, S, unlocked_rods):
 
             if rod_name in unlocked_rods:
                 image_path = os.path.join(
-                    ROOT_DIR, "assets", "images", rod.get("img", "default.png")
+                    ROOT_DIR, "assets", "images", "rods", rod.get("img", "default.png")
                 )
 
                 card = RodCard(
@@ -240,7 +240,7 @@ def run_rod_selection(screen, S, unlocked_rods):
                         os.path.join(
                             ROOT_DIR,
                             "assets",
-                            "images",
+                            "images", "rods",
                             locked_info.get("img", "locked_rod.png")
                         )
                     ).convert_alpha()
