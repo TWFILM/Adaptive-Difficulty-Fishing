@@ -82,6 +82,8 @@ def main():
             result = run_difficulty_selection(screen, S)
             if result == "QUIT":
                 state = "QUIT"
+            elif result == "LOBBY":
+                state = "LOBBY"
             else:
                 current_difficulty = result
                 state = "GAME"

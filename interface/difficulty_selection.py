@@ -30,17 +30,8 @@ def run_difficulty_selection(screen, S):
         # Title
         draw_text_centered(screen, "SELECT DIFFICULTY", font_title, (255, 255, 255), S.WIDTH // 2, S.HEIGHT * 0.2)
 
-        # Buttons
         mouse_pos = pygame.mouse.get_pos()
         
-        # Define Buttons (Label, Return Value, Y Position, Color)
-        buttons = [
-            ("EASY (Speed 1.0)", "EASY", 0.4, (100, 255, 100)),
-            ("MEDIUM (Speed 2.0)", "MEDIUM", 0.5, (255, 255, 100)),
-            ("HARD (Speed 3.0)", "HARD", 0.6, (255, 100, 100)),
-            ("ADAPTIVE (DDA)", "DDA", 0.75, (100, 200, 255))
-        ]
-
         click = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -48,6 +39,30 @@ def run_difficulty_selection(screen, S):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     click = True
+        
+        # Back button
+        back_btn_rect = pygame.Rect(S.WIDTH * 0.05, S.HEIGHT * 0.05, S.WIDTH * 0.2, S.HEIGHT * 0.07)
+        back_btn_rect.center = (S.WIDTH * 0.15, S.HEIGHT * 0.1)
+        
+        is_hover_back = back_btn_rect.collidepoint(mouse_pos)
+        back_color = (200, 200, 200) if is_hover_back else (100, 100, 100)
+        pygame.draw.rect(screen, (50,50,50), back_btn_rect, border_radius=10)
+        pygame.draw.rect(screen, (255, 255, 255), back_btn_rect, 2, border_radius=10)
+        
+        back_text_color = (255, 255, 255) if is_hover_back else (200, 200, 200)
+        draw_text_centered(screen, "< BACK", font_btn, back_text_color, back_btn_rect.centerx, back_btn_rect.centery)
+        
+        if is_hover_back and click:
+            play_button_sfx()
+            return "LOBBY"
+
+        # Difficulty Buttons
+        buttons = [
+            ("EASY (Speed 1.0)", "EASY", 0.4, (100, 255, 100)),
+            ("MEDIUM (Speed 2.0)", "MEDIUM", 0.5, (255, 255, 100)),
+            ("HARD (Speed 3.0)", "HARD", 0.6, (255, 100, 100)),
+            ("ADAPTIVE (DDA)", "DDA", 0.75, (100, 200, 255))
+        ]
 
         for label, value, y_ratio, color in buttons:
             # Simple button interaction
