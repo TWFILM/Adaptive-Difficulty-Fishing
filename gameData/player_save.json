@@ -1,17 +1,18 @@
 {
     "player": {
-        "rod": "Novice Rod",
+        "rod": "Cool Rod",
         "catched_fish": [
             "Chinook Salmon",
             "Bluefin Tuna",
             "Cod",
             "Haddock",
             "Sardine",
-            "Mullet"
+            "Mullet",
+            "Shrimp"
         ],
-        "total_catched": 9,
-        "catched_streak": 2,
-        "perfect_catches": 3,
+        "total_catched": 10,
+        "catched_streak": 3,
+        "perfect_catches": 4,
         "unlocked_rods": [
             "Novice Rod",
             "Cool Rod"

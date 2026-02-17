@@ -64,7 +64,7 @@ class Switch:
         return False
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.bg_color, self.rect, border_radius=30)
+        pygame.draw.rect(screen, self.bg_color, self.rect, border_radius=8)
 
         half_w = self.rect.width // 2
 
@@ -75,7 +75,7 @@ class Switch:
             self.rect.height
         )
 
-        pygame.draw.rect(screen, self.active_color, active_rect, border_radius=30)
+        pygame.draw.rect(screen, self.active_color, active_rect, border_radius=8)
 
         left_surf = self.font.render(self.left_text, True, self.text_color)
         right_surf = self.font.render(self.right_text, True, self.text_color)
