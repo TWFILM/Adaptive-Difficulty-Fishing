@@ -1,7 +1,7 @@
 import pygame
 import os
 
-from gameData.config import BG_COLOR, FPS
+from gameData.config import BG_COLOR
 from gameData.get_info import get_fish_data, get_locked_fish_info  
 from utils.gadgets import Button, FishCard    
 
@@ -23,7 +23,7 @@ FONT_PATH2 = os.path.join(
 
 PAGE_SIZE = 4  # 2x2
 
-def run_bestiary(screen, S, unlocked_fish):
+def run_bestiary(screen, S, unlocked_fish, FPS=60):
     pygame.init()
     screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
     pygame.display.set_caption("Bestiary")

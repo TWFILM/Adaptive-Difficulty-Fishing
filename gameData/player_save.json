@@ -1,26 +1,15 @@
 {
     "player": {
-        "rod": "Cool Rod",
-        "catched_fish": [
-            "Chinook Salmon",
-            "Bluefin Tuna",
-            "Cod",
-            "Haddock",
-            "Sardine",
-            "Mullet",
-            "Shrimp",
-            "Sea Star"
-        ],
-        "total_catched": 11,
+        "rod": "Novice Rod",
+        "catched_fish": [],
+        "total_catched": 0,
         "catched_streak": 0,
-        "perfect_catches": 4,
+        "perfect_catches": 0,
         "unlocked_rods": [
-            "Novice Rod",
-            "Cool Rod"
+            "Novice Rod"
         ],
         "shown_unlock_notice": [
-            "Novice Rod",
-            "Cool Rod"
+            "Novice Rod"
         ]
     },
     "settings_data": {
@@ -28,6 +17,6 @@
         "height": 800,
         "gameplay": "horizontal",
         "sfx": true,
-        "mode": "Default"
+        "FPS": 60
     }
 }

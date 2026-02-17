@@ -22,7 +22,7 @@ FONT_PATH1 = os.path.join(
     "RasterForgeRegular-JpBgm.ttf"
 )
 
-def run_game(screen, S, logger, rod_name, difficulty_mode="DDA"):
+def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
     pygame.init()
 
     # Create font
@@ -47,7 +47,7 @@ def run_game(screen, S, logger, rod_name, difficulty_mode="DDA"):
     bar_y = S.TRACK_Y
 
     EXTRA_HEIGHT = 10  
-    fish_height = S.BAR_HEIGHT + EXTRA_HEIGHT
+    fish_height = S.BAR_HEIGHT + EXTRA_HEIGHT 
     fish_y_draw = S.TRACK_Y - EXTRA_HEIGHT // 2
 
     encounter_start_time = time.time()
@@ -133,6 +133,9 @@ def run_game(screen, S, logger, rod_name, difficulty_mode="DDA"):
     actual_gain = 0.0
 
     while running:
+        dt = clock.tick(FPS) / 1000.0
+        frame_scale = dt * 60.0   # normalize to 60 FPS feel
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -166,14 +169,14 @@ def run_game(screen, S, logger, rod_name, difficulty_mode="DDA"):
 
             mouse_pressed = pygame.mouse.get_pressed()[0]
             if mouse_pressed:
-                bar_force += BAR_FORCE_INC
+                bar_force += BAR_FORCE_INC 
             else:
-                bar_force -= BAR_FORCE_DEC
+                bar_force -= BAR_FORCE_DEC 
 
             bar_force = max(0.0, min(BAR_FORCE_MAX, bar_force))
             bar_velocity = (bar_velocity + BAR_DRIFT_LEFT + bar_force) * BAR_FRICTION
             bar_velocity = max(-BAR_MAX_SPEED, min(BAR_MAX_SPEED, bar_velocity))
-            bar_x += bar_velocity
+            bar_x += bar_velocity * frame_scale
 
             if bar_x <= S.BAR_MIN_X:
                 bar_x = S.BAR_MIN_X
@@ -196,9 +199,7 @@ def run_game(screen, S, logger, rod_name, difficulty_mode="DDA"):
         # --- FISH MOVEMENT (CHAOS EDITION) ---
         if not freeze_active:
             if fish_waiting:
-                dt = clock.get_time() / 1000
                 resilient_timer += dt
-                
                 if rod_using["name"] == "Shear Rod" and not knife_active and not knife_checked:
                     if random.random() < 0.25:
                         play_stab_sfx()
@@ -248,7 +249,7 @@ def run_game(screen, S, logger, rod_name, difficulty_mode="DDA"):
                                 fish_speed = min(3.5, fish_speed * 1.3)
                     # >>>>>>>>>>>> CHAOS LOGIC END <<<<<<<<<<<<
 
-                    fish_x += fish_direction * fish_speed
+                    fish_x += fish_direction * fish_speed * frame_scale
                     if rod_name == "Meme Rod" and 2 in choices:
                         fish_y_draw += fish_direction * fish_speed
                         S.TRACK_Y += fish_direction * fish_speed
@@ -280,8 +281,8 @@ def run_game(screen, S, logger, rod_name, difficulty_mode="DDA"):
             progress_bar_color = (255, 215, 0)
             if knife_fill_remaining == KNIFE_FILL_TOTAL:
                 play_stab_sfx()
-            k_dt = clock.get_time() / 1000
-            fill_amount = KNIFE_FILL_SPEED * k_dt
+            # k_dt = clock.get_time() / 1000
+            fill_amount = KNIFE_FILL_SPEED * dt
             actual_fill = min(fill_amount, knife_fill_remaining)
             knife_fill_remaining -= actual_fill
             progress += actual_fill
@@ -299,11 +300,11 @@ def run_game(screen, S, logger, rod_name, difficulty_mode="DDA"):
                 
                 raw_gain = base_gain * (1.0 + current_fish_progress)
                 actual_gain = max(base_gain * 0.1, raw_gain) # Min gain guarantee
-                progress += actual_gain
+                progress += actual_gain * frame_scale
             else:
                 progress -= PROGRESS_DOWN_RATE
                 is_perfect_catch = False
-                actual_gain = -PROGRESS_DOWN_RATE
+                actual_gain = -(PROGRESS_DOWN_RATE * frame_scale)
         
         progress = max(0.0, min(1.0, progress))
 
@@ -362,12 +363,30 @@ def run_game(screen, S, logger, rod_name, difficulty_mode="DDA"):
         pygame.draw.rect(screen, progress_bar_color, (S.WIDTH // 2 - S.PROGRESS_BAR_WIDTH // 2, S.PROGRESS_BAR_Y, int(S.PROGRESS_BAR_WIDTH * progress), S.PROGRESS_BAR_HEIGHT))
 
         info_text = f"Mode:{difficulty_mode} | Speed:{fish_speed:.2f} | Catching:{is_catching}"
-        gain_text = f"Gain Rate: {actual_gain:.5f} (FishProg: {fish_progress:.2f})"
+        gain_text = f"Gain Rate: {actual_gain:.5f}"
         screen.blit(font.render(info_text, True, (200, 200, 200)), (10, 10))
         screen.blit(font.render(gain_text, True, (255, 255, 0)), (10, 35))
 
+        if fish_progress != 0:
+            color = (0, 255, 0) if fish_progress > 0 else (255, 80, 80)
+
+            text_surface = font.render(
+                f"Progression Speed {(fish_progress)*100:+.0f}%",
+                True,
+                color
+            )
+
+            text_rect = text_surface.get_rect(
+                center=(
+                    S.WIDTH // 2,
+                    S.PROGRESS_BAR_Y + S.PROGRESS_BAR_HEIGHT + 15
+                )
+            )
+
+            screen.blit(text_surface, text_rect)
+
         pygame.display.flip()
-        clock.tick(FPS)
+        # clock.tick(FPS)
 
     logger.export()
     if success[0]:

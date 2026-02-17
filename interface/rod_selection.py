@@ -1,7 +1,7 @@
 import pygame
 import os
 
-from gameData.config import BG_COLOR, FPS
+from gameData.config import BG_COLOR
 from gameData.get_info import get_rod_des, get_locked_rod_info
 from utils.save_writer import SaveManager
 from utils.gadgets import Button, RodCard
@@ -24,7 +24,7 @@ RODS = get_rod_des()   # list[dict]
 LOCKED_RODS = get_locked_rod_info()  # dict
 rod_data = list(RODS.values())
 
-def run_rod_selection(screen, S, unlocked_rods):
+def run_rod_selection(screen, S, unlocked_rods, FPS=60):
     pygame.init()
     screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
     pygame.display.set_caption("Rod Selection")

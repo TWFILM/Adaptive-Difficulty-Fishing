@@ -1,7 +1,7 @@
 import pygame
 import os
 from utils.gadgets import Button, Switch
-from gameData.config import BG_COLOR, FPS
+from gameData.config import BG_COLOR
 from utils.save_writer import SaveManager
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -69,13 +69,9 @@ def run_settings(screen, S, settings_data):
         initial=settings_data["sfx"]
     )
 
-    # Mode
-    modes = ["Default", "EASY", "HARD",  "DDA"]
-    mode_index = modes.index(settings_data["mode"])
-
-    mode_btn = Button(
+    fps_btn = Button(
         rect=(CONTROL_X*0.9, ROW_Y_START + ROW_GAP * 3, CONTROL_W, CONTROL_H),
-        text=settings_data["mode"],
+        text=str(settings_data["FPS"]),
         font=font_btn
     )
 
@@ -157,11 +153,27 @@ def run_settings(screen, S, settings_data):
             if sfx_switch.clicked(event):
                 settings_data["sfx"] = sfx_switch.value
 
-            # Mode
-            if mode_btn.clicked(event):
-                mode_index = (mode_index + 1) % len(modes)
-                settings_data["mode"] = modes[mode_index]
-                mode_btn.text = modes[mode_index]
+            # FPS
+            if fps_btn.clicked(event):
+
+                # Detect display refresh rate
+                display_info = pygame.display.Info()
+                refresh_rate = getattr(display_info, "current_h", 60)
+
+                # Available FPS options
+                fps_options = [30, 60]
+
+                # Only allow 120 if monitor likely supports it
+                if refresh_rate >= 120:
+                    fps_options.append(120)
+
+                # Cycle FPS
+                current_index = fps_options.index(settings_data["FPS"])
+                next_index = (current_index + 1) % len(fps_options)
+
+                settings_data["FPS"] = fps_options[next_index]
+                fps_btn.text = str(settings_data["FPS"])
+
 
             # Navigate
             if howto_btn.clicked(event):
@@ -235,7 +247,7 @@ def run_settings(screen, S, settings_data):
         )
 
         screen.blit(
-            font_label.render("MODE", True, (200, 200, 200)),
+            font_label.render("FPS", True, (200, 200, 200)),
             (LABEL_X, ROW_Y_START + ROW_GAP * 3 + 15 * S.scale)
         )
 
@@ -243,7 +255,7 @@ def run_settings(screen, S, settings_data):
         resolution_btn.draw(screen)
         gameplay_switch.draw(screen)
         sfx_switch.draw(screen)
-        mode_btn.draw(screen)
+        fps_btn.draw(screen)
 
         howto_btn.draw(screen)
         credits_btn.draw(screen)
@@ -252,4 +264,4 @@ def run_settings(screen, S, settings_data):
         back_btn.draw(screen)
 
         pygame.display.flip()
-        clock.tick(FPS)
+        clock.tick(settings_data["FPS"])

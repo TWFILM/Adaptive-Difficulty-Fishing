@@ -2,7 +2,7 @@
 import os
 import pygame
 
-from gameData.config import BG_COLOR, FPS
+from gameData.config import BG_COLOR
 from utils.gadgets import Button
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -22,7 +22,7 @@ FONT_PATH2 = os.path.join(
     "RasterForgeRegular-JpBgm.ttf"
 )
 
-def run_lobby(screen, S):
+def run_lobby(screen, S, FPS=60):
     pygame.init()
     screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
     pygame.display.set_caption("Fishing Lobby")

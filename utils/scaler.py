@@ -100,8 +100,6 @@ def build_scaled_config(width, height, orientation="horizontal"):
     # COPY LOGIC FROM CONFIG
     # ─────────────────────────
 
-    s.FPS = C.FPS
-
     s.BAR_MAX_SPEED = C.BAR_MAX_SPEED
     s.BAR_FRICTION = C.BAR_FRICTION
     s.BAR_FORCE_INC = C.BAR_FORCE_INC

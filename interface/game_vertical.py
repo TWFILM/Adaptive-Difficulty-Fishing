@@ -19,7 +19,7 @@ FONT_PATH = os.path.join(
 )
 
 
-def run_game_vertical(screen, S, logger, rod_name, difficulty_mode="DDA"):
+def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
     pygame.init()
     screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
     pygame.display.set_caption(f"DDA Experiment - Mode: {difficulty_mode}") 
@@ -129,6 +129,8 @@ def run_game_vertical(screen, S, logger, rod_name, difficulty_mode="DDA"):
 
     # ─────────────────────────────────
     while running:
+        dt = clock.tick(FPS) / 1000
+        frame_scale = dt * 60
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -178,7 +180,7 @@ def run_game_vertical(screen, S, logger, rod_name, difficulty_mode="DDA"):
             bar_velocity *= BAR_FRICTION
             bar_velocity = max(-BAR_MAX_SPEED, min(BAR_MAX_SPEED, bar_velocity))
 
-            bar_y += bar_velocity
+            bar_y += bar_velocity * frame_scale
 
             # bounce
             if bar_y <= S.BAR_MIN_Y :
@@ -204,8 +206,7 @@ def run_game_vertical(screen, S, logger, rod_name, difficulty_mode="DDA"):
         # ── Fish Movement (Vertical, DDA-enabled) ──
         if not freeze_active:
             if fish_waiting:
-                resilient_timer += clock.get_time() / 1000
-
+                resilient_timer += dt
                 # ===== Shear Rod logic =====
                 if rod_using["name"] == "Shear Rod" and not knife_active and not knife_checked:
                     if random.random() < 0.25:
@@ -253,7 +254,7 @@ def run_game_vertical(screen, S, logger, rod_name, difficulty_mode="DDA"):
                             fish_speed = min(3.5, fish_speed * 1.3)
                 # >>>>>>>>>>>> CHAOS LOGIC END <<<<<<<<<<<<
                 
-                fish_y += fish_direction * fish_speed
+                fish_y += fish_direction * fish_speed * frame_scale
                 if rod_name == "Meme Rod" and 2 in choices:
                         fish_x_draw += fish_direction * fish_speed
                         S.TRACK_Y += fish_direction * fish_speed
@@ -289,8 +290,8 @@ def run_game_vertical(screen, S, logger, rod_name, difficulty_mode="DDA"):
         if knife_active:
             progress_color = (255, 215, 0)
 
-            k_dt = clock.get_time() / 1000
-            fill_amount = KNIFE_FILL_SPEED * k_dt
+            # k_dt = clock.get_time() / 1000
+            fill_amount = KNIFE_FILL_SPEED * dt
 
             actual_fill = min(fill_amount, knife_fill_remaining)
             knife_fill_remaining -= actual_fill
@@ -307,9 +308,9 @@ def run_game_vertical(screen, S, logger, rod_name, difficulty_mode="DDA"):
                 current_fish_progress = dda_manager.get_modified_progress() if dda_manager else fish_progress
                 base_gain = PROGRESS_UP_RATE * (1.0 + current_fish_progress)
                 actual_gain = max(PROGRESS_UP_RATE * 0.1, base_gain) # Min gain guarantee
-                progress += actual_gain
+                progress += actual_gain * frame_scale
             else:
-                progress -= PROGRESS_DOWN_RATE
+                progress -= PROGRESS_DOWN_RATE * frame_scale
                 is_perfect_catch = False
                 actual_gain = -PROGRESS_DOWN_RATE
         
@@ -425,7 +426,7 @@ def run_game_vertical(screen, S, logger, rod_name, difficulty_mode="DDA"):
             True, (200, 200, 200)), (10, 10))
 
         pygame.display.flip()
-        clock.tick(FPS)
+        # clock.tick(FPS)
 
     logger.export()
     if success[0]:

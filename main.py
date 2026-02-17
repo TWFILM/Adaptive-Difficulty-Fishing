@@ -25,8 +25,7 @@ DEFAULT_SETTINGS = {
     "width": 600,
     "height": 800,
     "gameplay": "horizontal",
-    "sfx": True,
-    "mode": "Default"
+    "sfx": True
 }
 
 def main():
@@ -72,7 +71,7 @@ def main():
             pygame.mixer.pause()
 
         if state == "LOBBY":
-            next_state = run_lobby(screen, S)
+            next_state = run_lobby(screen, S, settings_data["FPS"])
 
             if next_state == "GAME":
                 state = "DIFFICULTY_SELECTION"
@@ -108,9 +107,9 @@ def main():
                 play_meme_sfx()
 
             if axis == "horizontal":
-                success = run_game(screen, S, logger, rod_name, current_difficulty)
+                success = run_game(screen, S, logger, rod_name, settings_data["FPS"], current_difficulty)
             else:
-                success = run_game_vertical(screen, S, logger, rod_name, current_difficulty)
+                success = run_game_vertical(screen, S, logger, rod_name, settings_data["FPS"], current_difficulty)
 
             print(
                 "Game Result:",
@@ -126,12 +125,12 @@ def main():
             get_unlocked_rods()
             save_data = load_save()
             unlocked_rods = save_data["player"]["unlocked_rods"]
-            state = run_rod_selection(screen, S, unlocked_rods)
+            state = run_rod_selection(screen, S, unlocked_rods, settings_data["FPS"])
 
         elif state == "FISH_LOG":
             save_data = load_save()
             unlocked_fish = save_data["player"]["catched_fish"]
-            state = run_bestiary(screen, S, unlocked_fish)
+            state = run_bestiary(screen, S, unlocked_fish, settings_data["FPS"])
 
         elif state == "SETTINGS":
             state = run_settings(screen, S, settings_data)
