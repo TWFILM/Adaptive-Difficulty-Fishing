@@ -9,6 +9,7 @@ from interface.game_vertical import run_game_vertical
 from interface.lobby import run_lobby
 from interface.rod_selection import run_rod_selection
 from interface.setting import run_settings
+from interface.difficulty_selection import run_difficulty_selection
 from logger import DataLogger
 
 import pygame
@@ -50,6 +51,8 @@ def main():
 
     icon_img = load_icon_image()
     pygame.display.set_icon(icon_img)
+    
+    current_difficulty = "DDA"
 
     while state != "QUIT":
 
@@ -69,7 +72,22 @@ def main():
             pygame.mixer.pause()
 
         if state == "LOBBY":
-            state = run_lobby(screen, S)
+            next_state = run_lobby(screen, S)
+
+            if next_state == "GAME":
+                state = "DIFFICULTY_SELECTION"
+            else:
+                state = next_state
+
+        elif state == "DIFFICULTY_SELECTION":
+            result = run_difficulty_selection(screen, S)
+            if result == "QUIT":
+                state = "QUIT"
+            elif result == "LOBBY":
+                state = "LOBBY"
+            else:
+                current_difficulty = result
+                state = "GAME"
 
         elif state == "GAME":
             stop_lobby_sfx()
@@ -90,9 +108,9 @@ def main():
                 play_meme_sfx()
 
             if axis == "horizontal":
-                success = run_game(screen, S, logger, rod_name)
+                success = run_game(screen, S, logger, rod_name, current_difficulty)
             else:
-                success = run_game_vertical(screen, S, logger, rod_name)
+                success = run_game_vertical(screen, S, logger, rod_name, current_difficulty)
 
             print(
                 "Game Result:",
