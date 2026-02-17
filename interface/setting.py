@@ -70,7 +70,7 @@ def run_settings(screen, S, settings_data):
     )
 
     # Mode
-    modes = ["Default", "Hardcore", "Zen"]
+    modes = ["Default", "EASY", "HARD",  "DDA"]
     mode_index = modes.index(settings_data["mode"])
 
     mode_btn = Button(

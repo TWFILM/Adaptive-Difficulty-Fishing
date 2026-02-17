@@ -1,7 +1,7 @@
 # main.py
 import os
-if not os.environ.get("SDL_AUDIODRIVER"):
-    os.environ["SDL_AUDIODRIVER"] = "dummy"
+# if not os.environ.get("SDL_AUDIODRIVER"):
+#     os.environ["SDL_AUDIODRIVER"] = "dummy"
 
 from interface.bestiary import run_bestiary
 from interface.game import run_game

@@ -8,10 +8,11 @@
             "Haddock",
             "Sardine",
             "Mullet",
-            "Shrimp"
+            "Shrimp",
+            "Sea Star"
         ],
-        "total_catched": 10,
-        "catched_streak": 3,
+        "total_catched": 11,
+        "catched_streak": 0,
         "perfect_catches": 4,
         "unlocked_rods": [
             "Novice Rod",
