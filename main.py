@@ -103,23 +103,18 @@ def main():
             )
             screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
 
-            if rod_name == "Meme Rod":
-                play_meme_sfx()
-
             if axis == "horizontal":
-                success = run_game(screen, S, logger, rod_name, settings_data["FPS"], current_difficulty)
+                game_result = run_game(screen, S, logger, rod_name, settings_data["FPS"], current_difficulty)
             else:
-                success = run_game_vertical(screen, S, logger, rod_name, settings_data["FPS"], current_difficulty)
+                game_result = run_game_vertical(screen, S, logger, rod_name, settings_data["FPS"], current_difficulty)
 
-            print(
-                "Game Result:",
-                f"🎣 Catch success! You caught the {success[1]} {success[2]}."
-                if success[0]
-                else "❌ Game ended the fish got away..."
-            )
-
-            state = "LOBBY"
-            play_lobby_sfx()
+            if game_result == "RETRY":
+                state = "GAME"
+            else: # LOBBY or QUIT
+                state = game_result
+            
+            if state == "LOBBY":
+                play_lobby_sfx()
 
         elif state == "SELECT_ROD":
             get_unlocked_rods()
