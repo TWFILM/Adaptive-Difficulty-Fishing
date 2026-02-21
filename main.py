@@ -1,5 +1,6 @@
 # main.py
 import os
+import uuid
 # if not os.environ.get("SDL_AUDIODRIVER"):
 #     os.environ["SDL_AUDIODRIVER"] = "dummy"
 
@@ -10,14 +11,16 @@ from interface.lobby import run_lobby
 from interface.rod_selection import run_rod_selection
 from interface.setting import run_settings
 from interface.difficulty_selection import run_difficulty_selection
+from interface.survey import run_survey
 from logger import DataLogger
 
 import pygame
 from utils.scaler import build_scaled_config
 from utils.save_reader import load_save
-from utils.load_audio import play_lobby_sfx, stop_lobby_sfx, load_sfx, play_meme_sfx
+from utils.load_audio import play_lobby_sfx, stop_lobby_sfx, load_sfx
 from gameData.get_info import get_unlocked_rods
 from utils.load_img import load_icon_image
+from utils.experiment_logger import log_experiment_data
 
 load_sfx()
 
@@ -25,7 +28,8 @@ DEFAULT_SETTINGS = {
     "width": 600,
     "height": 800,
     "gameplay": "horizontal",
-    "sfx": True
+    "sfx": True,
+    "FPS": 60
 }
 
 def main():
@@ -87,6 +91,32 @@ def main():
             else:
                 current_difficulty = result
                 state = "GAME"
+        
+        elif state == "EXPERIMENT":
+            stop_lobby_sfx()
+            player_id = str(uuid.uuid4())
+            experiment_modes = ["EASY", "MEDIUM", "HARD", "DDA"]
+            
+            for mode in experiment_modes:
+                save_data = load_save()
+                rod_name = save_data["player"]["rod"]
+                axis = settings_data["gameplay"]
+                S = build_scaled_config(settings_data["width"], settings_data["height"], axis)
+                screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
+
+                if axis == "horizontal":
+                    game_result = run_game(screen, S, logger, rod_name, settings_data["FPS"], mode, is_experiment=True)
+                else:
+                    game_result = run_game_vertical(screen, S, logger, rod_name, settings_data["FPS"], mode, is_experiment=True)
+
+                win_loss = "WIN" if game_result[0] else "LOSS"
+                
+                survey_results = run_survey(screen, S)
+                
+                log_experiment_data(player_id, mode, win_loss, survey_results)
+
+            state = "LOBBY"
+            play_lobby_sfx()
 
         elif state == "GAME":
             stop_lobby_sfx()
@@ -104,9 +134,9 @@ def main():
             screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
 
             if axis == "horizontal":
-                game_result = run_game(screen, S, logger, rod_name, settings_data["FPS"], current_difficulty)
+                game_result = run_game(screen, S, logger, rod_name, settings_data["FPS"], current_difficulty, is_experiment=False)
             else:
-                game_result = run_game_vertical(screen, S, logger, rod_name, settings_data["FPS"], current_difficulty)
+                game_result = run_game_vertical(screen, S, logger, rod_name, settings_data["FPS"], current_difficulty, is_experiment=False)
 
             if game_result == "RETRY":
                 state = "GAME"

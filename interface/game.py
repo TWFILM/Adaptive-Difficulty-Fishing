@@ -22,7 +22,7 @@ FONT_PATH1 = os.path.join(
     "RasterForgeRegular-JpBgm.ttf"
 )
 
-def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
+def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=False):
     pygame.init()
 
     if rod_name == "Meme Rod":
@@ -71,6 +71,12 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
     fish_encounter = get_fish(get_random_rarity(rod_using["name"]))
     fish_resilience = fish_encounter["FISH_RESILIENCE"] + rod_using["RESILIENCE"]
     fish_progress = fish_encounter["PROGRESS_SPD"] + rod_using["PROGRESS_SPD"]
+
+    # If Experiment, fix type of fish to "Common" and remove rod bonuses for consistency
+    if is_experiment:
+        fish_encounter = get_fish("Common")
+        fish_resilience = fish_encounter["FISH_RESILIENCE"]
+        fish_progress = fish_encounter["PROGRESS_SPD"]
 
     # --- DDA MANAGER SETUP ---
     dda_manager = None
@@ -419,19 +425,28 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
 
     # Button setup
     button_font = pygame.font.Font(FONT_PATH1, int(24 * S.scale))
-    retry_button = pygame.Rect(S.WIDTH // 2 - 150 * S.scale, S.HEIGHT - 100 * S.scale, 120 * S.scale, 50 * S.scale)
-    lobby_button = pygame.Rect(S.WIDTH // 2 + 30 * S.scale, S.HEIGHT - 100 * S.scale, 240 * S.scale, 50 * S.scale)
+    
+    # Create buttons based on mode
+    if is_experiment:
+        continue_button = pygame.Rect(S.WIDTH // 2 - 100 * S.scale, S.HEIGHT - 100 * S.scale, 200 * S.scale, 50 * S.scale)
+    else:
+        retry_button = pygame.Rect(S.WIDTH // 2 - 150 * S.scale, S.HEIGHT - 100 * S.scale, 120 * S.scale, 50 * S.scale)
+        lobby_button = pygame.Rect(S.WIDTH // 2 + 30 * S.scale, S.HEIGHT - 100 * S.scale, 240 * S.scale, 50 * S.scale)
 
     result_running = True
     while result_running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return "QUIT"
+                return "QUIT" if not is_experiment else success
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if retry_button.collidepoint(event.pos):
-                    return "RETRY"
-                if lobby_button.collidepoint(event.pos):
-                    return "LOBBY"
+                if is_experiment:
+                    if continue_button.collidepoint(event.pos):
+                        return success
+                else:
+                    if retry_button.collidepoint(event.pos):
+                        return "RETRY"
+                    if lobby_button.collidepoint(event.pos):
+                        return "LOBBY"
 
         screen.fill(BG_COLOR)
 
@@ -443,7 +458,7 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
             screen.blit(text_surf, text_rect)
 
             # Load and display fish image
-            fish_image_path = os.path.join(ROOT_DIR, "assets", "images", "fishes", f"{fish_encounter['name']}.png")
+            fish_image_path = os.path.join(ROOT_DIR, "assets", "images", "fishes", fish_encounter['img'])
             try:
                 fish_img = pygame.image.load(fish_image_path).convert_alpha()
                 img_width, img_height = fish_img.get_size()
@@ -463,14 +478,19 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
             screen.blit(text_surf, text_rect)
 
         # Draw buttons
-        pygame.draw.rect(screen, (0, 150, 0), retry_button)
-        pygame.draw.rect(screen, (150, 0, 0), lobby_button)
+        if is_experiment:
+            pygame.draw.rect(screen, (0, 100, 150), continue_button)
+            continue_text = button_font.render("CONTINUE", True, (255, 255, 255))
+            screen.blit(continue_text, continue_text.get_rect(center=continue_button.center))
+        else:
+            pygame.draw.rect(screen, (0, 150, 0), retry_button)
+            pygame.draw.rect(screen, (150, 0, 0), lobby_button)
 
-        retry_text = button_font.render("RETRY", True, (255, 255, 255))
-        lobby_text = button_font.render("BACK TO LOBBY", True, (255, 255, 255))
+            retry_text = button_font.render("RETRY", True, (255, 255, 255))
+            lobby_text = button_font.render("BACK TO LOBBY", True, (255, 255, 255))
 
-        screen.blit(retry_text, retry_text.get_rect(center=retry_button.center))
-        screen.blit(lobby_text, lobby_text.get_rect(center=lobby_button.center))
+            screen.blit(retry_text, retry_text.get_rect(center=retry_button.center))
+            screen.blit(lobby_text, lobby_text.get_rect(center=lobby_button.center))
 
         pygame.display.flip()
         clock.tick(FPS)

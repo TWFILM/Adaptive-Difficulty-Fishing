@@ -33,31 +33,38 @@ def run_lobby(screen, S, FPS=60):
 
     # --- Buttons ---
     play_btn = Button(
-        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 - 90 * S.scale, 200 * S.scale, 50 * S.scale),
+        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 - 125 * S.scale, 200 * S.scale, 50 * S.scale),
         text="PLAY",
         font=btn_font
     )
 
+    experiment_btn = Button(
+        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 - 55 * S.scale, 200 * S.scale, 50 * S.scale),
+        text="START EXPERIMENT",
+        font=btn_font,
+        bg_color=(150, 50, 50)
+    )
+
     rod_btn = Button(
-        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 - 20 * S.scale, 200 * S.scale, 50 * S.scale),
+        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 + 15 * S.scale, 200 * S.scale, 50 * S.scale),
         text="SELECT ROD",
         font=btn_font
     )
 
     log_btn = Button(
-        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 + 50 * S.scale, 200 * S.scale, 50 * S.scale),
+        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 + 85 * S.scale, 200 * S.scale, 50 * S.scale),
         text="BESTIARY",
         font=btn_font
     )
 
     settings_btn = Button(
-        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 + 120 * S.scale, 200 * S.scale, 50 * S.scale),
+        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 + 155 * S.scale, 200 * S.scale, 50 * S.scale),
         text="SETTINGS",
         font=btn_font
     )
 
     quit_btn = Button(
-        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 + 190 * S.scale, 200 * S.scale, 50 * S.scale),
+        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 + 225 * S.scale, 200 * S.scale, 50 * S.scale),
         text="QUIT",
         font=btn_font
     )
@@ -70,6 +77,9 @@ def run_lobby(screen, S, FPS=60):
 
             if play_btn.clicked(event):
                 return "GAME"
+            
+            if experiment_btn.clicked(event):
+                return "EXPERIMENT"
 
             if rod_btn.clicked(event):
                 return "SELECT_ROD"
@@ -87,10 +97,11 @@ def run_lobby(screen, S, FPS=60):
 
         # --- Title ---
         title = title_font.render("Fishing DDA", True, (230, 230, 230))
-        screen.blit(title, title.get_rect(center=(S.WIDTH//2, S.HEIGHT//2 - 180 * S.scale)))
+        screen.blit(title, title.get_rect(center=(S.WIDTH//2, S.HEIGHT//2 - 220 * S.scale)))
 
         # --- Draw Buttons ---
         play_btn.draw(screen)
+        experiment_btn.draw(screen)
         rod_btn.draw(screen)
         log_btn.draw(screen)
         settings_btn.draw(screen)
