@@ -1,85 +1,109 @@
-# Adaptive Difficulty Fishing 🎣
+# Dynamic Difficulty Adjustment for Flow State Optimization in a Simulated Environment
 
-A research-oriented simulation project exploring **Dynamic Difficulty Adjustment (DDA)** algorithms within a fishing mechanic.
+## 1. Abstract
 
-This repository demonstrates how real-time user performance metrics can drive algorithmic adjustments to game parameters (specifically **Fish Speed**) to maintain an optimal "Flow State" for the player.
+This project presents a research tool designed to investigate the relationship between **Dynamic Difficulty Adjustment (DDA)** and the psychological concept of **Flow State** within a video game context. The simulator, developed using Pygame, implements a fishing mini-game where difficulty parameters are manipulated in real-time based on player performance. By comparing player experiences under fixed difficulty settings (Easy, Medium, Hard) against a DDA-driven model, this study aims to evaluate how algorithmic adjustments can foster a more consistent state of engagement, as described by Flow Theory. Data is collected through in-game performance metrics and post-session subjective surveys to provide a quantitative and qualitative analysis of the DDA's efficacy.
 
-## 🧪 Project Objective
+## 2. Research Objectives
 
-The primary goal is to study the relationship between **player performance** and **system adaptation**. The system logs gameplay data to analyze how the DDA algorithm responds to player skill variance.
+The primary objective is to determine whether a DDA system is more effective at inducing and maintaining a Flow State in players compared to traditional static difficulty levels.
 
-## ⚙️ Core Mechanics (The DDA Algorithm)
+This is achieved by:
+*   Exposing participants to four distinct, sequential gameplay conditions in a **fixed sequential order (EASY → MEDIUM → HARD → DDA)**.
+*   Measuring player performance objectively through in-game metrics (e.g., time-on-target).
+*   Collecting subjective feedback on player experience (Boredom, Frustration, Focus) using a mandatory mini-survey after each condition.
+*   Analyzing the resulting dataset to correlate difficulty models with player-reported states of engagement.
 
-The system continuously monitors the player's tracking status (`is_catching`) and adjusts the difficulty in real-time:
+## 3. Features for Research
 
-**Fish Speed (Temporal Difficulty):**
-* **Success (Catching):** The fish moves faster (Speed increases).
-* **Failure (Missing):** The fish slows down (Speed decreases).
+This simulator was built with specific features to ensure a controlled and effective research process:
 
-**Logic snippet:**
-> If `is_catching` is True: Increase Fish Speed (Max 3.0)
-> Else: Decrease Fish Speed (Min 0.5)
+*   **Fixed Sequential Experiment Loop:** The system automatically guides the participant through the four required conditions in a fixed order (EASY → MEDIUM → HARD → DDA) to ensure consistent data collection.
+*   **Controlled Variables:** To eliminate confounding variables, all experiment sessions lock the fish type to **"Shrimp"** and disable any special abilities from equipped fishing rods, ensuring that the only variable being tested is the difficulty algorithm.
+*   **Mini-Survey Integration:** A brief, mandatory survey is presented after each of the four gameplay modes. This allows for the immediate capture of subjective feedback on Boredom, Frustration, and Focus, linking a player's psychological state directly to the condition they just experienced.
+*   **Automated CSV Data Logging:** All experimental data, including a timestamp, the participant's unique ID, the difficulty condition, the win/loss outcome, and their survey responses are automatically logged to a single, clean CSV file (`experiment_results.csv`) for straightforward analysis.
 
-*(Note: Currently, the Bar Width is fixed at 120px and defined in `config.py`)*
-
-## 🎮 Controls & Physics
-
-The game simulates a fishing bar fighting against a water current.
-* **Mouse Click (Hold):** Apply force to move the bar to the **Right**.
-* **Release Mouse:** The bar naturally drifts to the **Left** due to current/friction.
-
-**Goal:** Keep the green bar overlapping with the red fish to fill the progress bar.
-
-## 📂 Repository Structure
-
-* `main.py`: Entry point of the application.
-* `game.py`: Handles the main game loop, physics engine, and rendering.
-* `dda.py`: Contains the Dynamic Difficulty Adjustment logic.
-* `config.py`: Stores constant variables (Screen size, Colors, Fixed physics values).
-* `logger.py`: Handles data recording during the session.
-* `fish_data.json` & `get_info.py`: Database of fish types with different resilience traits.
-* `plot_graph.py`: Visualization script to generate performance charts.
-* `dda_result.csv`: (Generated Output) Raw gameplay data.
-* `dda_graph.png`: (Generated Output) Visualization of the session.
-
-## 🚀 Getting Started
+## 4. Installation & Setup
 
 ### Prerequisites
+*   Python 3.8+
+*   Git
 
-* Python 3.x
-* Required libraries:
+### Installation Steps
+
+1.  **Clone the repository:**
     ```bash
-    pip install pygame pandas matplotlib
+    git clone <repository-url>
+    cd <repository-directory>
     ```
 
-### Usage
+2.  **Create a virtual environment (recommended):**
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+    ```
 
-1.  **Run the Simulation:**
-    Start the game and play.
+3.  **Install required libraries:**
+    The project requires several libraries for the simulation, data handling, and plotting.
+    ```bash
+    pip install pygame pandas numpy matplotlib
+    ```
+
+## 5. How to Conduct the Experiment
+
+This guide provides the exact steps for a researcher or participant to complete one full experimental session.
+
+1.  **Launch the Program:**
+    From the project's root directory, run the `main.py` script.
     ```bash
     python main.py
     ```
 
-2.  **Analyze the Data:**
-    After closing the simulation (or finishing the catch), a CSV file is generated. Run the analysis script:
-    ```bash
-    python plot_graph.py
-    ```
+2.  **Start the Experiment:**
+    In the main lobby screen, click the **"EXPERIMENT"** button. This will initiate the sequential research session.
 
-3.  **View Results:**
-    Check `dda_graph.png` to see the visualization of your performance vs. fish speed adaptation.
+3.  **Play Through the Four Conditions:**
+    You will be automatically presented with four fishing sessions. Play each one to the best of your ability. The order is fixed:
+    *   **Condition 1: EASY**
+    *   **Condition 2: MEDIUM**
+    *   **Condition 3: HARD**
+    *   **Condition 4: DDA**
 
-## 📊 Data Visualization
+4.  **Complete the Post-Game Surveys:**
+    After *each* of the four sessions, a survey will appear on the screen. You **must answer the questions by pressing the number keys (1 to 5) on the keyboard, and it will automatically proceed.**
 
-The analysis script produces a dual-axis chart:
-* **Top Chart:** Binary Player State (Green = Catching, Red = Missing).
-* **Bottom Chart:** Difficulty Curve (Inverted Y-axis logic applied if plotting bar size, or standard for speed).
+5.  **Session Completion:**
+    After the final survey (following the DDA round), the experiment is complete. The application will automatically return to the main lobby. You can now safely close the program. All data has been saved.
 
-## 🛠 Tech Stack
+## 6. Data Output
 
-* **Simulation:** Pygame
-* **Data Processing:** Pandas, CSV module
-* **Visualization:** Matplotlib
+The results of the experiment are saved in the `experiment_results.csv` file in the root directory. Each row in this file represents a single participant's experience in one of the four conditions.
 
----
-*Developed for Educational & Research Purposes in Game Mechanics.*
+The columns are defined as follows:
+
+| Column Name       | Type    | Description                                                                 |
+|-------------------|---------|-----------------------------------------------------------------------------|
+| `Timestamp`       | String  | The date and time the session was completed.                                |
+| `Player_ID`       | String  | A unique identifier (UUID) assigned to each participant for the session.    |
+| `Mode_Played`     | String  | The difficulty condition being tested (`EASY`, `MEDIUM`, `HARD`, or `DDA`).   |
+| `Win_Loss`        | String  | The outcome of the mini-game for that condition (`WIN` or `LOSS`).            |
+| `Q1_Boredom`      | Integer | The participant's self-reported boredom level (1-5 scale).                  |
+| `Q2_Frustration`  | Integer | The participant's self-reported frustration level (1-5 scale).              |
+| `Q3_Flow`         | Integer | The participant's self-reported focus/flow state (1-5 scale).               |
+
+This structured output is designed for easy import into statistical analysis software like R, SPSS, or Python libraries such as Pandas and SciPy.
+
+## 7. Data Visualization
+
+After collecting data, you can automatically generate a set of professional, poster-ready graphs by running the `plot_graph.py` script.
+
+**To generate the graphs:**
+```bash
+python plot_graph.py
+```
+
+This will read the `experiment_results.csv` file and produce the following three images inside the `Graph/` directory:
+
+*   `Graph/graph_flow.png`: A bar chart showing the average "Flow" score for each of the four difficulty modes.
+*   `Graph/graph_emotion.png`: A grouped bar chart comparing the average "Boredom" and "Frustration" scores side-by-side for each mode.
+*   `Graph/graph_winrate.png`: A bar chart showing the win rate percentage for each mode.
