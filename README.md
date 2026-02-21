@@ -33,8 +33,8 @@ This simulator was built with specific features to ensure a controlled and effec
 
 1.  **Clone the repository:**
     ```bash
-    git clone <repository-url>
-    cd <repository-directory>
+    git clone https://github.com/TWFILM/Adaptive-Difficulty-Fishing.git
+    cd Adaptive-Difficulty-Fishing
     ```
 
 2.  **Create a virtual environment (recommended):**
@@ -60,7 +60,7 @@ This guide provides the exact steps for a researcher or participant to complete 
     ```
 
 2.  **Start the Experiment:**
-    In the main lobby screen, click the **"EXPERIMENT"** button. This will initiate the sequential research session.
+    In the main lobby screen, click the **"START EXPERIMENT"** button. This will initiate the sequential research session.
 
 3.  **Play Through the Four Conditions:**
     You will be automatically presented with four fishing sessions. Play each one to the best of your ability. The order is fixed:
