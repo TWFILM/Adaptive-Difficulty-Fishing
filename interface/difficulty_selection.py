@@ -3,6 +3,7 @@ import pygame
 import os
 from gameData.config import *
 from utils.load_audio import play_button_sfx
+from utils.load_img import load_ui_image    
 
 # ใช้ Font เดียวกับในเกม (อิงจาก path ใน game.py)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -21,14 +22,17 @@ def run_difficulty_selection(screen, S):
     font_title = pygame.font.Font(FONT_PATH, int(30 * S.scale))
     font_btn = pygame.font.Font(FONT_PATH, int(20 * S.scale))
 
+    bg_img = load_ui_image("bg2.png")
+    bg_img = pygame.transform.scale(bg_img, (S.WIDTH, S.HEIGHT))
+
     running = True
     selected_difficulty = "DDA" # Default fallback
 
     while running:
-        screen.fill(BG_COLOR)
+        screen.blit(bg_img, (0, 0))
         
         # Title
-        draw_text_centered(screen, "SELECT DIFFICULTY", font_title, (255, 255, 255), S.WIDTH // 2, S.HEIGHT * 0.2)
+        draw_text_centered(screen, "SELECT DIFFICULTY", font_title, (51, 25, 0), S.WIDTH // 2, S.HEIGHT * 0.2)
 
         mouse_pos = pygame.mouse.get_pos()
         

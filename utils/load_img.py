@@ -4,6 +4,7 @@ import time
 import os
 import random
 from gameData.config import BASE_WIDTH, BASE_HEIGHT
+from utils.gadgets import Button, Switch
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -86,3 +87,12 @@ def load_icon_image():
     except Exception as e:
         print("[ICON LOAD ERROR]:", e)
         return None
+    
+def load_ui_image(filename):
+    ui_path = os.path.join(BASE_DIR, "assets", "images", "ui", filename)
+
+    if not os.path.exists(ui_path):
+        raise FileNotFoundError(f"UI image not found: {filename}")
+
+    return pygame.image.load(ui_path).convert_alpha()
+

@@ -3,6 +3,7 @@ import os
 
 from gameData.config import BG_COLOR
 from gameData.get_info import get_rod_des, get_locked_rod_info
+from utils.load_img import load_ui_image
 from utils.save_writer import SaveManager
 from utils.gadgets import Button, RodCard
 from utils.load_audio import play_unlock_sfx, play_warned_sfx
@@ -11,11 +12,7 @@ from utils.load_audio import play_unlock_sfx, play_warned_sfx
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 
-FONT_PATH1 = os.path.join(
-    ROOT_DIR, "assets", "fonts", "Underlines-PVjX2.ttf"
-)
-
-FONT_PATH2 = os.path.join(
+FONT_PATH = os.path.join(
     ROOT_DIR, "assets", "fonts", "RasterForgeRegular-JpBgm.ttf"
 )
 
@@ -30,12 +27,16 @@ def run_rod_selection(screen, S, unlocked_rods, FPS=60):
     pygame.display.set_caption("Rod Selection")
     clock = pygame.time.Clock()
 
+    button_img = load_ui_image("button.png")
+    bg_img = load_ui_image("bg3.png")
+    bg_img = pygame.transform.scale(bg_img, (S.WIDTH, S.HEIGHT))
+
     # ── FONTS ───────────────────────
-    title_font = pygame.font.Font(FONT_PATH1, int(48*S.scale))
-    card_title_font = pygame.font.Font(FONT_PATH2, int(23*S.scale))
-    card_desc_font = pygame.font.Font(FONT_PATH2, int(16*S.scale))
-    btn_font = pygame.font.Font(FONT_PATH2, int(26*S.scale)) 
-    status_font = pygame.font.Font(FONT_PATH2, int(20*S.scale))
+    title_font = pygame.font.Font(FONT_PATH, int(48*S.scale))
+    card_title_font = pygame.font.Font(FONT_PATH, int(23*S.scale))
+    card_desc_font = pygame.font.Font(FONT_PATH, int(16*S.scale))
+    btn_font = pygame.font.Font(FONT_PATH, int(26*S.scale)) 
+    status_font = pygame.font.Font(FONT_PATH, int(20*S.scale))
 
     # ── LAYOUT ──────────────────────
     CARD_WIDTH = int(S.WIDTH * 0.8)
@@ -72,21 +73,24 @@ def run_rod_selection(screen, S, unlocked_rods, FPS=60):
 
     # ── BUTTONS ─────────────────────
     back_btn = Button(
-        rect=(S.WIDTH * 0.18 - 80, S.HEIGHT * 0.80, 160, 60),
+        rect=(S.WIDTH * 0.18 - 80, S.HEIGHT * 0.80, 160, 80),
         text="BACK",
-        font=btn_font
+        font=btn_font,
+        image=button_img
     )
 
     next_btn = Button(
-        rect=(S.WIDTH * 0.82 - 80, S.HEIGHT * 0.80, 160, 60),
+        rect=(S.WIDTH * 0.82 - 80, S.HEIGHT * 0.80, 160, 80),
         text="NEXT",
-        font=btn_font
+        font=btn_font,
+        image=button_img
     )
 
     center_btn = Button(
-        rect=(S.WIDTH // 2 - 90, S.HEIGHT * 0.80, 180, 60),
+        rect=(S.WIDTH // 2 - 90, S.HEIGHT * 0.80, 180, 80),
         text="SELECT",
         font=btn_font
+        ,image=button_img
     )
     page_index = 0      # หน้า
     cursor = 0          # 0 = card บน, 1 = card ล่าง
@@ -173,14 +177,14 @@ def run_rod_selection(screen, S, unlocked_rods, FPS=60):
                     return "LOBBY"
 
         # ── DRAW ─────────────────────
-        screen.fill(BG_COLOR)
+        screen.blit(bg_img, (0, 0))
 
         start = page_index * PAGE_SIZE
         visible_rods = rod_data[start : start + PAGE_SIZE]
 
 
         # Title
-        title = title_font.render("Rod Selection", True, (240, 240, 240))
+        title = title_font.render("Rod Selection", True, (51,25,0))
         screen.blit(
             title,
             title.get_rect(center=(S.WIDTH // 2, S.HEIGHT * 0.1))

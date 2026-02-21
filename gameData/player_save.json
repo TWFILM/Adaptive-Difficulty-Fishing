@@ -1,9 +1,12 @@
 {
     "player": {
         "rod": "Novice Rod",
-        "catched_fish": [],
-        "total_catched": 0,
-        "catched_streak": 0,
+        "catched_fish": [
+            "Mullet",
+            "Amberjack"
+        ],
+        "total_catched": 2,
+        "catched_streak": 2,
         "perfect_catches": 0,
         "unlocked_rods": [
             "Novice Rod"
@@ -17,6 +20,6 @@
         "height": 800,
         "gameplay": "horizontal",
         "sfx": true,
-        "FPS": 60
+        "FPS": 90
     }
 }

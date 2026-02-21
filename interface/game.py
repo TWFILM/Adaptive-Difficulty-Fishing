@@ -328,10 +328,28 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
 
         # --- Render ---
         screen.fill(BG_COLOR)
-        pygame.draw.rect(screen, TRACK_COLOR, (S.TRACK_X, S.TRACK_Y, S.TRACK_WIDTH, S.TRACK_HEIGHT))
+        pygame.draw.rect(screen, TRACK_COLOR, (S.TRACK_X, S.TRACK_Y + 5 * S.scale, S.TRACK_WIDTH, S.TRACK_HEIGHT - 10 * S.scale))
         
-        bar_draw_color = (100, 255, 100) if is_catching else BAR_COLOR
-        pygame.draw.rect(screen, bar_draw_color, (bar_x, bar_y, player_bar_width, S.BAR_HEIGHT))
+        bar_draw_color = (255, 210, 85) if is_catching else BAR_COLOR
+        rect = pygame.Rect(bar_x, bar_y, player_bar_width, S.BAR_HEIGHT)
+        radius = int(3 * S.scale)
+        aplha_surf = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA)
+        
+        if is_catching:    
+            pygame.draw.rect(aplha_surf, (*bar_draw_color, 255), (0, 0, rect.width, rect.height), border_radius=radius)
+            screen.blit(aplha_surf, rect.topleft)
+            pygame.draw.rect(screen, (255, 188, 0), rect, width=int(3 * S.scale), border_radius=radius)
+        else:
+            pygame.draw.rect(aplha_surf, (*bar_draw_color, 220), (0, 0, rect.width, rect.height), border_radius=radius)
+            screen.blit(aplha_surf, rect.topleft)
+
+        # Outer frame (dark)
+        
+
+        # Inner highlight (light)
+        # inner_rect = rect.inflate(-int(4 * S.scale), -int(4 * S.scale))
+        # pygame.draw.rect(screen, (120, 120, 120), inner_rect, width=1, border_radius=radius)
+
         pygame.draw.rect(screen, FISH_COLOR, (fish_x, fish_y_draw, S.FISH_SIZE, fish_height), border_radius=3)
         
         if rod_using["name"] == "Prismatic Rod":

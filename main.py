@@ -6,6 +6,7 @@ import os
 from interface.bestiary import run_bestiary
 from interface.game import run_game
 from interface.game_vertical import run_game_vertical
+from interface.how_to_play import run_how_to_play
 from interface.lobby import run_lobby
 from interface.rod_selection import run_rod_selection
 from interface.setting import run_settings
@@ -21,6 +22,7 @@ from utils.load_img import load_icon_image
 
 load_sfx()
 
+
 DEFAULT_SETTINGS = {
     "width": 600,
     "height": 800,
@@ -33,6 +35,7 @@ def main():
 
     logger = DataLogger()
     state = "LOBBY"
+
     
     play_lobby_sfx()
 
@@ -134,6 +137,9 @@ def main():
 
         elif state == "SETTINGS":
             state = run_settings(screen, S, settings_data)
+        
+        elif state == "HOW_TO_PLAY":
+            state = run_how_to_play(screen, S, settings_data["FPS"])
 
     stop_lobby_sfx()
     pygame.quit()
