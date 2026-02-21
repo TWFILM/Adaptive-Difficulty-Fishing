@@ -9,7 +9,7 @@ from gameData.config import *
 from dda import DDAManager, update_fish_speed
 from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
 from utils.load_img import *
-from utils.load_audio import trigger_jumpscare, play_stab_sfx, stop_meme_sfx
+from utils.load_audio import trigger_jumpscare, play_stab_sfx, stop_meme_sfx, play_meme_sfx
 from utils.save_writer import SaveManager
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -24,6 +24,9 @@ FONT_PATH1 = os.path.join(
 
 def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
     pygame.init()
+
+    if rod_name == "Meme Rod":
+        play_meme_sfx()
 
     # Create font
     try:
@@ -407,39 +410,85 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
         # clock.tick(FPS)
 
     logger.export()
+
+    # --- Result Screen ---
     if success[0]:
-        msg = f"You caught the {fish_encounter['rarity']} {fish_encounter['name']}!"
-        text_surf = font.render(msg, True, (200, 200, 200))
-        screen.blit(text_surf, ((S.WIDTH - text_surf.get_width()) // 2, S.HEIGHT // 2))
-        
         if not fish_encounter["name"] in save.data["player"]["catched_fish"]:
             save.data["player"]["catched_fish"].append(fish_encounter["name"])
-
         save.data["player"]["total_catched"] += 1
         save.data["player"]["catched_streak"] += 1
         if is_perfect_catch:
             save.data["player"]["perfect_catches"] += 1
         save.save()
-        pygame.display.flip()
-        time.sleep(3)
-    else :
-        msg = "The fish got away..."
-        text_surf = font.render(msg, True, (200, 200, 200))
-        screen.blit(text_surf, ((S.WIDTH - text_surf.get_width()) // 2, S.HEIGHT // 2))
-
+    else:
         save.data["player"]["catched_streak"] = 0
         save.save()
-        pygame.display.flip()
-        time.sleep(2)
+
+    if rod_using["name"] == "Meme Rod":
+        stop_meme_sfx()
 
     if rod_using["name"] == "Meme Rod" and success[0] is True and 3 in choices:
-        stop_meme_sfx()
         trigger_jumpscare(meme_fish=False)
         run_end_screen_meme(screen, clock, duration=4, meme_fish=False)
-    
+
     if fish_encounter["name"] == "Meme Fish" and success[0] is False:
         trigger_jumpscare(meme_fish=True)
         run_end_screen_meme(screen, clock, duration=4, meme_fish=True)
 
-    pygame.quit()
-    return success
+    # Button setup
+    button_font = pygame.font.Font(FONT_PATH1, int(24 * S.scale))
+    retry_button = pygame.Rect(S.WIDTH // 2 - 150 * S.scale, S.HEIGHT - 100 * S.scale, 120 * S.scale, 50 * S.scale)
+    lobby_button = pygame.Rect(S.WIDTH // 2 + 30 * S.scale, S.HEIGHT - 100 * S.scale, 240 * S.scale, 50 * S.scale)
+
+    result_running = True
+    while result_running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "QUIT"
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if retry_button.collidepoint(event.pos):
+                    return "RETRY"
+                if lobby_button.collidepoint(event.pos):
+                    return "LOBBY"
+
+        screen.fill(BG_COLOR)
+
+        if success[0]:
+            # Display fish info
+            msg = f"You caught a {fish_encounter['rarity']} {fish_encounter['name']}!"
+            text_surf = font.render(msg, True, (200, 200, 200))
+            text_rect = text_surf.get_rect(center=(S.WIDTH // 2, S.HEIGHT // 2 - 100 * S.scale))
+            screen.blit(text_surf, text_rect)
+
+            # Load and display fish image
+            fish_image_path = os.path.join(ROOT_DIR, "assets", "images", "fishes", f"{fish_encounter['name']}.png")
+            try:
+                fish_img = pygame.image.load(fish_image_path).convert_alpha()
+                img_width, img_height = fish_img.get_size()
+                scaled_img = pygame.transform.scale(fish_img, (int(img_width * 0.75), int(img_height * 0.75)))
+                img_rect = scaled_img.get_rect(center=(S.WIDTH // 2, S.HEIGHT // 2))
+                screen.blit(scaled_img, img_rect)
+            except pygame.error:
+                # Fallback if image not found
+                fallback_text = font.render("(Image not found)", True, (200, 200, 200))
+                fallback_rect = fallback_text.get_rect(center=(S.WIDTH // 2, S.HEIGHT // 2))
+                screen.blit(fallback_text, fallback_rect)
+
+        else:
+            msg = "The fish got away..."
+            text_surf = font.render(msg, True, (200, 200, 200))
+            text_rect = text_surf.get_rect(center=(S.WIDTH // 2, S.HEIGHT // 2))
+            screen.blit(text_surf, text_rect)
+
+        # Draw buttons
+        pygame.draw.rect(screen, (0, 150, 0), retry_button)
+        pygame.draw.rect(screen, (150, 0, 0), lobby_button)
+
+        retry_text = button_font.render("RETRY", True, (255, 255, 255))
+        lobby_text = button_font.render("BACK TO LOBBY", True, (255, 255, 255))
+
+        screen.blit(retry_text, retry_text.get_rect(center=retry_button.center))
+        screen.blit(lobby_text, lobby_text.get_rect(center=lobby_button.center))
+
+        pygame.display.flip()
+        clock.tick(FPS)
