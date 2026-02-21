@@ -22,7 +22,7 @@ FONT_PATH1 = os.path.join(
     "RasterForgeRegular-JpBgm.ttf"
 )
 
-def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=False):
+def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=False):
     pygame.init()
 
     if rod_name == "Meme Rod":
@@ -333,7 +333,7 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA", is_expe
             # Legacy speed update for non-DDA modes
             fish_speed = update_fish_speed(is_catching, fish_speed)
 
-        logger.log(player_bar_width, fish_speed, is_catching)
+
 
         # --- Render ---
         screen.fill(BG_COLOR)
@@ -397,7 +397,7 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA", is_expe
         pygame.display.flip()
         # clock.tick(FPS)
 
-    logger.export()
+
 
     # --- Result Screen ---
     if success[0]:

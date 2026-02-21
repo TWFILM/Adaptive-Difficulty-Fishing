@@ -12,7 +12,7 @@ from interface.rod_selection import run_rod_selection
 from interface.setting import run_settings
 from interface.difficulty_selection import run_difficulty_selection
 from interface.survey import run_survey
-from logger import DataLogger
+
 
 import pygame
 from utils.scaler import build_scaled_config
@@ -35,7 +35,6 @@ DEFAULT_SETTINGS = {
 def main():
     pygame.init()
 
-    logger = DataLogger()
     state = "LOBBY"
     
     play_lobby_sfx()
@@ -105,9 +104,9 @@ def main():
                 screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
 
                 if axis == "horizontal":
-                    game_result = run_game(screen, S, logger, rod_name, settings_data["FPS"], mode, is_experiment=True)
+                    game_result = run_game(screen, S, rod_name, settings_data["FPS"], mode, is_experiment=True)
                 else:
-                    game_result = run_game_vertical(screen, S, logger, rod_name, settings_data["FPS"], mode, is_experiment=True)
+                    game_result = run_game_vertical(screen, S, rod_name, settings_data["FPS"], mode, is_experiment=True)
 
                 win_loss = "WIN" if game_result[0] else "LOSS"
                 
@@ -134,9 +133,9 @@ def main():
             screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
 
             if axis == "horizontal":
-                game_result = run_game(screen, S, logger, rod_name, settings_data["FPS"], current_difficulty, is_experiment=False)
+                game_result = run_game(screen, S, rod_name, settings_data["FPS"], current_difficulty, is_experiment=False)
             else:
-                game_result = run_game_vertical(screen, S, logger, rod_name, settings_data["FPS"], current_difficulty, is_experiment=False)
+                game_result = run_game_vertical(screen, S, rod_name, settings_data["FPS"], current_difficulty, is_experiment=False)
 
             if game_result == "RETRY":
                 state = "GAME"
