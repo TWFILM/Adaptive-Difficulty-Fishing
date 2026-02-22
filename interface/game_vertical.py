@@ -28,6 +28,17 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
     pygame.display.set_caption(f"DDA Experiment - Mode: {difficulty_mode}") 
     clock = pygame.time.Clock()
     font = pygame.font.Font(FONT_PATH, int(18 * S.scale))
+    
+    btn_font = pygame.font.Font(FONT_PATH, int(24 * S.scale))
+    button_img = load_ui_image("button.png")
+
+    button_width = 220 * S.scale
+    button_height = 60 * S.scale
+    button_gap = 40 * S.scale
+
+    total_width = button_width * 2 + button_gap
+    start_x = S.WIDTH // 2 - total_width // 2
+    y_pos = S.HEIGHT - 200 * S.scale
 
     # LOAD SAVE DATA
     save = SaveManager()
@@ -344,10 +355,42 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
         )
 
         
-        pygame.draw.rect(
-            screen, BAR_COLOR,
-            (bar_x, bar_y, S.BAR_WIDTH, player_bar_height)
+        bar_draw_color = (255, 210, 85) if is_catching else BAR_COLOR
+        rect = pygame.Rect(
+            bar_x, 
+            bar_y, 
+            S.BAR_WIDTH, 
+            player_bar_height
         )
+
+        radius = int(3 * S.scale)
+
+        alpha_surf = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA)
+
+        if is_catching:
+            pygame.draw.rect(
+                alpha_surf,
+                (*bar_draw_color, 255),
+                (0, 0, rect.width, rect.height),
+                border_radius=radius
+            )
+            screen.blit(alpha_surf, rect.topleft)
+
+            pygame.draw.rect(
+                screen,
+                (255, 188, 0),
+                rect,
+                width=int(3 * S.scale),
+                border_radius=radius
+            )
+        else:
+            pygame.draw.rect(
+                alpha_surf,
+                (*bar_draw_color, 220),
+                (0, 0, rect.width, rect.height),
+                border_radius=radius
+            )
+            screen.blit(alpha_surf, rect.topleft)
 
         pygame.draw.rect(
             screen,
@@ -399,11 +442,9 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
         )
 
         pygame.draw.rect(
-            screen, progress_color,
-            (S.PROGRESS_BAR_X,
-             S.PROGRESS_BAR_Y + S.PROGRESS_BAR_HEIGHT * (1 - progress),
-             S.PROGRESS_BAR_WIDTH,
-             S.PROGRESS_BAR_HEIGHT * progress)
+            screen,
+            progress_color,
+            (S.PROGRESS_BAR_X, S.PROGRESS_BAR_Y + (S.PROGRESS_BAR_HEIGHT - int(S.PROGRESS_BAR_HEIGHT * progress)), S.PROGRESS_BAR_WIDTH, int(S.PROGRESS_BAR_HEIGHT * progress))
         )
 
         if fish_progress != 0:
@@ -458,9 +499,29 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
         run_end_screen_meme(screen, clock, duration=4, meme_fish=True)
 
     # Button setup
-    button_font = pygame.font.Font(FONT_PATH, int(24 * S.scale))
-    retry_button = pygame.Rect(S.WIDTH // 2 - 150 * S.scale, S.HEIGHT - 100 * S.scale, 120 * S.scale, 50 * S.scale)
-    lobby_button = pygame.Rect(S.WIDTH // 2 + 30 * S.scale, S.HEIGHT - 100 * S.scale, 240 * S.scale, 50 * S.scale)
+    retry_button = Button(
+        rect=(
+            start_x,
+            y_pos,
+            button_width,
+            button_height
+        ),
+        text="RETRY",
+        font=btn_font,
+        image=button_img
+    )
+
+    lobby_button = Button(
+        rect=(
+            start_x + button_width + button_gap,
+            y_pos,
+            button_width,
+            button_height
+        ),
+        text="BACK TO LOBBY",
+        font=btn_font,
+        image=button_img
+    )
 
     result_running = True
     while result_running:
@@ -468,9 +529,9 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
             if event.type == pygame.QUIT:
                 return "QUIT"
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if retry_button.collidepoint(event.pos):
+                if retry_button.clicked(event):
                     return "RETRY"
-                if lobby_button.collidepoint(event.pos):
+                if lobby_button.clicked(event):
                     return "LOBBY"
 
         screen.fill(BG_COLOR)
@@ -506,11 +567,8 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
         pygame.draw.rect(screen, (0, 150, 0), retry_button)
         pygame.draw.rect(screen, (150, 0, 0), lobby_button)
 
-        retry_text = button_font.render("RETRY", True, (255, 255, 255))
-        lobby_text = button_font.render("BACK TO LOBBY", True, (255, 255, 255))
-
-        screen.blit(retry_text, retry_text.get_rect(center=retry_button.center))
-        screen.blit(lobby_text, lobby_text.get_rect(center=lobby_button.center))
+        retry_button.draw(screen)
+        lobby_button.draw(screen)
 
         pygame.display.flip()
         clock.tick(FPS)

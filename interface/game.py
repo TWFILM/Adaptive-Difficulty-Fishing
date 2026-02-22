@@ -15,7 +15,7 @@ from utils.save_writer import SaveManager
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 
-FONT_PATH1 = os.path.join(
+FONT_PATH = os.path.join(
     ROOT_DIR,
     "assets",
     "fonts",
@@ -30,13 +30,24 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
 
     # Create font
     try:
-        font = pygame.font.Font(FONT_PATH1, int(18 * S.scale))
+        font = pygame.font.Font(FONT_PATH, int(18 * S.scale))
     except:
         font = pygame.font.SysFont("arial", int(18 * S.scale))
 
     screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
     pygame.display.set_caption(f"DDA Experiment - Mode: {difficulty_mode}") 
     clock = pygame.time.Clock()
+    
+    btn_font = pygame.font.Font(FONT_PATH, int(24 * S.scale))
+    button_img = load_ui_image("button.png")
+
+    button_width = 220 * S.scale
+    button_height = 60 * S.scale
+    button_gap = 40 * S.scale
+
+    total_width = button_width * 2 + button_gap
+    start_x = S.WIDTH // 2 - total_width // 2
+    y_pos = S.HEIGHT - 200 * S.scale
 
     # LOAD SAVE DATA
     save = SaveManager()
@@ -436,9 +447,29 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
         run_end_screen_meme(screen, clock, duration=4, meme_fish=True)
 
     # Button setup
-    button_font = pygame.font.Font(FONT_PATH1, int(24 * S.scale))
-    retry_button = pygame.Rect(S.WIDTH // 2 - 150 * S.scale, S.HEIGHT - 100 * S.scale, 120 * S.scale, 50 * S.scale)
-    lobby_button = pygame.Rect(S.WIDTH // 2 + 30 * S.scale, S.HEIGHT - 100 * S.scale, 240 * S.scale, 50 * S.scale)
+    retry_button = Button(
+        rect=(
+            start_x,
+            y_pos,
+            button_width,
+            button_height
+        ),
+        text="RETRY",
+        font=btn_font,
+        image=button_img
+    )
+
+    lobby_button = Button(
+        rect=(
+            start_x + button_width + button_gap,
+            y_pos,
+            button_width,
+            button_height
+        ),
+        text="BACK TO LOBBY",
+        font=btn_font,
+        image=button_img
+    )
 
     result_running = True
     while result_running:
@@ -446,9 +477,9 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
             if event.type == pygame.QUIT:
                 return "QUIT"
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if retry_button.collidepoint(event.pos):
+                if retry_button.clicked(event):
                     return "RETRY"
-                if lobby_button.collidepoint(event.pos):
+                if lobby_button.clicked(event):
                     return "LOBBY"
 
         screen.fill(BG_COLOR)
@@ -481,14 +512,8 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
             screen.blit(text_surf, text_rect)
 
         # Draw buttons
-        pygame.draw.rect(screen, (0, 150, 0), retry_button)
-        pygame.draw.rect(screen, (150, 0, 0), lobby_button)
-
-        retry_text = button_font.render("RETRY", True, (255, 255, 255))
-        lobby_text = button_font.render("BACK TO LOBBY", True, (255, 255, 255))
-
-        screen.blit(retry_text, retry_text.get_rect(center=retry_button.center))
-        screen.blit(lobby_text, lobby_text.get_rect(center=lobby_button.center))
+        retry_button.draw(screen)
+        lobby_button.draw(screen)
 
         pygame.display.flip()
         clock.tick(FPS)

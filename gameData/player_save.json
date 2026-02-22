@@ -3,11 +3,13 @@
         "rod": "Novice Rod",
         "catched_fish": [
             "Mullet",
-            "Amberjack"
+            "Amberjack",
+            "Haddock",
+            "Sea Bass"
         ],
-        "total_catched": 2,
+        "total_catched": 7,
         "catched_streak": 2,
-        "perfect_catches": 0,
+        "perfect_catches": 2,
         "unlocked_rods": [
             "Novice Rod"
         ],
