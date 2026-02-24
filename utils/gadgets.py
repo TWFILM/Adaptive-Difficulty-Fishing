@@ -30,6 +30,28 @@ class Button:
 
         if self.rect.collidepoint(mouse_pos):
             screen.blit(self.hover_image, self.rect)
+            corner_color = (255, 200, 60)
+            thickness = 5
+            length = 18
+            r = -1  # offset radius from the corner
+
+            x, y, w, h = self.rect
+
+            # ── Top Left ──
+            pygame.draw.line(screen, corner_color, (x-r, y-r), (x-r+length, y-r), thickness)
+            pygame.draw.line(screen, corner_color, (x-r, y-r), (x-r, y-r+length), thickness)
+
+            # ── Top Right ──
+            pygame.draw.line(screen, corner_color, (x+w+r, y-r), (x+w+r-length, y-r), thickness)
+            pygame.draw.line(screen, corner_color, (x+w+r, y-r), (x+w+r, y-r+length), thickness)
+
+            # ── Bottom Left ──
+            pygame.draw.line(screen, corner_color, (x-r, y+h+r), (x-r+length, y+h+r), thickness)
+            pygame.draw.line(screen, corner_color, (x-r, y+h+r), (x-r, y+h+r-length), thickness)
+
+            # ── Bottom Right ──
+            pygame.draw.line(screen, corner_color, (x+w+r, y+h+r), (x+w+r-length, y+h+r), thickness)
+            pygame.draw.line(screen, corner_color, (x+w+r, y+h+r), (x+w+r, y+h+r-length), thickness)
         else:
             screen.blit(self.image, self.rect)
 
@@ -268,6 +290,27 @@ class FishCard:
             self.rect.width - 32
         )
 
+        mouse_pos = pygame.mouse.get_pos()
+        is_hover_img = self.img_rect and self.img_rect.collidepoint(mouse_pos)
+        if is_hover_img:
+            corner_color = (51, 25, 0)
+            thickness = 3
+            length = 14
+
+            x, y, w, h = self.img_rect
+
+            pygame.draw.line(screen, corner_color, (x, y), (x+length, y), thickness)
+            pygame.draw.line(screen, corner_color, (x, y), (x, y+length), thickness)
+
+            pygame.draw.line(screen, corner_color, (x+w, y), (x+w-length, y), thickness)
+            pygame.draw.line(screen, corner_color, (x+w, y), (x+w, y+length), thickness)
+
+            pygame.draw.line(screen, corner_color, (x, y+h), (x+length, y+h), thickness)
+            pygame.draw.line(screen, corner_color, (x, y+h), (x, y+h-length), thickness)
+
+            pygame.draw.line(screen, corner_color, (x+w, y+h), (x+w-length, y+h), thickness)
+            pygame.draw.line(screen, corner_color, (x+w, y+h), (x+w, y+h-length), thickness)
+
     # ── CLICK CHECK ─────────────────
     def image_clicked(self, event):
         return (
@@ -325,6 +368,30 @@ class RodCard:
         pygame.draw.rect(screen, bg, self.rect, border_radius=18)
         pygame.draw.rect(screen, (51,25,0), self.rect, 3, border_radius=18)
 
+        if self.selected:
+            corner_color = (255, 200, 60)
+            thickness = 5
+            length = 18
+            r = 10  # offset radius from the corner
+
+            x, y, w, h = self.rect
+
+            # ── Top Left ──
+            pygame.draw.line(screen, corner_color, (x-r, y-r), (x-r+length, y-r), thickness)
+            pygame.draw.line(screen, corner_color, (x-r, y-r), (x-r, y-r+length), thickness)
+
+            # ── Top Right ──
+            pygame.draw.line(screen, corner_color, (x+w+r, y-r), (x+w+r-length, y-r), thickness)
+            pygame.draw.line(screen, corner_color, (x+w+r, y-r), (x+w+r, y-r+length), thickness)
+
+            # ── Bottom Left ──
+            pygame.draw.line(screen, corner_color, (x-r, y+h+r), (x-r+length, y+h+r), thickness)
+            pygame.draw.line(screen, corner_color, (x-r, y+h+r), (x-r, y+h+r-length), thickness)
+
+            # ── Bottom Right ──
+            pygame.draw.line(screen, corner_color, (x+w+r, y+h+r), (x+w+r-length, y+h+r), thickness)
+            pygame.draw.line(screen, corner_color, (x+w+r, y+h+r), (x+w+r, y+h+r-length), thickness)
+
         # ── IMAGE ───────────────────
         img_x = self.rect.x + self.IMG_PAD
         img_y = self.rect.centery - self.IMG_BOX_H // 2
@@ -339,7 +406,7 @@ class RodCard:
         else:
             self.img_rect = pygame.Rect(img_x, img_y, self.IMG_BOX_W, self.IMG_BOX_H)
             pygame.draw.rect(screen, (30, 30, 30), self.img_rect, border_radius=8)
-
+    
         # ── TEXT ────────────────────
         text_x = img_x + self.IMG_BOX_W + 24
 
@@ -348,12 +415,26 @@ class RodCard:
 
         y = self.rect.y + 52
         stats = [
-            f"LUCK        {self.rod.get('LUCK', 'N/A')}",
-            f"CONTROL     {self.rod.get('CONTROLLED', 'N/A')}",
-            f"RESILIENCE  {self.rod.get('RESILIENCE', 'N/A')}",
+            ("LUCK", self.rod.get("LUCK")),
+            ("CONTROL", self.rod.get("CONTROLLED")),
+            ("RESILIENCE", self.rod.get("RESILIENCE")),
         ]
-        for s in stats:
-            screen.blit(self.small_font.render(s, True, (51,25,0)), (text_x, y))
+
+        for name, value in stats:
+
+            if value is None:
+                display_value = "N/A"
+            else:
+                if name == "CONTROL":
+                    display_value = format_number(value)
+                else:
+                    display_value = format_percent(value)
+
+            text = f"{name:<12} {display_value}"
+            screen.blit(
+                self.small_font.render(text, True, (51,25,0)),
+                (text_x, y)
+            )
             y += 22
 
         desc_lines = wrap_text(
@@ -366,6 +447,27 @@ class RodCard:
         for ln in desc_lines:
             screen.blit(self.small_font.render(ln, True, (51,25,0)), (text_x, dy))
             dy += 18
+        
+        mouse_pos = pygame.mouse.get_pos()
+        is_hover_img = self.img_rect and self.img_rect.collidepoint(mouse_pos)
+        if is_hover_img:
+            corner_color = (51, 25, 0)
+            thickness = 3
+            length = 14
+
+            x, y, w, h = self.img_rect
+
+            pygame.draw.line(screen, corner_color, (x, y), (x+length, y), thickness)
+            pygame.draw.line(screen, corner_color, (x, y), (x, y+length), thickness)
+
+            pygame.draw.line(screen, corner_color, (x+w, y), (x+w-length, y), thickness)
+            pygame.draw.line(screen, corner_color, (x+w, y), (x+w, y+length), thickness)
+
+            pygame.draw.line(screen, corner_color, (x, y+h), (x+length, y+h), thickness)
+            pygame.draw.line(screen, corner_color, (x, y+h), (x, y+h-length), thickness)
+
+            pygame.draw.line(screen, corner_color, (x+w, y+h), (x+w-length, y+h), thickness)
+            pygame.draw.line(screen, corner_color, (x+w, y+h), (x+w, y+h-length), thickness)
 
     def image_clicked(self, event):
         return (

@@ -22,7 +22,7 @@ FONT_PATH = os.path.join(
     "RasterForgeRegular-JpBgm.ttf"
 )
 
-def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
+def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=False):
     pygame.init()
 
     if rod_name == "Meme Rod":
@@ -41,8 +41,24 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
     btn_font = pygame.font.Font(FONT_PATH, int(24 * S.scale))
     button_img = load_ui_image("button.png")
 
-    button_width = 220 * S.scale
-    button_height = 60 * S.scale
+    bg_img = load_ui_image("game_bg.png")
+    bg_img = pygame.transform.scale(bg_img, (S.WIDTH, S.HEIGHT))
+    bg_img2 = load_ui_image("game_bg2.png")
+    bg_img2 = pygame.transform.scale(bg_img2, (S.WIDTH, S.HEIGHT))
+
+    fish_img = load_ui_image("fish.png")
+    fish_img = pygame.transform.scale(
+            fish_img,
+            (50 * S.scale, 45 * S.scale)
+        )
+    fish_img2 = load_ui_image("fish2.png")
+    fish_img2 = pygame.transform.scale(
+            fish_img2,
+            (50 * S.scale, 45 * S.scale)
+        )
+
+    button_width = 190 * S.scale
+    button_height = 80 * S.scale
     button_gap = 40 * S.scale
 
     total_width = button_width * 2 + button_gap
@@ -83,6 +99,12 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
     fish_resilience = fish_encounter["FISH_RESILIENCE"] + rod_using["RESILIENCE"]
     fish_progress = fish_encounter["PROGRESS_SPD"] + rod_using["PROGRESS_SPD"]
 
+    # If Experiment, fix type of fish to "Common" and remove rod bonuses for consistency
+    if is_experiment:
+        fish_encounter = get_fish("Common")
+        fish_resilience = fish_encounter["FISH_RESILIENCE"]
+        fish_progress = fish_encounter["PROGRESS_SPD"]
+
     # --- DDA MANAGER SETUP ---
     dda_manager = None
     if difficulty_mode == "DDA":
@@ -98,6 +120,7 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
         progress_addition = 0.26
         progress_bar_color = (255, 215, 0)
         mult = 0.5
+        fill_colors = 0
 
     if rod_using["name"] == "Shear Rod":
         knife_fill_remaining = 0.0
@@ -126,13 +149,9 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
         fish_speed = random.uniform(FISH_MIN_SPEED, FISH_MAX_SPEED)
 
     distance = random.randint(FISH_MOVE_MIN_DIST, FISH_MOVE_MAX_DIST)
-    fish_target_x = fish_x + fish_direction * distance
-    fish_target_x = max(
-        S.BAR_MIN_X + (S.FISH_SIZE+10),
-        min(S.BAR_MAX_X + S.BAR_WIDTH - (S.FISH_SIZE+10), fish_target_x)
-    )
+    fish_target_x = fish_x
 
-    fish_waiting = False
+    fish_waiting = True
     resilient_timer = 0.0
 
     bar_velocity = 0.0
@@ -171,9 +190,9 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
                     player_bar_width += player_bar_width * 0.005 
             if rod_using["name"] == "Anchor Rod" and is_anchor_active:
                 if is_catching:
-                    if player_bar_width > player_bar_width_before*0.4:
+                    if player_bar_width > player_bar_width_before*0.6:
                         player_bar_width -= 0.25
-                        fish_progress += 0.0003     
+                    fish_progress += 0.0003     
                 else:
                     is_anchor_active = False
                     fish_progress = fish_encounter["PROGRESS_SPD"]+rod_using["PROGRESS_SPD"]
@@ -338,10 +357,10 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
             # Legacy speed update for non-DDA modes
             fish_speed = update_fish_speed(is_catching, fish_speed)
 
-        logger.log(player_bar_width, fish_speed, is_catching)
+
 
         # --- Render ---
-        screen.fill(BG_COLOR)
+        screen.blit(bg_img, (0, 0))
         pygame.draw.rect(screen, TRACK_COLOR, (S.TRACK_X, S.TRACK_Y + 5 * S.scale, S.TRACK_WIDTH, S.TRACK_HEIGHT - 10 * S.scale))
         
         bar_draw_color = (255, 210, 85) if is_catching else BAR_COLOR
@@ -359,16 +378,23 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
 
         # Outer frame (dark)
         
-
-        # Inner highlight (light)
-        # inner_rect = rect.inflate(-int(4 * S.scale), -int(4 * S.scale))
-        # pygame.draw.rect(screen, (120, 120, 120), inner_rect, width=1, border_radius=radius)
-
         pygame.draw.rect(screen, FISH_COLOR, (fish_x, fish_y_draw, S.FISH_SIZE, fish_height), border_radius=3)
         
+        fish_rect = fish_img.get_rect(
+            center=(fish_x + S.FISH_SIZE // 2,
+                    fish_y_draw + fish_height // 2 - 55 * S.scale)
+        )
+
+        screen.blit(fish_img, fish_rect)
+
         if rod_using["name"] == "Prismatic Rod":
             if pygame.time.get_ticks() % 1000 < 800 :
-                pygame.draw.rect(screen, (255, 255, 255), (fish_target_x, bar_y + (S.TRACK_HEIGHT//2) - S.FISH_SIZE, S.FISH_SIZE, S.FISH_SIZE))
+                fish_rect2 = fish_img2.get_rect(
+                    center=(fish_target_x + S.FISH_SIZE // 2,
+                            fish_y_draw + fish_height // 2 - 55 * S.scale)
+                )
+                screen.blit(fish_img2, fish_rect2)
+                # pygame.draw.rect(screen, (255, 255, 255), (fish_target_x, bar_y + (S.TRACK_HEIGHT//2) - S.FISH_SIZE, S.FISH_SIZE, S.FISH_SIZE))
 
         if knife_active or conqueror_active:
             if conqueror_active:
@@ -376,6 +402,7 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
                 knife_length = int(S.FISH_SIZE * (mult))
                 knife_thickness = int(S.HEIGHT*2)
                 angle = 0 
+                fill_colors = min(fill_colors + 1, 255)
             else:
                 mult += 0.1
                 knife_length = int(S.FISH_SIZE//mult)
@@ -383,7 +410,10 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
                 angle = 0
 
             knife_surf = pygame.Surface((knife_length, knife_thickness), pygame.SRCALPHA)
-            knife_surf.fill(progress_bar_color)
+            if rod_using["name"] == "Shear Rod":
+                knife_surf.fill(progress_bar_color)
+            else:
+                knife_surf.fill((255, 215, fill_colors))
             knife_rotated = pygame.transform.rotate(knife_surf, angle)
             fish_y = bar_y + (S.FISH_SIZE * S.scale)
             fish_center_x = fish_x + (S.FISH_SIZE // 2)
@@ -395,7 +425,7 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
         pygame.draw.rect(screen, progress_bar_color, (S.WIDTH // 2 - S.PROGRESS_BAR_WIDTH // 2, S.PROGRESS_BAR_Y, int(S.PROGRESS_BAR_WIDTH * progress), S.PROGRESS_BAR_HEIGHT))
 
         info_text = f"Mode:{difficulty_mode} | Speed:{fish_speed:.2f} | Catching:{is_catching}"
-        gain_text = f"Gain Rate: {actual_gain:.5f}"
+        gain_text = f"Gain Rate: {actual_gain:.5f} | Catched Streaks: {CATCHED_STREAK:.0f}"
         screen.blit(font.render(info_text, True, (200, 200, 200)), (10, 10))
         screen.blit(font.render(gain_text, True, (255, 255, 0)), (10, 35))
 
@@ -420,7 +450,7 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
         pygame.display.flip()
         # clock.tick(FPS)
 
-    logger.export()
+
 
     # --- Result Screen ---
     if success[0]:
@@ -446,53 +476,70 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
         trigger_jumpscare(meme_fish=True)
         run_end_screen_meme(screen, clock, duration=4, meme_fish=True)
 
-    # Button setup
-    retry_button = Button(
-        rect=(
-            start_x,
-            y_pos,
-            button_width,
-            button_height
-        ),
-        text="RETRY",
-        font=btn_font,
-        image=button_img
-    )
+ 
+    # Create buttons based on mode
+    if is_experiment:
+        continue_button = Button(
+            rect=(
+                S.WIDTH // 2 - button_width // 2,
+                y_pos,
+                button_width,
+                button_height
+            ),
+            text="CONTINUE",
+            font=btn_font,
+            image=button_img
+        )
+    else:
+        retry_button = Button(
+            rect=(
+                start_x,
+                y_pos,
+                button_width,
+                button_height
+            ),
+            text="RETRY",
+            font=btn_font,
+            image=button_img
+        )
 
-    lobby_button = Button(
-        rect=(
-            start_x + button_width + button_gap,
-            y_pos,
-            button_width,
-            button_height
-        ),
-        text="BACK TO LOBBY",
-        font=btn_font,
-        image=button_img
-    )
-
+        lobby_button = Button(
+            rect=(
+                start_x + button_width + button_gap,
+                y_pos,
+                button_width,
+                button_height
+            ),
+            text="LOBBY",
+            font=btn_font,
+            image=button_img
+        )
     result_running = True
     while result_running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return "QUIT"
+                return "QUIT" if not is_experiment else success
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if retry_button.clicked(event):
-                    return "RETRY"
-                if lobby_button.clicked(event):
-                    return "LOBBY"
+                if is_experiment:
+                    if continue_button.clicked(event):
+                        return success
+                else:
+                    if retry_button.clicked(event):
+                        return "RETRY"
+                    if lobby_button.clicked(event):
+                        return "LOBBY"
 
-        screen.fill(BG_COLOR)
+        screen.blit(bg_img2, (0, 0))
 
         if success[0]:
             # Display fish info
             msg = f"You caught a {fish_encounter['rarity']} {fish_encounter['name']}!"
             text_surf = font.render(msg, True, (200, 200, 200))
-            text_rect = text_surf.get_rect(center=(S.WIDTH // 2, S.HEIGHT // 2 - 100 * S.scale))
+            text_rect = text_surf.get_rect(center=(S.WIDTH // 2, S.HEIGHT // 2 - 150 * S.scale))
             screen.blit(text_surf, text_rect)
 
             # Load and display fish image
-            fish_image_path = os.path.join(ROOT_DIR, "assets", "images", "fishes", f"{fish_encounter['name']}.png")
+            fish_image_path = os.path.join(ROOT_DIR, "assets", "images", "fishes", fish_encounter['img'])
             try:
                 fish_img = pygame.image.load(fish_image_path).convert_alpha()
                 img_width, img_height = fish_img.get_size()
@@ -512,8 +559,11 @@ def run_game(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
             screen.blit(text_surf, text_rect)
 
         # Draw buttons
-        retry_button.draw(screen)
-        lobby_button.draw(screen)
+        if is_experiment:
+            continue_button.draw(screen)
+        else:
+            retry_button.draw(screen)
+            lobby_button.draw(screen)
 
         pygame.display.flip()
         clock.tick(FPS)

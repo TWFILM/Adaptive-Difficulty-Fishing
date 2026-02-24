@@ -26,81 +26,100 @@ def run_lobby(screen, S, FPS=60):
     clock = pygame.time.Clock()
     
     button_img = load_ui_image("button.png")
+    play_button_img = load_ui_image("play_button.png")
+    quit_button_img = load_ui_image("quit_button.png")
     bg_img = load_ui_image("lobby_bg.png")
     bg_img = pygame.transform.scale(bg_img, (S.WIDTH, S.HEIGHT))
 
     title_font = pygame.font.Font(FONT_PATH, int(42 * S.scale))
     btn_font = pygame.font.Font(FONT_PATH, int(24 * S.scale))
+    ex_btn_font = pygame.font.Font(FONT_PATH, int(21 * S.scale))
 
+    start_x = int(S.WIDTH * 0.2)
+    start_y = int(S.HEIGHT * 0.2)
+    gap = int(90 * S.scale)
+    btn_w = int(190 * S.scale)
+    btn_h = int(85 * S.scale)
     # --- Buttons ---
-    play_btn = Button(
-        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 - 160 * S.scale, 180 * S.scale, 95 * S.scale),
-        text="PLAY",
-        font=btn_font,
-        image=button_img
-    )
+    buttons = [
+        ("PLAY", btn_font, "GAME"),
+        ("EXPERIMENT", ex_btn_font, "EXPERIMENT"),
+        ("ROD", btn_font, "SELECT_ROD"),
+        ("BESTIARY", btn_font, "FISH_LOG"),
+        ("SETTINGS", btn_font, "SETTINGS"),
+        ("QUIT", btn_font, "QUIT"),
+        ]
 
-    rod_btn = Button(
-        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 - 70 * S.scale, 180 * S.scale, 95 * S.scale),
-        text="ROD",
-        font=btn_font,
-        image=button_img
-    )
+    ui_buttons = []
 
-    log_btn = Button(
-        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 + 20 * S.scale, 180 * S.scale, 95 * S.scale),
-        text="BESTIARY",
-        font=btn_font,
-        image=button_img
-    )
-
-    settings_btn = Button(
-        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 + 110 * S.scale, 180 * S.scale, 95 * S.scale),
-        text="SETTINGS",
-        font=btn_font,
-        image=button_img
-    )
-
-    quit_btn = Button(
-        rect=(S.WIDTH//2 - 100 * S.scale, S.HEIGHT//2 + 200 * S.scale, 180 * S.scale, 95 * S.scale),
-        text="QUIT",
-        font=btn_font,
-        image=button_img
-    )
+    for i, (text, font_used, action) in enumerate(buttons):
+        if i == 0:
+            btn = Button(
+                rect=(
+                    start_x*0.87,
+                    start_y*0.85 + i * gap,
+                    btn_w*1.2,
+                    btn_h*1.2
+                ),
+                text=text,
+                font=font_used,
+                image=play_button_img
+            )
+        elif i == 5:
+            btn = Button(
+                rect=(
+                    start_x,
+                    start_y + i * (gap-5),
+                    btn_w,
+                    btn_h
+                ),
+                text=text,
+                font=font_used,
+                image=quit_button_img
+            )
+        else:
+            btn = Button(
+                rect=(
+                    start_x,
+                    start_y + i * (gap-5),
+                    btn_w,
+                    btn_h
+                ),
+                text=text,
+                font=font_used,
+                image=button_img
+            )
+        ui_buttons.append((btn, action))
 
     running = True
     while running:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return "QUIT"
-
-            if play_btn.clicked(event):
-                return "GAME"
-
-            if rod_btn.clicked(event):
-                return "SELECT_ROD"
-
-            if log_btn.clicked(event):
-                return "FISH_LOG"
-            
-            if settings_btn.clicked(event):
-                return "SETTINGS"
-
-            if quit_btn.clicked(event):
-                return "QUIT"
+            for btn, action in ui_buttons:
+                if btn.clicked(event):
+                    return action
 
         screen.blit(bg_img, (0, 0))
 
         # --- Title ---
-        title = title_font.render("Fishing DDA", True, (51,25,0))
-        screen.blit(title, title.get_rect(center=(S.WIDTH//2, S.HEIGHT//2 - 210 * S.scale)))
+        text = "Fishing DDA"
+        text_color = (51, 25, 0)
+        outline_color = (255, 255, 255)
+        title = title_font.render(text, True, text_color)
+        outline = title_font.render(text, True, outline_color)
+        title_rect = title.get_rect(
+            center=(start_x + 110 * S.scale, S.HEIGHT // 2 - 300 * S.scale)
+        )
+        thickness = 2
+        for dx in range(-thickness, thickness + 1):
+            for dy in range(-thickness, thickness + 1):
+                if dx != 0 or dy != 0:
+                    screen.blit(outline, title_rect.move(dx, dy))
 
+        screen.blit(title, title_rect)
+        
         # --- Draw Buttons ---
-        play_btn.draw(screen)
-        rod_btn.draw(screen)
-        log_btn.draw(screen)
-        settings_btn.draw(screen)
-        quit_btn.draw(screen)
+        for btn, _ in ui_buttons:
+            btn.draw(screen)
 
         pygame.display.flip()
         clock.tick(FPS)

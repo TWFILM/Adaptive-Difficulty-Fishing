@@ -19,7 +19,7 @@
             "desc": "This Rod has a chance to stab the fish.", "img": "shear.png" }
     ,
     "Anchor Rod" : 
-        { "name": "Anchor Rod", "CONTROLLED": 0.55, 
+        { "name": "Anchor Rod", "CONTROLLED": 0.68, 
                 "RESILIENCE": 1, "PROGRESS_SPD": 0, "LUCK": 0.35, 
                 "desc": "So heavy..", "img": "anchor.png" }
     ,
@@ -31,7 +31,7 @@
     "Rod of the Conqueror":
         { "name": "Rod of the Conqueror", "CONTROLLED": 1.85, 
             "RESILIENCE": 0.7, "PROGRESS_SPD": 0, "LUCK": 1.25, 
-            "desc": "This Rod will significantly fill the progression bar.", "img": "meme1.png" }
+            "desc": "This Rod will significantly fill the progression bar.", "img": "Rod of the Conqueror.png" }
     ,
     "Meme Rod" : 
         { "name": "Meme Rod", "CONTROLLED": 0, 

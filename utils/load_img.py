@@ -96,3 +96,11 @@ def load_ui_image(filename):
 
     return pygame.image.load(ui_path).convert_alpha()
 
+def load_tutorial(filename):
+    ui_path = os.path.join(BASE_DIR, "assets", "images", "tutorial", filename)
+
+    if not os.path.exists(ui_path):
+        raise FileNotFoundError(f"UI image not found: {filename}")
+
+    return pygame.image.load(ui_path).convert_alpha()
+

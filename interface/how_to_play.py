@@ -1,5 +1,6 @@
 import os
 import pygame
+from utils.load_img import load_tutorial
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
@@ -18,22 +19,6 @@ TUTORIAL_PATH = os.path.join(
     "tutorial"
 )
 
-
-def load_scaled_image(path, max_rect):
-    image = pygame.image.load(path).convert_alpha()
-
-    img_ratio = image.get_width() / image.get_height()
-    rect_ratio = max_rect.width / max_rect.height
-
-    if img_ratio > rect_ratio:
-        new_width = max_rect.width
-        new_height = int(new_width / img_ratio)
-    else:
-        new_height = max_rect.height
-        new_width = int(new_height * img_ratio)
-
-    return pygame.transform.smoothscale(image, (new_width, new_height))
-
 def run_how_to_play(screen, S, FPS=60):
 
     clock = pygame.time.Clock()
@@ -44,14 +29,22 @@ def run_how_to_play(screen, S, FPS=60):
 
     # ---- Load tutorial images ----
     tutorial_images = [
-        load_scaled_image(os.path.join(TUTORIAL_PATH, "step1.png"),
-                          pygame.Rect(0, 0, S.WIDTH, S.HEIGHT)),
-        load_scaled_image(os.path.join(TUTORIAL_PATH, "step2.png"),
-                          pygame.Rect(0, 0, S.WIDTH, S.HEIGHT)),
-        load_scaled_image(os.path.join(TUTORIAL_PATH, "step3.png"),
-                          pygame.Rect(0, 0, S.WIDTH, S.HEIGHT)),
-        load_scaled_image(os.path.join(TUTORIAL_PATH, "step4.png"),
-                          pygame.Rect(0, 0, S.WIDTH, S.HEIGHT)),
+        pygame.transform.smoothscale(
+            load_tutorial("step1.png"),
+            (S.WIDTH, S.HEIGHT)
+        ),
+        pygame.transform.smoothscale(
+            load_tutorial("step2.png"),
+            (S.WIDTH, S.HEIGHT)
+        ),
+        pygame.transform.smoothscale(
+            load_tutorial("step3.png"),
+            (S.WIDTH, S.HEIGHT)
+        ),
+        pygame.transform.smoothscale(
+            load_tutorial("step4.png"),
+            (S.WIDTH, S.HEIGHT)
+        ),
     ]
 
     current_step = 0
@@ -112,10 +105,7 @@ def run_how_to_play(screen, S, FPS=60):
         )
 
         # ---- Draw Image ----
-        image = tutorial_images[current_step]
-        image_rect = image.get_rect(center=content_rect.center)
-
-        screen.blit(image, image_rect)
+        screen.blit(tutorial_images[current_step], (0, 0))
 
         # -------------------------------------------------
         # Navigation Group
@@ -137,13 +127,13 @@ def run_how_to_play(screen, S, FPS=60):
         bar_x = nav_rect.centerx - bar_width // 2
         bar_y = nav_rect.top + int(10 * S.scale)
 
-        pygame.draw.rect(screen, (70, 70, 90),
+        pygame.draw.rect(screen, (224, 150, 40),
                          (bar_x, bar_y, bar_width, bar_height),
                          border_radius=6)
 
         progress_ratio = (current_step + 1) / len(tutorial_images)
 
-        pygame.draw.rect(screen, (255, 255, 255),
+        pygame.draw.rect(screen, (51,25,0),
                          (bar_x,
                           bar_y,
                           int(bar_width * progress_ratio),
@@ -154,7 +144,7 @@ def run_how_to_play(screen, S, FPS=60):
         step_text = font_text.render(
             f"STEP {current_step + 1} / {len(tutorial_images)}",
             True,
-            (200, 200, 200)
+            (51,25,0)
         )
 
         step_rect = step_text.get_rect(
@@ -168,8 +158,8 @@ def run_how_to_play(screen, S, FPS=60):
         back_label = "< BACK"
         next_label = "FINISH" if current_step == len(tutorial_images) - 1 else "NEXT >"
 
-        back_text = font_btn.render(back_label, True, (200, 200, 200))
-        next_text = font_btn.render(next_label, True, (200, 200, 200))
+        back_text = font_btn.render(back_label, True, (51,25,0))
+        next_text = font_btn.render(next_label, True, (51,25,0))
 
         back_rect = back_text.get_rect(
             midleft=(nav_rect.left, bar_y + bar_height // 2)

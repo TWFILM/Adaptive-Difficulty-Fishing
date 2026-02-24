@@ -19,7 +19,7 @@ FONT_PATH = os.path.join(
 )
 
 
-def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"):
+def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=False):
     pygame.init()
     
     if rod_name == "Meme Rod":
@@ -32,8 +32,24 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
     btn_font = pygame.font.Font(FONT_PATH, int(24 * S.scale))
     button_img = load_ui_image("button.png")
 
-    button_width = 220 * S.scale
-    button_height = 60 * S.scale
+    bg_img = load_ui_image("game_bg.png")
+    bg_img = pygame.transform.scale(bg_img, (S.WIDTH, S.HEIGHT))
+    bg_img2 = load_ui_image("game_bg2.png")
+    bg_img2 = pygame.transform.scale(bg_img2, (S.WIDTH, S.HEIGHT))
+
+    fish_img = load_ui_image("fish.png")
+    fish_img = pygame.transform.scale(
+            fish_img,
+            (50 * S.scale, 45 * S.scale)
+        )
+    fish_img2 = load_ui_image("fish2.png")
+    fish_img2 = pygame.transform.scale(
+            fish_img2,
+            (50 * S.scale, 45 * S.scale)
+        )
+
+    button_width = 190 * S.scale
+    button_height = 80 * S.scale
     button_gap = 40 * S.scale
 
     total_width = button_width * 2 + button_gap
@@ -65,6 +81,7 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
         progress_addition = 0.26
         progress_color = (255, 215, 0)
         mult = 0.5
+        fill_colors = 0
     
     if rod_using["name"] == "Anchor Rod":
         is_anchor_active = True
@@ -90,11 +107,7 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
     fish_direction = random.choice([-1, 1])
 
     distance = random.randint(FISH_MOVE_MIN_DIST, FISH_MOVE_MAX_DIST)
-    fish_target_y = fish_y + fish_direction * distance
-    fish_target_y = max(
-            S.BAR_MIN_Y + (S.FISH_SIZE+10),
-            min(S.BAR_MAX_Y + S.BAR_HEIGHT - (S.FISH_SIZE+10), fish_target_y)
-        )
+    fish_target_y = fish_y 
     
     EXTRA_WIDTH = 10  
     fish_width = S.TRACK_WIDTH + EXTRA_WIDTH
@@ -105,7 +118,7 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
     )
 
 
-    fish_waiting = False
+    fish_waiting = True
     resilient_timer = 0.0
 
     # ── PLAYER PHYSICS ───────────────
@@ -120,6 +133,12 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
     fish_encounter = get_fish(get_random_rarity(rod_using["name"]))
     fish_resilience = fish_encounter["FISH_RESILIENCE"] + rod_using["RESILIENCE"]
     fish_progress = fish_encounter["PROGRESS_SPD"] + rod_using["PROGRESS_SPD"]
+
+    # If Experiment, fix type of fish to "Common" and remove rod bonuses for consistency
+    if is_experiment:
+        fish_encounter = get_fish("Common")
+        fish_resilience = fish_encounter["FISH_RESILIENCE"]
+        fish_progress = fish_encounter["PROGRESS_SPD"]
 
     if rod_using["name"] == "Meme Rod":
         choices = random.choices([1, 2, 3])
@@ -168,9 +187,9 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
                     player_bar_height += player_bar_height * 0.005
             if rod_using["name"] == "Anchor Rod" and is_anchor_active:
                 if is_catching:
-                    if player_bar_height > player_bar_height_before*0.3:
+                    if player_bar_height > player_bar_height_before*0.6:
                         player_bar_height -= 0.25
-                        fish_progress += 0.0003
+                    fish_progress += 0.0003
                 
                 else:
                     is_anchor_active = False
@@ -344,14 +363,14 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
             # Legacy speed update for non-DDA modes
             fish_speed = update_fish_speed(is_catching, fish_speed)
 
-        logger.log(player_bar_height, fish_speed, is_catching)
+
 
         # ── RENDER ────────────────────
-        screen.fill(BG_COLOR)
+        screen.blit(bg_img, (0, 0))
 
         pygame.draw.rect(
             screen, TRACK_COLOR,
-            (S.TRACK_X, S.TRACK_Y, S.TRACK_WIDTH, S.TRACK_HEIGHT)
+            (S.TRACK_X + 5 * S.scale, S.TRACK_Y, S.TRACK_WIDTH - 10 * S.scale, S.TRACK_HEIGHT)
         )
 
         
@@ -398,9 +417,25 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
             (fish_x_draw, fish_y, fish_width, S.FISH_SIZE), border_radius=3
         )
 
+        fish_rect = fish_img.get_rect(
+            center=(
+                fish_x_draw + fish_width // 2,
+                fish_y + S.FISH_SIZE // 2
+            )
+        )
+
+        screen.blit(fish_img, fish_rect)
+
         if rod_using["name"] == "Prismatic Rod":
             if pygame.time.get_ticks() % 1000 < 800 :
-                pygame.draw.rect(screen, (255, 255, 255), (bar_x + (S.BAR_WIDTH // 2 - S.FISH_SIZE // 2), fish_target_y, S.FISH_SIZE, S.FISH_SIZE))
+                fish_rect2 = fish_img2.get_rect(
+                    center=(
+                        fish_x_draw + fish_width // 2,
+                        fish_target_y + S.FISH_SIZE // 2
+                    )
+                )
+                screen.blit(fish_img2, fish_rect2)
+                # pygame.draw.rect(screen, (255, 255, 255), (bar_x + (S.BAR_WIDTH // 2 - S.FISH_SIZE // 2), fish_target_y, S.FISH_SIZE, S.FISH_SIZE))
 
         if knife_active or conqueror_active:
             if conqueror_active:
@@ -408,6 +443,7 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
                 knife_length = int(S.WIDTH*2)
                 knife_thickness = int(S.FISH_SIZE * (mult))
                 angle = 0 
+                fill_colors = min(fill_colors + 1, 255)
             else:
                 mult += 0.1
                 knife_length = int(S.HEIGHT*(2-mult if (2-mult)>=0 else 0))
@@ -421,7 +457,10 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
                 (knife_length, knife_thickness),
                 pygame.SRCALPHA
             )
-            knife_surf.fill(progress_color)
+            if rod_using["name"] == "Shear Rod":
+                knife_surf.fill(progress_color)
+            else:
+                knife_surf.fill((255, 215, fill_colors))
 
             knife_rotated = pygame.transform.rotate(knife_surf, angle)
            
@@ -472,7 +511,7 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
         pygame.display.flip()
         # clock.tick(FPS)
 
-    logger.export()
+
 
     # --- Result Screen ---
     if success[0]:
@@ -499,52 +538,72 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
         run_end_screen_meme(screen, clock, duration=4, meme_fish=True)
 
     # Button setup
-    retry_button = Button(
-        rect=(
-            start_x,
-            y_pos,
-            button_width,
-            button_height
-        ),
-        text="RETRY",
-        font=btn_font,
-        image=button_img
-    )
+    button_font = pygame.font.Font(FONT_PATH, int(24 * S.scale))
+    
+    # Create buttons based on mode
+    if is_experiment:
+        continue_button = Button(
+            rect=(
+                start_x,
+                y_pos,
+                button_width,
+                button_height
+            ),
+            text="CONTINUE",
+            font=btn_font,
+            image=button_img
+        )
+    else:
+        retry_button = Button(
+            rect=(
+                start_x,
+                y_pos,
+                button_width,
+                button_height
+            ),
+            text="RETRY",
+            font=btn_font,
+            image=button_img
+        )
 
-    lobby_button = Button(
-        rect=(
-            start_x + button_width + button_gap,
-            y_pos,
-            button_width,
-            button_height
-        ),
-        text="BACK TO LOBBY",
-        font=btn_font,
-        image=button_img
-    )
+        lobby_button = Button(
+            rect=(
+                start_x + button_width + button_gap,
+                y_pos,
+                button_width,
+                button_height
+            ),
+            text="LOBBY",
+            font=btn_font,
+            image=button_img
+        )
 
     result_running = True
     while result_running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return "QUIT"
+                return "QUIT" if not is_experiment else success
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if retry_button.clicked(event):
-                    return "RETRY"
-                if lobby_button.clicked(event):
-                    return "LOBBY"
+                if is_experiment:
+                    if continue_button.clicked(event):
+                        return success
+                else:
+                    if retry_button.clicked(event):
+                        return "RETRY"
+                    if lobby_button.clicked(event):
+                        return "LOBBY"
 
-        screen.fill(BG_COLOR)
+        screen.blit(bg_img2, (0, 0))
 
         if success[0]:
             # Display fish info
             msg = f"You caught a {fish_encounter['rarity']} {fish_encounter['name']}!"
             text_surf = font.render(msg, True, (200, 200, 200))
-            text_rect = text_surf.get_rect(center=(S.WIDTH // 2, S.HEIGHT // 2 - 100 * S.scale))
+            text_rect = text_surf.get_rect(center=(S.WIDTH // 2, S.HEIGHT // 2 - 150 * S.scale))
             screen.blit(text_surf, text_rect)
 
             # Load and display fish image
-            fish_image_path = os.path.join(ROOT_DIR, "assets", "images", "fishes", f"{success[2]}.png")
+            fish_image_path = os.path.join(ROOT_DIR, "assets", "images", "fishes", fish_encounter['img'])
             try:
                 fish_img = pygame.image.load(fish_image_path).convert_alpha()
                 img_width, img_height = fish_img.get_size()
@@ -564,11 +623,11 @@ def run_game_vertical(screen, S, logger, rod_name, FPS=60, difficulty_mode="DDA"
             screen.blit(text_surf, text_rect)
 
         # Draw buttons
-        pygame.draw.rect(screen, (0, 150, 0), retry_button)
-        pygame.draw.rect(screen, (150, 0, 0), lobby_button)
-
-        retry_button.draw(screen)
-        lobby_button.draw(screen)
+        if is_experiment:
+            continue_button.draw(screen)
+        else:
+            retry_button.draw(screen)
+            lobby_button.draw(screen)
 
         pygame.display.flip()
         clock.tick(FPS)
