@@ -22,7 +22,7 @@ def draw_text(screen, text, font, color, center_x, center_y, bg_color=None):
     text_rect = text_surface.get_rect(center=(center_x, center_y))
     screen.blit(text_surface, text_rect)
 
-def run_survey(screen, S):
+def run_survey(screen, S, remaining_survey=2):
     pygame.init()
     clock = pygame.time.Clock()
 
@@ -68,9 +68,7 @@ def run_survey(screen, S):
                 draw_text(screen, str(i), font_question, (255, 255, 255), S.WIDTH // 2 + (i - 3) * 60 * S.scale, S.HEIGHT * 0.7)
         else:
             # All questions answered
-            print(len(QUESTIONS), current_question)
-            print(len(QUESTIONS) - current_question)
-            draw_text(screen, f"Thank you! Another {current_question - 1} left" if (current_question - 1) > 0 else "Thank you! for surveying" , font_title, (100, 255, 100), S.WIDTH // 2, S.HEIGHT // 2)
+            draw_text(screen, f"Thank you! Another {remaining_survey} left" if remaining_survey > 0 else "Thank you! for surveying" , font_title, (100, 255, 100), S.WIDTH // 2, S.HEIGHT // 2)
             pygame.display.flip()
             pygame.time.wait(1500) # Show "Thank you" for a moment
             running = False

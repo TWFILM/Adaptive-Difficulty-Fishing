@@ -99,6 +99,7 @@ def main():
             run_play_guide(screen, S, duration=15, FPS=settings_data["FPS"])
             player_id = str(uuid.uuid4())
             experiment_modes = ["EASY", "MEDIUM", "HARD", "DDA"]
+            remaining_rounds = len(experiment_modes) # Assuming 1 survey round per mode
             
             for mode in experiment_modes:
                 save_data = load_save()
@@ -114,9 +115,10 @@ def main():
 
                 win_loss = "WIN" if game_result[0] else "LOSS"
                 
-                survey_results = run_survey(screen, S)
+                survey_results = run_survey(screen, S, remaining_rounds - 1)
                 
                 log_experiment_data(player_id, mode, win_loss, survey_results)
+                remaining_rounds -= 1
 
             state = "LOBBY"
             play_lobby_sfx()
