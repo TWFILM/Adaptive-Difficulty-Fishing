@@ -8,7 +8,7 @@ from gameData.config import *
 from dda import DDAManager, update_fish_speed
 from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
 from utils.load_img import *
-from utils.load_audio import trigger_jumpscare, play_stab_sfx, stop_meme_sfx, play_meme_sfx
+from utils.load_audio import play_caught_sfx, play_failed_sfx, play_reeling_sfx, stop_reeling_sfx, trigger_jumpscare, play_stab_sfx, stop_meme_sfx, play_meme_sfx
 from utils.save_writer import SaveManager
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -159,6 +159,8 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
     is_perfect_catch = True
     success = [False, None, None]
     running = True
+
+    play_reeling_sfx()
 
     # ─────────────────────────────────
     while running:
@@ -516,6 +518,7 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
     # --- Result Screen ---
     catch_duration = time.time() - encounter_start_time
     if success[0]:
+        play_caught_sfx()
         if not fish_encounter["name"] in save.data["player"]["catched_fish"]:
             save.data["player"]["catched_fish"].append(fish_encounter["name"])
         save.data["player"]["total_catched"] += 1
@@ -524,8 +527,11 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
             save.data["player"]["perfect_catches"] += 1
         save.save()
     else:
+        play_failed_sfx()
         save.data["player"]["catched_streak"] = 0
         save.save()
+
+    stop_reeling_sfx()
 
     if rod_using["name"] == "Meme Rod":
         stop_meme_sfx()
@@ -538,9 +544,6 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
         trigger_jumpscare(meme_fish=True)
         run_end_screen_meme(screen, clock, duration=4, meme_fish=True)
 
-    # Button setup
-    button_font = pygame.font.Font(FONT_PATH, int(24 * S.scale))
-    
     # Create buttons based on mode
     if is_experiment:
         continue_button = Button(

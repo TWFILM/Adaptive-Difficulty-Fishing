@@ -33,11 +33,11 @@ def run_credits(screen, S, settings_data):
     CENTER_X = S.WIDTH // 2
     button_width = 190 * S.scale
     button_height = 80 * S.scale
-    button_gap = 40 * S.scale
 
-    total_width = button_width * 2 + button_gap
-    start_x = S.WIDTH // 2 - total_width // 2
     y_pos = S.HEIGHT - 200 * S.scale
+    ROW_Y_START = S.HEIGHT * 0.2
+
+    LABEL_X = CENTER_X
 
     setting_btn = Button(
             rect=(
@@ -69,6 +69,19 @@ def run_credits(screen, S, settings_data):
         screen.blit(title,
                     title.get_rect(center=(CENTER_X,
                                            S.HEIGHT * 0.12)))
+        screen.blit(
+            font_label.render("SoundTrack: Monplaisir - Free Music", True, (51,25,0)),
+            (LABEL_X- (font_label.size(f"SoundTrack: Monplaisir - Free Music")[0] // 2), ROW_Y_START + 20 * S.scale)
+        )
+        screen.blit(
+            font_label.render("Fish: Pufferfish - Blue Reef Aquarium", True, (51,25,0)),
+            (LABEL_X- (font_label.size(f"Fish: Pufferfish - Blue Reef Aquarium")[0] // 2), ROW_Y_START + 60 * S.scale)
+        )
+        screen.blit(
+            font_label.render("Inspired by Stardewvalley & Roblox Fisch", True, (51,25,0)),
+            (LABEL_X- (font_label.size(f"Inspired by Stardewvalley & Roblox Fisch")[0] // 2), ROW_Y_START + 100 * S.scale)
+        )
+        
         setting_btn.draw(screen)
         
         pygame.display.flip()

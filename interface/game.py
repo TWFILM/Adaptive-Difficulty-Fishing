@@ -9,7 +9,7 @@ from gameData.config import *
 from dda import DDAManager, update_fish_speed
 from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
 from utils.load_img import *
-from utils.load_audio import trigger_jumpscare, play_stab_sfx, stop_meme_sfx, play_meme_sfx
+from utils.load_audio import play_caught_sfx, play_failed_sfx, trigger_jumpscare, play_stab_sfx, stop_meme_sfx, play_meme_sfx, play_reeling_sfx, stop_reeling_sfx
 from utils.save_writer import SaveManager
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -164,6 +164,8 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
     is_perfect_catch = True
     running = True
     actual_gain = 0.0
+
+    play_reeling_sfx()
 
     while running:
         dt = clock.tick(FPS) / 1000.0
@@ -455,6 +457,7 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
     # --- Result Screen ---
     catch_duration = time.time() - encounter_start_time
     if success[0]:
+        play_caught_sfx()
         if not fish_encounter["name"] in save.data["player"]["catched_fish"]:
             save.data["player"]["catched_fish"].append(fish_encounter["name"])
         save.data["player"]["total_catched"] += 1
@@ -463,8 +466,11 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
             save.data["player"]["perfect_catches"] += 1
         save.save()
     else:
+        play_failed_sfx()
         save.data["player"]["catched_streak"] = 0
         save.save()
+
+    stop_reeling_sfx()
 
     if rod_using["name"] == "Meme Rod":
         stop_meme_sfx()
@@ -477,7 +483,6 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
         trigger_jumpscare(meme_fish=True)
         run_end_screen_meme(screen, clock, duration=4, meme_fish=True)
 
- 
     # Create buttons based on mode
     if is_experiment:
         continue_button = Button(

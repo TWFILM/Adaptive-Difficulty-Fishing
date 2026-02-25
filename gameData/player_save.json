@@ -1,6 +1,6 @@
 {
     "player": {
-        "rod": "Rod of the Conqueror",
+        "rod": "Novice Rod",
         "catched_fish": [
             "Cod",
             "Clownfish",
@@ -27,9 +27,9 @@
             "Amberjack",
             "Meme Fish"
         ],
-        "total_catched": 109,
-        "catched_streak": 9,
-        "perfect_catches": 61,
+        "total_catched": 117,
+        "catched_streak": 1,
+        "perfect_catches": 65,
         "unlocked_rods": [
             "Novice Rod",
             "Cool Rod",

@@ -56,7 +56,7 @@ def main():
 
     icon_img = load_icon_image()
     pygame.display.set_icon(icon_img)
-    
+
     current_difficulty = "DDA"
 
     while state != "QUIT":
@@ -93,14 +93,14 @@ def main():
             else:
                 current_difficulty = result
                 state = "GAME"
-        
+
         elif state == "EXPERIMENT":
             stop_lobby_sfx()
             run_play_guide(screen, S, duration=15, FPS=settings_data["FPS"])
             player_id = str(uuid.uuid4())
             experiment_modes = ["EASY", "MEDIUM", "HARD", "DDA"]
             remaining_rounds = len(experiment_modes) # Assuming 1 survey round per mode
-            
+
             for mode in experiment_modes:
                 save_data = load_save()
                 rod_name = save_data["player"]["rod"]
@@ -149,7 +149,7 @@ def main():
                 state = "GAME"
             else: # LOBBY or QUIT
                 state = game_result
-            
+
             if state == "LOBBY":
                 play_lobby_sfx()
 
@@ -166,10 +166,10 @@ def main():
 
         elif state == "SETTINGS":
             state = run_settings(screen, S, settings_data)
-        
+
         elif state == "HOW_TO_PLAY":
             state = run_how_to_play(screen, S, settings_data["FPS"])
-        
+
         elif state == "CREDITS":
              state = run_credits(screen, S, settings_data)
 
