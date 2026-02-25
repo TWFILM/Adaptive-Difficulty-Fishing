@@ -21,14 +21,14 @@ FONT_PATH = os.path.join(
 
 def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=False):
     pygame.init()
-    
+
     if rod_name == "Meme Rod":
         play_meme_sfx()
     screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
-    pygame.display.set_caption(f"DDA Experiment - Mode: {difficulty_mode}") 
+    pygame.display.set_caption(f"DDA Experiment - Mode: {difficulty_mode}")
     clock = pygame.time.Clock()
     font = pygame.font.Font(FONT_PATH, int(18 * S.scale))
-    
+
     btn_font = pygame.font.Font(FONT_PATH, int(24 * S.scale))
     button_img = load_ui_image("button.png")
 
@@ -67,7 +67,7 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
     bar_y = S.TRACK_Y + S.TRACK_HEIGHT // 2 - player_bar_height // 2
     bar_x = S.TRACK_X
 
-    
+
     encounter_start_time = time.time()
 
     # ── PROGRESS ─────────────────────
@@ -82,7 +82,7 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
         progress_color = (255, 215, 0)
         mult = 0.5
         fill_colors = 0
-    
+
     if rod_using["name"] == "Anchor Rod":
         is_anchor_active = True
         player_bar_height_before = S.BAR_HEIGHT + (rod_using["CONTROLLED"] * S.BAR_HEIGHT)
@@ -101,15 +101,15 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
     else:
         # Fallback for non-DDA modes
         fish_speed = {"EASY": 1.0, "MEDIUM": 2.0, "HARD": 3.0}.get(difficulty_mode, 1.0)
-    
+
     # ── FISH ─────────────────────────
     fish_y = S.TRACK_Y + S.TRACK_HEIGHT // 2 - S.FISH_SIZE // 2
     fish_direction = random.choice([-1, 1])
 
     distance = random.randint(FISH_MOVE_MIN_DIST, FISH_MOVE_MAX_DIST)
-    fish_target_y = fish_y 
-    
-    EXTRA_WIDTH = 10  
+    fish_target_y = fish_y
+
+    EXTRA_WIDTH = 10
     fish_width = S.TRACK_WIDTH + EXTRA_WIDTH
 
     fish_x_draw = (
@@ -150,12 +150,12 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
         knife_fill_remaining = 0.0
         KNIFE_FILL_TOTAL = 0.05
         KNIFE_FILL_SPEED = 0.075   # stop fish movement for 0.75 sec
-        knife_checked = False  
+        knife_checked = False
         # angle_mode = 1
         mult = 0.5
 
     knife_active = False
-    
+
     is_perfect_catch = True
     success = [False, None, None]
     running = True
@@ -177,12 +177,12 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
         if freeze_active and progress < (PROGRESS_INIT + progress_addition):
             progress += PROGRESS_FILL_ANIM_SPEED
             progress = min(progress, PROGRESS_INIT + progress_addition)
-            
+
 
         # ── PLAYER CONTROL ────────────
         if not freeze_active:
             if rod_using["name"] == "Rod of the Conqueror":
-                progress_color = PROGRESS_BAR_COLOR 
+                progress_color = PROGRESS_BAR_COLOR
                 conqueror_active = False
             if rod_using["name"] == "Meme Rod" :
                 if 1 in choices and player_bar_height <= S.TRACK_HEIGHT and fish_encounter["name"] != "Meme Fish":
@@ -192,7 +192,7 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
                     if player_bar_height > player_bar_height_before*0.6:
                         player_bar_height -= 0.25
                     fish_progress += 0.0003
-                
+
                 else:
                     is_anchor_active = False
                     fish_progress = fish_encounter["PROGRESS_SPD"]+rod_using["PROGRESS_SPD"]
@@ -274,12 +274,12 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
                         chaos_chance = dda_manager.get_chaos_chance()
                     else: # Fallback to original logic for non-DDA modes
                         chaos_chance = 0.02 if difficulty_mode == "HARD" else 0.01
-                    
+
                     if random.random() < chaos_chance:
                         # 40% chance to stop, 60% chance to juke
-                        if random.random() < 0.4: 
+                        if random.random() < 0.4:
                             fish_waiting = True
-                            resilient_timer = 0 
+                            resilient_timer = 0
                         else: # Juke!
                             fish_direction *= -1
                             distance = random.randint(50, 150) # Short, sharp movement
@@ -288,7 +288,7 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
                             # Small speed burst on juke
                             fish_speed = min(3.5, fish_speed * 1.3)
                 # >>>>>>>>>>>> CHAOS LOGIC END <<<<<<<<<<<<
-                
+
                 fish_y += fish_direction * fish_speed * frame_scale
                 if rod_name == "Meme Rod" and 2 in choices:
                         fish_x_draw += fish_direction * fish_speed
@@ -331,7 +331,7 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
             actual_fill = min(fill_amount, knife_fill_remaining)
             knife_fill_remaining -= actual_fill
             progress += actual_fill
-                    
+
             if knife_fill_remaining <= 0:
                 knife_active = False
                 progress_color = PROGRESS_BAR_COLOR
@@ -348,7 +348,7 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
                 progress -= PROGRESS_DOWN_RATE * frame_scale
                 is_perfect_catch = False
                 actual_gain = -PROGRESS_DOWN_RATE
-        
+
         progress = max(0.0, min(1.0, progress))
 
         if progress >= 1.0:
@@ -375,12 +375,12 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
             (S.TRACK_X + 5 * S.scale, S.TRACK_Y, S.TRACK_WIDTH - 10 * S.scale, S.TRACK_HEIGHT)
         )
 
-        
+
         bar_draw_color = (255, 210, 85) if is_catching else BAR_COLOR
         rect = pygame.Rect(
-            bar_x, 
-            bar_y, 
-            S.BAR_WIDTH, 
+            bar_x,
+            bar_y,
+            S.BAR_WIDTH,
             player_bar_height
         )
 
@@ -444,7 +444,7 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
                 mult += 0.1
                 knife_length = int(S.WIDTH*2)
                 knife_thickness = int(S.FISH_SIZE * (mult))
-                angle = 0 
+                angle = 0
                 fill_colors = min(fill_colors + 1, 255)
             else:
                 mult += 0.1
@@ -465,7 +465,7 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
                 knife_surf.fill((255, 215, fill_colors))
 
             knife_rotated = pygame.transform.rotate(knife_surf, angle)
-           
+
             fish_x = bar_x + (S.BAR_WIDTH // 2 - S.FISH_SIZE // 2)
             fish_center_x = fish_x + (S.FISH_SIZE // 2)
             fish_center_y = fish_y + (S.FISH_SIZE // 2)
@@ -586,11 +586,11 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
     while result_running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return "QUIT" if not is_experiment else (success, catch_duration)
+                return "QUIT" if not is_experiment else (success, catch_duration, match_accuracy, baseline_skill)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if is_experiment:
                     if continue_button.clicked(event):
-                        return (success, catch_duration)
+                        return (success, catch_duration, match_accuracy, baseline_skill)
                 else:
                     if retry_button.clicked(event):
                         return "RETRY"

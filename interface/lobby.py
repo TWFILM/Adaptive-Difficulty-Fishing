@@ -24,7 +24,7 @@ def run_lobby(screen, S, FPS=60):
     screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
     pygame.display.set_caption("Fishing Lobby")
     clock = pygame.time.Clock()
-    
+
     button_img = load_ui_image("button.png")
     play_button_img = load_ui_image("play_button.png")
     quit_button_img = load_ui_image("quit_button.png")
@@ -116,7 +116,7 @@ def run_lobby(screen, S, FPS=60):
                     screen.blit(outline, title_rect.move(dx, dy))
 
         screen.blit(title, title_rect)
-        
+
         # --- Draw Buttons ---
         for btn, _ in ui_buttons:
             btn.draw(screen)

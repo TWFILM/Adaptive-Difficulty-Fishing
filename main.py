@@ -35,7 +35,28 @@ DEFAULT_SETTINGS = {
     "sfx": True,
     "FPS": 60
 }
+def get_next_player_number():
+    log_file = "experiment_results.csv"
+    if not os.path.exists(log_file):
+        return 1
 
+    try:
+        with open(log_file, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+            if len(lines) <= 1: # มีแค่ Header
+                return 1
+
+            # ดึง Player_ID จากบรรทัดสุดท้าย (คอลัมน์ที่ 2)
+            last_line = lines[-1].split(",")
+            if len(last_line) > 1:
+                last_id = last_line[1] # เช่น "Player2"
+                if last_id.startswith("Player"):
+                    # ดึงตัวเลขออกมาแล้วบวกเพิ่ม 1
+                    num = int(last_id.replace("Player", ""))
+                    return num + 1
+    except Exception:
+        pass
+    return 1
 def main():
     pygame.init()
     state = "LOBBY"
@@ -97,7 +118,9 @@ def main():
         elif state == "EXPERIMENT":
             stop_lobby_sfx()
             run_play_guide(screen, S, duration=15, FPS=settings_data["FPS"])
-            player_id = str(uuid.uuid4())
+            # เรียกใช้ฟังก์ชันที่เราสร้างไว้เพื่อรันเลขต่อจากของเดิม
+            next_num = get_next_player_number()
+            player_id = f"Player{next_num}"
             experiment_modes = ["EASY", "MEDIUM", "HARD", "DDA"]
             remaining_rounds = len(experiment_modes) # Assuming 1 survey round per mode
 
@@ -111,15 +134,18 @@ def main():
                 screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
 
                 if axis == "horizontal":
-                    game_result, catch_duration = run_game(screen, S, rod_name, settings_data["FPS"], mode, is_experiment=True)
+                    # แก้บรรทัดนี้
+                    game_result, catch_duration, match_acc, base_skill = run_game(screen, S, rod_name, settings_data["FPS"], mode, is_experiment=True)
                 else:
-                    game_result, catch_duration = run_game_vertical(screen, S, rod_name, settings_data["FPS"], mode, is_experiment=True)
+                    # แก้บรรทัดนี้ด้วย (เผื่อเล่นแนวตั้ง)
+                    game_result, catch_duration, match_acc, base_skill = run_game_vertical(screen, S, rod_name, settings_data["FPS"], mode, is_experiment=True)
 
                 win_loss = "WIN" if game_result[0] else "LOSS"
-                
+
                 survey_results = run_survey(screen, S, mode, remaining_rounds - 1)
-                
-                log_experiment_data(player_id, mode, win_loss, survey_results, catch_duration)
+
+                # แก้บรรทัดนี้: เติม match_acc กับ base_skill เข้าไปที่ท้ายวงเล็บ
+                log_experiment_data(player_id, mode, win_loss, survey_results, catch_duration, match_acc, base_skill)
                 remaining_rounds -= 1
 
             state = "LOBBY"

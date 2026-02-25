@@ -22,11 +22,11 @@ def run_survey(screen, S, mode, remaining_survey=2):
 
     bg_img = load_ui_image("game_bg2.png")
     bg_img = pygame.transform.scale(bg_img, (S.WIDTH, S.HEIGHT))
-    
+
     font_title = pygame.font.Font(FONT_PATH, int(30 * S.scale))
     font_question = pygame.font.Font(FONT_PATH, int(22 * S.scale))
     font_scale = pygame.font.Font(FONT_PATH, int(18 * S.scale))
-    
+
     base_questions = [
         "How HARD was this mode?",
         "How FUN was this mode?",
@@ -41,7 +41,7 @@ def run_survey(screen, S, mode, remaining_survey=2):
 
     answers = {}
     current_question = 0
-    
+
     running = True
     while running:
         for event in pygame.event.get():
@@ -61,12 +61,12 @@ def run_survey(screen, S, mode, remaining_survey=2):
                     current_question += 1
                     if current_question >= len(questions):
                         running = False
-        
+
         screen.blit(bg_img, (0, 0))
-        
+
         # Draw Title
         draw_text(screen, "Post-Game Survey", font_title, (255, 255, 255), S.WIDTH // 2, S.HEIGHT * 0.2)
-        
+
         if current_question < len(questions):
             # Draw current question
             draw_text(screen, questions[current_question], font_question, (200, 200, 200), S.WIDTH // 2, S.HEIGHT * 0.4)
@@ -109,5 +109,5 @@ def run_survey(screen, S, mode, remaining_survey=2):
 
         pygame.display.flip()
         clock.tick(30)
-        
+
     return answers

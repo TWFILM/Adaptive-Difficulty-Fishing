@@ -27,7 +27,7 @@
             "Amberjack",
             "Meme Fish"
         ],
-        "total_catched": 117,
+        "total_catched": 139,
         "catched_streak": 1,
         "perfect_catches": 65,
         "unlocked_rods": [
@@ -49,13 +49,39 @@
             "Shear Rod",
             "Meme Rod",
             "Rod of the Conqueror"
-        ]
+        ],
+        "historical_stats": {
+            "EASY": {
+                "plays": 2,
+                "wins": 1,
+                "avg_accuracy": 0.8964967769867231,
+                "avg_time_taken": 35.716715574264526
+            },
+            "MEDIUM": {
+                "plays": 2,
+                "wins": 2,
+                "avg_accuracy": 0.7729891002036529,
+                "avg_time_taken": 19.248767614364624
+            },
+            "HARD": {
+                "plays": 1,
+                "wins": 0,
+                "avg_accuracy": 0.6195845697329377,
+                "avg_time_taken": 40.8920624256134
+            },
+            "DDA": {
+                "plays": 1,
+                "wins": 1,
+                "avg_accuracy": 0.7312703583061889,
+                "avg_time_taken": 30.26750087738037
+            }
+        }
     },
     "settings_data": {
         "width": 600,
         "height": 800,
         "gameplay": "horizontal",
-        "sfx": true,
+        "sfx": false,
         "FPS": 90
     }
 }

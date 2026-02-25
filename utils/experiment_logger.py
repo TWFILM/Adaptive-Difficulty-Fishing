@@ -10,10 +10,12 @@ FIELDNAMES = [
     "Mode_Played",
     "Win_Loss",
     "Catch_Duration_Sec",
-    "Difficulty_Score",
-    "Fun_Score",
-    "DDA_Similarity",
-    "DDA_More_Fun",
+    "Match_Accuracy",    # เพิ่มเพื่อดูความแม่นยำจริง
+    "Baseline_Skill",    # เพิ่มเพื่อดูว่าผู้เล่นเก่งแค่ไหนก่อนเล่น
+    "Difficulty_Score",  # คะแนนความยาก (จากแบบสอบถาม)
+    "Fun_Score",         # คะแนนความสนุก (จากแบบสอบถาม)
+    "DDA_Similarity",    # เหมือนโหมดไหน (จากแบบสอบถาม)
+    "DDA_More_Fun",      # สนุกกว่าไหม (จากแบบสอบถาม)
 ]
 
 
@@ -55,10 +57,10 @@ def _migrate_csv_header_if_needed(file_path: str) -> None:
             except OSError:
                 pass
 
-def log_experiment_data(player_id, mode, win_loss, survey_results, catch_duration=None):
+def log_experiment_data(player_id, mode, win_loss, survey_results, catch_duration=None, match_accuracy=None, baseline_skill=None):
     """
     Appends a new row of experiment data to the CSV file.
-    
+
     Args:
         player_id (str): A unique identifier for the player session.
         mode (str): The difficulty mode that was just played (e.g., "EASY", "DDA").
@@ -66,24 +68,26 @@ def log_experiment_data(player_id, mode, win_loss, survey_results, catch_duratio
         survey_results (dict): A dictionary with keys 'Q1', 'Q2', 'Q3' and integer values.
         catch_duration (float | None): Seconds taken for the fishing encounter.
     """
-    
+
     # Create file and write header if it doesn't exist (or migrate if schema changed)
     file_exists = os.path.isfile(LOG_FILE)
     if file_exists:
         _migrate_csv_header_if_needed(LOG_FILE)
-    
+
     row_data = {
         "Timestamp": datetime.now().isoformat(),
         "Player_ID": player_id,
         "Mode_Played": mode,
         "Win_Loss": win_loss,
         "Catch_Duration_Sec": catch_duration,
+        "Match_Accuracy": match_accuracy,  # <--- [เพิ่มตรงนี้]
+        "Baseline_Skill": baseline_skill,  # <--- [เพิ่มตรงนี้]
         "Difficulty_Score": survey_results.get("Q1", ""),
         "Fun_Score": survey_results.get("Q2", ""),
         "DDA_Similarity": survey_results.get("Q3", ""),
         "DDA_More_Fun": survey_results.get("Q4", ""),
     }
-    
+
     try:
         with open(LOG_FILE, 'a', newline='', encoding='utf-8') as f:
             writer = csv.DictWriter(f, fieldnames=FIELDNAMES)

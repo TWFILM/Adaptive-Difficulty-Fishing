@@ -4,7 +4,7 @@ import math
 import random
 import time
 import os
-
+import numpy as np  # <--- เพิ่มบรรทัดนี้เข้าไปครับ
 from gameData.config import *
 from dda import DDAManager, update_fish_speed
 from gameData.get_info import get_fish, get_fishing_rod_info, get_random_rarity
@@ -107,10 +107,29 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
 
     # --- DDA MANAGER SETUP ---
     dda_manager = None
+    baseline_skill = None  # <--- [เพิ่มบรรทัดนี้] เผื่อโหมดอื่นที่ไม่มี DDA จะได้ส่งค่า None ออกไปได้
     if difficulty_mode == "DDA":
-        dda_manager = DDAManager(fish_resilience=fish_resilience, fish_progress=fish_progress)
-        # Use a neutral starting speed for DDA mode, the manager will adjust it
-        fish_speed = 1.5
+        baseline_skill = 0.5
+
+        # ดึงประวัติมาคำนวณความเก่ง
+        hist_stats = save.data["player"].get("historical_stats", None)
+        if hist_stats:
+            if hist_stats["HARD"]["plays"] > 0 and hist_stats["HARD"]["avg_accuracy"] > 0.4:
+                baseline_skill = hist_stats["HARD"]["avg_accuracy"] + 0.2
+            elif hist_stats["MEDIUM"]["plays"] > 0:
+                baseline_skill = hist_stats["MEDIUM"]["avg_accuracy"]
+            elif hist_stats["EASY"]["plays"] > 0:
+                baseline_skill = hist_stats["EASY"]["avg_accuracy"] - 0.1
+            baseline_skill = np.clip(baseline_skill, 0.1, 0.9)
+
+        dda_manager = DDAManager(
+            fish_resilience=fish_resilience,
+            fish_progress=fish_progress,
+            baseline_skill=baseline_skill # ส่งค่าความเก่งเข้าไป
+        )
+
+        # ปรับความเร็วเริ่มต้นของปลาตามฝีมือ
+        fish_speed = np.interp(baseline_skill, [0, 1], [0.8, 2.5])
 
     # Rod Logics
     progress_addition = 0
@@ -164,6 +183,10 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
     is_perfect_catch = True
     running = True
     actual_gain = 0.0
+
+    # --- เพิ่ม 2 บรรทัดนี้ ---
+    total_active_frames = 0
+    total_catching_frames = 0
 
     play_reeling_sfx()
 
@@ -327,7 +350,10 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
 
         # --- Progression Logic (Fixed) ---
         if not freeze_active:
+            total_active_frames += 1 # นับเฟรมทั้งหมดที่เล่น
             if is_catching:
+                total_catching_frames += 1 # นับเฟรมที่กรอบตรงกับปลา
+
                 base_gain = PROGRESS_UP_RATE
 
                 # Use DDA-modified progress rate if available
@@ -456,6 +482,39 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
 
     # --- Result Screen ---
     catch_duration = time.time() - encounter_start_time
+
+    # ------------------ แทรกระบบเก็บสถิติที่นี่ ------------------
+    match_accuracy = total_catching_frames / max(1, total_active_frames)
+
+    # เพิ่ม "DDA" เข้าไปในลิสต์
+    if difficulty_mode in ["EASY", "MEDIUM", "HARD", "DDA"] and not is_experiment:
+
+        # 1. ถ้ายังไม่มี historical_stats เลย ให้สร้างโครงสร้างเริ่มต้น (เพิ่ม DDA เข้าไปแล้ว)
+        if "historical_stats" not in save.data["player"]:
+            save.data["player"]["historical_stats"] = {
+                "EASY": {"plays": 0, "wins": 0, "avg_accuracy": 0.0, "avg_time_taken": 0.0},
+                "MEDIUM": {"plays": 0, "wins": 0, "avg_accuracy": 0.0, "avg_time_taken": 0.0},
+                "HARD": {"plays": 0, "wins": 0, "avg_accuracy": 0.0, "avg_time_taken": 0.0},
+                "DDA": {"plays": 0, "wins": 0, "avg_accuracy": 0.0, "avg_time_taken": 0.0}
+            }
+
+        # 2. กันเหนียว: ถ้าไฟล์เซฟมี historical_stats แล้ว แต่ดันไม่มีโหมดที่กำลังเล่นอยู่ (เช่น ไฟล์เซฟเก่าที่ยังไม่มีคีย์ DDA)
+        if difficulty_mode not in save.data["player"]["historical_stats"]:
+            save.data["player"]["historical_stats"][difficulty_mode] = {
+                "plays": 0, "wins": 0, "avg_accuracy": 0.0, "avg_time_taken": 0.0
+            }
+
+        # 3. ดึงค่ามาคำนวณและอัปเดตตามปกติ
+        stats = save.data["player"]["historical_stats"][difficulty_mode]
+        old_plays = stats["plays"]
+        stats["plays"] += 1
+        if success[0]:
+            stats["wins"] += 1
+
+        stats["avg_accuracy"] = ((stats["avg_accuracy"] * old_plays) + match_accuracy) / stats["plays"]
+        stats["avg_time_taken"] = ((stats["avg_time_taken"] * old_plays) + catch_duration) / stats["plays"]
+    # --------------------------------------------------------
+
     if success[0]:
         play_caught_sfx()
         if not fish_encounter["name"] in save.data["player"]["catched_fish"]:
@@ -524,11 +583,12 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
     while result_running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return "QUIT" if not is_experiment else (success, catch_duration)
+                # แก้บรรทัดนี้: เพิ่ม match_accuracy และ baseline_skill ต่อท้ายเข้าไป
+                return "QUIT" if not is_experiment else (success, catch_duration, match_accuracy, baseline_skill)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if is_experiment:
                     if continue_button.clicked(event):
-                        return (success, catch_duration)
+                        return (success, catch_duration, match_accuracy, baseline_skill)
                 else:
                     if retry_button.clicked(event):
                         return "RETRY"

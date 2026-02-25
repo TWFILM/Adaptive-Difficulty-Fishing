@@ -25,9 +25,14 @@ class DDAManager:
     Manages dynamic difficulty by tracking player performance and adjusting
     multiple gameplay parameters in real-time to maintain a 'flow state'.
     """
-    def __init__(self, fish_resilience, fish_progress):
+    def __init__(self, fish_resilience, fish_progress, baseline_skill=0.5): # เพิ่ม baseline_skill
         self.catching_history = deque(maxlen=PERFORMANCE_HISTORY_LENGTH)
-        self.performance_metric = 0.5  # Start at a neutral value
+
+        # ใส่ประวัติจำลองตอนเริ่มเกมตามฝีมือที่ประเมินได้
+        for _ in range(PERFORMANCE_HISTORY_LENGTH):
+            self.catching_history.append(1 if random.random() < baseline_skill else 0)
+
+        self.performance_metric = baseline_skill  # เริ่มต้นตามฝีมือจริง
 
         # Store base values of the current fish to modify
         self.base_resilience = fish_resilience
@@ -50,7 +55,7 @@ class DDAManager:
         # Immediate adjustment
         if not is_catching:
             current_speed -= 0.005 # Player is not on the fish, slow it down a bit
-        
+
         # Performance-based adjustment
         if self.performance_metric > PERFORMANCE_THRESHOLD_HIGH:
             # Player is doing well, make it harder over time
@@ -60,7 +65,7 @@ class DDAManager:
             # Player is struggling, make it easier over time
             adjustment = np.interp(self.performance_metric, [0, PERFORMANCE_THRESHOLD_LOW], [MIN_SPEED_ADJ, 0])
             return max(0.5, current_speed + adjustment)
-        
+
         # Ensure speed is always within a valid range
         return np.clip(current_speed, 0.5, 4.0)
 
@@ -87,7 +92,7 @@ class DDAManager:
         """
         modifier = np.interp(self.performance_metric, [0, 1], [MIN_PROGRESS_MOD, MAX_PROGRESS_MOD])
         return self.base_progress + modifier
-        
+
 def update_fish_speed(is_catching, fish_speed):
     """Legacy function, kept for non-DDA modes if needed."""
     if is_catching:
