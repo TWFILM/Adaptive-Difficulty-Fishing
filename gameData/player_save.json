@@ -27,9 +27,9 @@
             "Amberjack",
             "Meme Fish"
         ],
-        "total_catched": 117,
-        "catched_streak": 1,
-        "perfect_catches": 65,
+        "total_catched": 125,
+        "catched_streak": 9,
+        "perfect_catches": 67,
         "unlocked_rods": [
             "Novice Rod",
             "Cool Rod",
@@ -52,10 +52,10 @@
         ]
     },
     "settings_data": {
-        "width": 600,
-        "height": 800,
-        "gameplay": "horizontal",
-        "sfx": true,
+        "width": 1000,
+        "height": 1200,
+        "gameplay": "vertical",
+        "sfx": false,
         "FPS": 90
     }
 }
