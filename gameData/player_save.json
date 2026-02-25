@@ -1,6 +1,6 @@
 {
     "player": {
-        "rod": "Prismatic Rod",
+        "rod": "Novice Rod",
         "catched_fish": [
             "Cod",
             "Clownfish",
@@ -54,14 +54,8 @@
     "settings_data": {
         "width": 600,
         "height": 800,
-<<<<<<< HEAD
-        "gameplay": "vertical",
-        "sfx": false,
-        "mode": "Default"
-=======
         "gameplay": "horizontal",
         "sfx": true,
         "FPS": 90
->>>>>>> cf0ae12b37f129963ee78be70e1e2543de8c4c2b
     }
 }
