@@ -1,9 +1,10 @@
 import pygame
 import os
 
-from gameData.config import BG_COLOR, FPS
+from gameData.config import BG_COLOR
 from gameData.get_info import get_fish_data, get_locked_fish_info  
-from utils.gadgets import Button, FishCard    
+from utils.gadgets import Button, FishCard
+from utils.load_img import load_ui_image    
 
 # ── PATH ───────────────────────────
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -13,27 +14,27 @@ ROOT_DIR = os.path.dirname(BASE_DIR)
 FONT_TITLE = os.path.join(ROOT_DIR, "assets", "fonts", "Underlines-PVjX2.ttf")
 FONT_BODY  = os.path.join(ROOT_DIR, "assets", "fonts", "RasterForgeRegular-JpBgm.ttf")
 
-FONT_PATH1 = os.path.join(
-    ROOT_DIR, "assets", "fonts", "Underlines-PVjX2.ttf"
-)
-
-FONT_PATH2 = os.path.join(
+FONT_PATH = os.path.join(
     ROOT_DIR, "assets", "fonts", "RasterForgeRegular-JpBgm.ttf"
 )
 
 PAGE_SIZE = 4  # 2x2
 
-def run_bestiary(screen, S, unlocked_fish):
+def run_bestiary(screen, S, unlocked_fish, FPS=60):
     pygame.init()
     screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
     pygame.display.set_caption("Bestiary")
     clock = pygame.time.Clock()
 
+    button_img = load_ui_image("button.png")
+    bg_img = load_ui_image("bg.png")
+    bg_img = pygame.transform.scale(bg_img, (S.WIDTH, S.HEIGHT))
+
     # fonts
-    title_font = pygame.font.Font(FONT_PATH1, int(48*S.scale))
-    card_font = pygame.font.Font(FONT_PATH2, int(16*S.scale)) 
-    desc_font = pygame.font.Font(FONT_PATH2, int(12*S.scale)) 
-    btn_font = pygame.font.Font(FONT_PATH2, int(26*S.scale)) 
+    title_font = pygame.font.Font(FONT_PATH, int(48*S.scale))
+    card_font = pygame.font.Font(FONT_PATH, int(16*S.scale)) 
+    desc_font = pygame.font.Font(FONT_PATH, int(12*S.scale)) 
+    btn_font = pygame.font.Font(FONT_PATH, int(26*S.scale)) 
 
     # data
     FISH_DATA = get_fish_data()
@@ -57,21 +58,24 @@ def run_bestiary(screen, S, unlocked_fish):
 
     # buttons
     back_btn = Button(
-        rect=(S.WIDTH * 0.18 - 80, S.HEIGHT * 0.80, 160, 60),
+        rect=(S.WIDTH * 0.18 - 80, S.HEIGHT * 0.80, 160, 80),
         text="BACK",
-        font=btn_font
+        font=btn_font,
+        image=button_img
     )
 
     next_btn = Button(
-        rect=(S.WIDTH * 0.82 - 80, S.HEIGHT * 0.80, 160, 60),
+        rect=(S.WIDTH * 0.82 - 80, S.HEIGHT * 0.80, 160, 80),
         text="NEXT",
-        font=btn_font
+        font=btn_font,
+        image=button_img
     )
 
     center_btn = Button(
-        rect=(S.WIDTH // 2 - 90, S.HEIGHT * 0.80, 180, 60),
+        rect=(S.WIDTH // 2 - 90, S.HEIGHT * 0.80, 180, 80),
         text="LOBBY",
-        font=btn_font
+        font=btn_font,
+        image=button_img
     )
 
     # ── CREATE FISH CARDS (ONCE) ─────
@@ -147,9 +151,9 @@ def run_bestiary(screen, S, unlocked_fish):
                 return "LOBBY"
 
         # ── DRAW ─────────────────────
-        screen.fill(BG_COLOR)
+        screen.blit(bg_img, (0, 0))
 
-        title = title_font.render("Bestiary", True, (240, 240, 240))
+        title = title_font.render("Bestiary", True, (51,25,0))
         screen.blit(
             title,
             title.get_rect(center=(S.WIDTH // 2, S.HEIGHT * 0.12))

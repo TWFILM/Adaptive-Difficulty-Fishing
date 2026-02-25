@@ -1,3 +1,4 @@
+from matplotlib import image
 import pygame
 
 from utils.load_audio import play_button_sfx
@@ -14,27 +15,50 @@ RARITY_COLORS = {
 
 # ── BUTTON CLASS ──────────────────
 class Button:
-    def __init__(self, rect, text, font,
-                 bg_color=(70, 70, 70),
-                 hover_color=(120, 120, 120),
-                 text_color=(255, 255, 255)):
-
+    def __init__(self, rect, text, font, image, text_color=(51,25,0)):
         self.rect = pygame.Rect(rect)
         self.text = text
         self.font = font
-        self.bg_color = bg_color
-        self.hover_color = hover_color
         self.text_color = text_color
+
+        base_img = pygame.transform.scale(image, (self.rect.width, self.rect.height))
+        self.image = base_img
+        self.hover_image = brighten(base_img)
 
     def draw(self, screen):
         mouse_pos = pygame.mouse.get_pos()
-        color = self.hover_color if self.rect.collidepoint(mouse_pos) else self.bg_color
 
-        pygame.draw.rect(screen, color, self.rect, border_radius=8)
+        if self.rect.collidepoint(mouse_pos):
+            screen.blit(self.hover_image, self.rect)
+            corner_color = (255, 200, 60)
+            thickness = 5
+            length = 18
+            r = -1  # offset radius from the corner
 
-        text_surf = self.font.render(self.text, True, self.text_color)
-        text_rect = text_surf.get_rect(center=self.rect.center)
-        screen.blit(text_surf, text_rect)
+            x, y, w, h = self.rect
+
+            # ── Top Left ──
+            pygame.draw.line(screen, corner_color, (x-r, y-r), (x-r+length, y-r), thickness)
+            pygame.draw.line(screen, corner_color, (x-r, y-r), (x-r, y-r+length), thickness)
+
+            # ── Top Right ──
+            pygame.draw.line(screen, corner_color, (x+w+r, y-r), (x+w+r-length, y-r), thickness)
+            pygame.draw.line(screen, corner_color, (x+w+r, y-r), (x+w+r, y-r+length), thickness)
+
+            # ── Bottom Left ──
+            pygame.draw.line(screen, corner_color, (x-r, y+h+r), (x-r+length, y+h+r), thickness)
+            pygame.draw.line(screen, corner_color, (x-r, y+h+r), (x-r, y+h+r-length), thickness)
+
+            # ── Bottom Right ──
+            pygame.draw.line(screen, corner_color, (x+w+r, y+h+r), (x+w+r-length, y+h+r), thickness)
+            pygame.draw.line(screen, corner_color, (x+w+r, y+h+r), (x+w+r, y+h+r-length), thickness)
+        else:
+            screen.blit(self.image, self.rect)
+
+        if self.text:
+            text_surf = self.font.render(self.text, True, self.text_color)
+            text_rect = text_surf.get_rect(center=self.rect.center)
+            screen.blit(text_surf, text_rect)
 
     def clicked(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -42,6 +66,7 @@ class Button:
                 play_button_sfx()
                 return True
         return False
+
 
 # ── SWITCH BUTTON ─────────────────────────────
 class Switch:
@@ -52,9 +77,9 @@ class Switch:
         self.font = font
         self.value = initial  # True = left, False = right
 
-        self.bg_color = (70, 70, 70)
-        self.active_color = (120, 120, 120)
-        self.text_color = (255, 255, 255)
+        self.bg_color = (224, 150, 40)
+        self.active_color = (255, 210, 85)
+        self.text_color = (51,25,0)
 
     def clicked(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -64,7 +89,7 @@ class Switch:
         return False
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.bg_color, self.rect, border_radius=30)
+        pygame.draw.rect(screen, self.bg_color, self.rect, border_radius=8)
 
         half_w = self.rect.width // 2
 
@@ -75,7 +100,14 @@ class Switch:
             self.rect.height
         )
 
-        pygame.draw.rect(screen, self.active_color, active_rect, border_radius=30)
+        pygame.draw.rect(screen, self.active_color, active_rect, border_radius=8)
+        pygame.draw.line(
+            screen,
+            (51,25,0),
+            (self.rect.centerx, self.rect.y + 3),
+            (self.rect.centerx, self.rect.bottom - 3),
+            3
+        )
 
         left_surf = self.font.render(self.left_text, True, self.text_color)
         right_surf = self.font.render(self.right_text, True, self.text_color)
@@ -91,6 +123,71 @@ class Switch:
             right_surf.get_rect(center=(self.rect.x + half_w + half_w // 2,
                                        self.rect.centery))
         )
+
+        pygame.draw.rect(screen, (80, 40, 0), self.rect, 3, border_radius=8)
+
+class Slider:
+    def __init__(self, rect, min_val, max_val, start_val):
+        self.rect = pygame.Rect(rect)
+        self.min_val = min_val
+        self.max_val = max_val
+        self.value = start_val
+
+        self.dragging = False
+        self.handle_radius = 10
+
+    def draw(self, screen):
+
+        # --- Track ---
+        track_rect = pygame.Rect(
+            self.rect.x,
+            self.rect.y,
+            self.rect.width,
+            self.rect.height
+        )
+
+        pygame.draw.rect(screen, (224, 150, 40), track_rect, border_radius=4)
+        pygame.draw.rect(screen, (51,25,0), track_rect, 2, border_radius=4)
+
+        # --- Fill  ---
+        fill_width = int((self.value - self.min_val) /
+                        (self.max_val - self.min_val) * self.rect.width)
+
+        fill_rect = pygame.Rect(
+            self.rect.x,
+            self.rect.y,
+            fill_width,
+            self.rect.height
+        )
+
+        pygame.draw.rect(screen, (51,25,0), fill_rect, border_radius=4)
+
+        # --- Handle  ---
+        handle_width = 18
+        handle_rect = pygame.Rect(
+            self.rect.x + fill_width - handle_width // 2,
+            self.rect.y - 4,
+            handle_width,
+            self.rect.height + 8
+        )
+
+        pygame.draw.rect(screen, (255, 210, 85), handle_rect, border_radius=4)
+        pygame.draw.rect(screen, (51,25,0), handle_rect, 2, border_radius=4)
+
+
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                self.dragging = True
+
+        if event.type == pygame.MOUSEBUTTONUP:
+            self.dragging = False
+
+        if event.type == pygame.MOUSEMOTION and self.dragging:
+            x = max(self.rect.x, min(event.pos[0], self.rect.right))
+            ratio = (x - self.rect.x) / self.rect.width
+            self.value = self.min_val + ratio * (self.max_val - self.min_val)
+
 
 
 # ── FISH CARD CLASS ────────────────
@@ -115,21 +212,20 @@ class FishCard:
         self.img_rect = None     #  click 
 
     def draw(self, screen):
-        # ── CARD BACKGROUND ──────────────
+        # ── CARD BACKGROUND (40, 60, 90)──────────────
         pygame.draw.rect(
             screen,
-            (40, 60, 90),
+            (255, 255, 204),
             self.rect,
             border_radius=18
         )
 
-        # ── RARITY BAR ───────────────────
-        pygame.draw.rect(
-            screen,
-            self.rarity_color,
-            (self.rect.x, self.rect.y, self.rect.width, 6),
-            border_radius=6
-        )
+        # Outer Border
+        pygame.draw.rect(screen, (90, 50, 0), self.rect, 4, border_radius=18)
+
+        # Inner Border 
+        # inner_rect = self.rect.inflate(-6, -6)
+        # pygame.draw.rect(screen, self.rarity_color, inner_rect, 3, border_radius=14)
 
         # ── TITLE  ────────────────────────
         title = self.font.render(
@@ -194,6 +290,27 @@ class FishCard:
             self.rect.width - 32
         )
 
+        mouse_pos = pygame.mouse.get_pos()
+        is_hover_img = self.img_rect and self.img_rect.collidepoint(mouse_pos)
+        if is_hover_img:
+            corner_color = (51, 25, 0)
+            thickness = 3
+            length = 14
+
+            x, y, w, h = self.img_rect
+
+            pygame.draw.line(screen, corner_color, (x, y), (x+length, y), thickness)
+            pygame.draw.line(screen, corner_color, (x, y), (x, y+length), thickness)
+
+            pygame.draw.line(screen, corner_color, (x+w, y), (x+w-length, y), thickness)
+            pygame.draw.line(screen, corner_color, (x+w, y), (x+w, y+length), thickness)
+
+            pygame.draw.line(screen, corner_color, (x, y+h), (x+length, y+h), thickness)
+            pygame.draw.line(screen, corner_color, (x, y+h), (x, y+h-length), thickness)
+
+            pygame.draw.line(screen, corner_color, (x+w, y+h), (x+w-length, y+h), thickness)
+            pygame.draw.line(screen, corner_color, (x+w, y+h), (x+w, y+h-length), thickness)
+
     # ── CLICK CHECK ─────────────────
     def image_clicked(self, event):
         return (
@@ -222,7 +339,7 @@ class FishCard:
 
         y = start_y
         for ln in lines:
-            surf = font.render(ln.strip(), True, (220, 220, 220))
+            surf = font.render(ln.strip(), True, (51,25,0))
             rect = surf.get_rect(centerx=center_x, y=y)
             surface.blit(surf, rect)
             y += font.get_height() + 4
@@ -247,8 +364,33 @@ class RodCard:
         self.img_rect = None  # Check if clicked
 
     def draw(self, screen):
-        bg = (70, 120, 200) if self.selected else (40, 60, 90)
+        bg = (255, 210, 85) if self.selected else (255, 255, 204)
         pygame.draw.rect(screen, bg, self.rect, border_radius=18)
+        pygame.draw.rect(screen, (51,25,0), self.rect, 3, border_radius=18)
+
+        if self.selected:
+            corner_color = (255, 200, 60)
+            thickness = 5
+            length = 18
+            r = 10  # offset radius from the corner
+
+            x, y, w, h = self.rect
+
+            # ── Top Left ──
+            pygame.draw.line(screen, corner_color, (x-r, y-r), (x-r+length, y-r), thickness)
+            pygame.draw.line(screen, corner_color, (x-r, y-r), (x-r, y-r+length), thickness)
+
+            # ── Top Right ──
+            pygame.draw.line(screen, corner_color, (x+w+r, y-r), (x+w+r-length, y-r), thickness)
+            pygame.draw.line(screen, corner_color, (x+w+r, y-r), (x+w+r, y-r+length), thickness)
+
+            # ── Bottom Left ──
+            pygame.draw.line(screen, corner_color, (x-r, y+h+r), (x-r+length, y+h+r), thickness)
+            pygame.draw.line(screen, corner_color, (x-r, y+h+r), (x-r, y+h+r-length), thickness)
+
+            # ── Bottom Right ──
+            pygame.draw.line(screen, corner_color, (x+w+r, y+h+r), (x+w+r-length, y+h+r), thickness)
+            pygame.draw.line(screen, corner_color, (x+w+r, y+h+r), (x+w+r, y+h+r-length), thickness)
 
         # ── IMAGE ───────────────────
         img_x = self.rect.x + self.IMG_PAD
@@ -264,21 +406,35 @@ class RodCard:
         else:
             self.img_rect = pygame.Rect(img_x, img_y, self.IMG_BOX_W, self.IMG_BOX_H)
             pygame.draw.rect(screen, (30, 30, 30), self.img_rect, border_radius=8)
-
+    
         # ── TEXT ────────────────────
         text_x = img_x + self.IMG_BOX_W + 24
 
-        title = self.font.render(self.rod["name"].upper(), True, (240, 240, 240))
+        title = self.font.render(self.rod["name"].upper(), True, (51,25,0))
         screen.blit(title, (text_x, self.rect.y + 18))
 
         y = self.rect.y + 52
         stats = [
-            f"LUCK        {self.rod.get('LUCK', 'N/A')}",
-            f"CONTROL     {self.rod.get('CONTROLLED', 'N/A')}",
-            f"RESILIENCE  {self.rod.get('RESILIENCE', 'N/A')}",
+            ("LUCK", self.rod.get("LUCK")),
+            ("CONTROL", self.rod.get("CONTROLLED")),
+            ("RESILIENCE", self.rod.get("RESILIENCE")),
         ]
-        for s in stats:
-            screen.blit(self.small_font.render(s, True, (210, 210, 210)), (text_x, y))
+
+        for name, value in stats:
+
+            if value is None:
+                display_value = "N/A"
+            else:
+                if name == "CONTROL":
+                    display_value = format_number(value)
+                else:
+                    display_value = format_percent(value)
+
+            text = f"{name:<12} {display_value}"
+            screen.blit(
+                self.small_font.render(text, True, (51,25,0)),
+                (text_x, y)
+            )
             y += 22
 
         desc_lines = wrap_text(
@@ -289,8 +445,29 @@ class RodCard:
 
         dy = self.rect.bottom - 20 - len(desc_lines) * 18
         for ln in desc_lines:
-            screen.blit(self.small_font.render(ln, True, (220, 220, 220)), (text_x, dy))
+            screen.blit(self.small_font.render(ln, True, (51,25,0)), (text_x, dy))
             dy += 18
+        
+        mouse_pos = pygame.mouse.get_pos()
+        is_hover_img = self.img_rect and self.img_rect.collidepoint(mouse_pos)
+        if is_hover_img:
+            corner_color = (51, 25, 0)
+            thickness = 3
+            length = 14
+
+            x, y, w, h = self.img_rect
+
+            pygame.draw.line(screen, corner_color, (x, y), (x+length, y), thickness)
+            pygame.draw.line(screen, corner_color, (x, y), (x, y+length), thickness)
+
+            pygame.draw.line(screen, corner_color, (x+w, y), (x+w-length, y), thickness)
+            pygame.draw.line(screen, corner_color, (x+w, y), (x+w, y+length), thickness)
+
+            pygame.draw.line(screen, corner_color, (x, y+h), (x+length, y+h), thickness)
+            pygame.draw.line(screen, corner_color, (x, y+h), (x, y+h-length), thickness)
+
+            pygame.draw.line(screen, corner_color, (x+w, y+h), (x+w-length, y+h), thickness)
+            pygame.draw.line(screen, corner_color, (x+w, y+h), (x+w, y+h-length), thickness)
 
     def image_clicked(self, event):
         return (
@@ -338,3 +515,8 @@ def scale_to_fit(image, max_w, max_h):
         image,
         (int(w * scale), int(h * scale))
     )
+
+def brighten(image, amount=40):
+            img = image.copy()
+            img.fill((amount, amount, amount, 0), special_flags=pygame.BLEND_RGBA_ADD)
+            return img

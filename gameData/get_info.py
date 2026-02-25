@@ -29,13 +29,13 @@ def get_random_rarity(rod_name):
     luck = rod.get("LUCK", 0)
     if luck!=0:
         if luck < 0:
-            weights[0] = weights[0] * 1+abs(luck) # common
+            weights[0] *= (1+abs(luck)) # common
         else :
-            weights[0] = weights[0] * abs(luck)/2 # common
-        weights[1] *= 1+luck # uncommon
-        weights[2] *= 1+(luck*2) # rare
-        weights[3] *= 1+(luck*4) # legendary
-        weights[4] *= 1+(luck*8) # mythical
+            weights[0] *= (abs(luck)/2) # common
+        weights[1] *= (1+luck) # uncommon
+        weights[2] *= (1+(luck*2)) # rare
+        weights[3] *= (1+(luck*4)) # legendary
+        weights[4] *= (1+(luck*8)) # mythical
            
     
     result = random.choices(rarities, weights=weights, k=1)
@@ -61,26 +61,27 @@ def get_rod_des():
 def get_unlocked_rods():
     save_data = SaveManager()
     player_data = save_data.data["player"]
-    if "Cool Rod" not in player_data["unlocked_rods"] and player_data["total_catched"] >= 15:
+    if "Cool Rod" not in player_data["unlocked_rods"] and player_data["total_catched"] >= 5:
         save_data.data["player"]["unlocked_rods"].append("Cool Rod")
         save_data.save()
-    if "RU Sure Rod" not in player_data["unlocked_rods"] and player_data["catched_streak"] >= 15:
+    if "RU Sure Rod" not in player_data["unlocked_rods"] and player_data["catched_streak"] >= 10:
         save_data.data["player"]["unlocked_rods"].append("RU Sure Rod")
         save_data.save()
 
-    if "Shear Rod" not in player_data["unlocked_rods"] and player_data["total_catched"] >= 70:
+    if "Shear Rod" not in player_data["unlocked_rods"] and player_data["total_catched"] >= 45:
         save_data.data["player"]["unlocked_rods"].append("Shear Rod")
         save_data.save()
 
-    if "Anchor Rod" not in player_data["unlocked_rods"] and player_data["perfect_catches"] >= 15:
+    if "Anchor Rod" not in player_data["unlocked_rods"] and player_data["perfect_catches"] >= 5:
             save_data.data["player"]["unlocked_rods"].append("Anchor Rod")
             save_data.save()
 
     if "Prismatic Rod" not in player_data["unlocked_rods"] and all_caught_fish_legendary():
         save_data.data["player"]["unlocked_rods"].append("Prismatic Rod")
         save_data.save()
-
-    if "Rod of the Conqueror" not in player_data["unlocked_rods"] and player_data["catched_fish"] == len(get_fish_data()):
+    
+    if "Rod of the Conqueror" not in player_data["unlocked_rods"] and len(player_data["catched_fish"]) == (len(get_fish_data()["Common"]) 
+        + len(get_fish_data()["Uncommon"]) + len(get_fish_data()["Rare"]) + len(get_fish_data()["Legendary"]) + len(get_fish_data()["Mythical"]) + len(get_fish_data()["Meme"])):
         save_data.data["player"]["unlocked_rods"].append("Rod of the Conqueror")
         save_data.save()
 

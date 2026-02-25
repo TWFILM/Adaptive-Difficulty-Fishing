@@ -1,7 +1,7 @@
 {
     "Mackerel": {
         "name": "Mackerel",
-        "desc": "A rounded and torpedo-shaped fish with a slender, keeled tail base.",
+        "desc": "A rounded and torpedo-shaped fish with a slender, keeled tail.",
         "img": "Mackerel_locked.png"
     },
     "Sardine": {
@@ -16,7 +16,7 @@
     },
     "Shrimp": {
         "name": "Shrimp",
-        "desc": "A small translucent crustacean with a curved body and long antennae.",
+        "desc": "A small translucent crustacean with a curved body.",
         "img": "Shrimp_locked.png"
     },
     "Haddock": {
@@ -31,7 +31,7 @@
     },
     "Sea Star": {
         "name": "Sea Star",
-        "desc": "A spiky creature with five vibrant arms radiating from its center.",
+        "desc": "A creature with five vibrant arms radiating from its center.",
         "img": "Sea_Star_locked.png"
     },
     "Cod": {
@@ -41,82 +41,82 @@
     },
     "Crab": {
         "name": "Crab",
-        "desc": "A hard-shelled crustacean with eight legs and powerful claws.",
+        "desc": "A hard-shelled with eight legs and powerful claws.",
         "img": "Crab_locked.png"
     },
     "Chinook Salmon": {
         "name": "Chinook Salmon",
-        "desc": "A streamlined, torpedo-shaped fish with robust bodies and small fins.",
+        "desc": "A streamlined, torpedo-shaped fish with small fins.",
         "img": "Chinook_Salmon_locked.png"
     },
     "Amberjack": {
         "name": "Amberjack",
         "desc": "A sleek fish with golden horizontal stripes along its body.",
-        "img": "locked_fish.png"
+        "img": "Amberjack_locked.png"
     },
     "Clownfish": {
         "name": "Clownfish",
         "desc": "A vibrant orange fish with bold white and black stripes.",
-        "img": "locked_fish.png"
+        "img": "Clownfish_locked.png"
     },
     "Bluefin Tuna": {
         "name": "Bluefin Tuna",
         "desc": "A massive fish with deep blue coloring and a torpedo-shaped body.",
-        "img": "locked_fish.png"
+        "img": "Bluefin_Tuna_locked.png"
     },
     "Pufferfish": {
         "name": "Pufferfish",
-        "desc": "A round fish covered in sharp spines that inflates when threatened.",
-        "img": "locked_fish.png"
+        "desc": "A round fish covered in sharp spines that inflates.",
+        "img": "Pufferfish_locked.png"
     },
     "Octopus": {
         "name": "Octopus",
         "desc": "A soft-bodied creature with eight flexible tentacles and spots.",
-        "img": "locked_fish.png"
+        "img": "Octopus_locked.png"
     },
     "Giant Trevally": {
         "name": "Giant Trevally",
         "desc": "A powerful fish with a sleek metallic body and large fins.",
-        "img": "locked_fish.png"
+        "img": "Giant_Trevally_locked.png"
     },
     "Great White Shark": {
         "name": "Great White Shark",
-        "desc": "A massive predator with grey coloring and a distinctive white belly.",
-        "img": "locked_fish.png"
+        "desc": "A massive predator with grey coloring and white belly.",
+        "img": "Great_White_Shark_locked.png"
     },
     "Flying Fish": {
         "name": "Flying Fish",
         "desc": "A streamlined fish with enlarged pectoral fins like wings.",
-        "img": "locked_fish.png"
+        "img": "Flying_Fish_locked.png"
     },
     "Sea Turtle": {
         "name": "Sea Turtle",
         "desc": "An ancient reptile with a hard shell and four flippers.",
-        "img": "locked_fish.png"
+        "img": "Sea_Turtle_locked.png"
     },
     "Barracuda": {
         "name": "Barracuda",
-        "desc": "A sleek predator with sharp teeth and a silvery streamlined body.",
-        "img": "locked_fish.png"
+        "desc": "A sleek predator with sharp teeth and a silvery body.",
+        "img": "Barracuda_locked.png"
     },
     "Colossal Squid": {
         "name": "Colossal Squid",
-        "desc": "A massive deep-sea creature with glowing eyes and enormous tentacles.",
-        "img": "locked_fish.png"
+        "desc": "A massive deep-sea creature with enormous tentacles.",
+        "img": "Colossal_Squid_locked.png"
     },
     "Orca": {
         "name": "Orca",
-        "desc": "A massive black and white marine mammal with a distinctive white eye patch.",
-        "img": "locked_fish.png"
+        "desc": "A massive black and white marine mammal.",
+        "img": "Orca_locked.png"
     },
     "Blue Whale": {
         "name": "Blue Whale",
         "desc": "An enormous blue-grey creature, the largest animal to exist.",
-        "img": "locked_fish.png"
+        "img": "Blue_Whale_locked.png"
     },
     "Meme Fish": {
         "name": "Meme Fish",
-        "desc": "A peculiar creature with an unusual appearance born from internet culture.",
-        "img": "locked_fish.png"
+        "desc": "Legend said this mythical creature was swim in the abyss.",
+        "img": "Meme_Fish_locked.png"
     }
 }

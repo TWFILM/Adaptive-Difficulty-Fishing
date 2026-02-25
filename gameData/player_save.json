@@ -1,26 +1,67 @@
 {
     "player": {
-        "rod": "Novice Rod",
+        "rod": "Prismatic Rod",
         "catched_fish": [
+            "Cod",
+            "Clownfish",
+            "Mackerel",
+            "Mullet",
+            "Giant Trevally",
+            "Sea Star",
+            "Chinook Salmon",
+            "Octopus",
+            "Colossal Squid",
+            "Great White Shark",
             "Barracuda",
+            "Flying Fish",
+            "Sea Turtle",
+            "Shrimp",
+            "Crab",
+            "Pufferfish",
+            "Blue Whale",
+            "Orca",
+            "Sardine",
+            "Bluefin Tuna",
+            "Haddock",
+            "Sea Bass",
             "Amberjack",
-            "Octopus"
+            "Meme Fish"
         ],
-        "total_catched": 4,
-        "catched_streak": 4,
-        "perfect_catches": 0,
+        "total_catched": 117,
+        "catched_streak": 1,
+        "perfect_catches": 65,
         "unlocked_rods": [
-            "Novice Rod"
+            "Novice Rod",
+            "Cool Rod",
+            "Prismatic Rod",
+            "RU Sure Rod",
+            "Anchor Rod",
+            "Shear Rod",
+            "Meme Rod",
+            "Rod of the Conqueror"
         ],
         "shown_unlock_notice": [
-            "Novice Rod"
+            "Novice Rod",
+            "Cool Rod",
+            "Prismatic Rod",
+            "RU Sure Rod",
+            "Anchor Rod",
+            "Shear Rod",
+            "Meme Rod",
+            "Rod of the Conqueror"
         ]
     },
     "settings_data": {
         "width": 600,
         "height": 800,
+<<<<<<< HEAD
         "gameplay": "vertical",
         "sfx": false,
         "mode": "Default"
+=======
+        "gameplay": "horizontal",
+        "sfx": true,
+        "FPS": 90
+>>>>>>> cf0ae12b37f129963ee78be70e1e2543de8c4c2b
     }
 }

@@ -5,22 +5,22 @@
     ,
     "Cool Rod":
         { "name": "Cool Rod", 
-        "desc": "Unlock by getting 15 total caught fish.",
+        "desc": "Unlock by getting 5 total caught fish.",
         "img": "Cool Rod locked.png" }
     ,
     "RU Sure Rod":
         { "name": "RU Sure Rod", 
-        "desc": "Unlock by getting 15 catching streaks.",
+        "desc": "Unlock by getting 10 catching streaks.",
         "img": "RU Sure Rod locked.png" }
     ,
     "Shear Rod":
         { "name": "Shear Rod", 
-        "desc": "Unlock by getting 70 total caught fish.",
+        "desc": "Unlock by getting 45 total caught fish.",
         "img": "Shear Rod locked.png" }
     ,
     "Anchor Rod": 
         { "name": "Anchor Rod", 
-        "desc": "Unlock by getting 15 total Perfect Catches.",
+        "desc": "Unlock by getting 5 total Perfect Catches.",
         "img": "Anchor Rod locked.png" }
     ,
     "Prismatic Rod":
@@ -31,7 +31,7 @@
     "Rod of the Conqueror":
         { "name": "Rod of the Conqueror", 
         "desc": "Unlock by having 100% bestiary completion.",
-        "img": "locked_rod.png" }
+        "img": "Rod of the Conqueror locked.png" }
     ,
     "Meme Rod" : 
         { "name": "Meme Rod", 
