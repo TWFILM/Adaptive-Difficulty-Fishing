@@ -1,5 +1,6 @@
 {
     "player": {
+
         "rod": "Novice Rod",
         "catched_fish": [
             "Cod",
@@ -26,9 +27,9 @@
             "Sea Bass",
             "Amberjack",
             "Meme Fish"
-        ],
-        "total_catched": 117,
-        "catched_streak": 1,
+        ],        "total_catched": 120,
+        "catched_streak": 2,
+
         "perfect_catches": 65,
         "unlocked_rods": [
             "Novice Rod",
@@ -55,7 +56,7 @@
         "width": 600,
         "height": 800,
         "gameplay": "horizontal",
-        "sfx": true,
-        "FPS": 90
+        "sfx": false,
+        "FPS": 89
     }
 }

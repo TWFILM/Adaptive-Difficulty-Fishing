@@ -35,9 +35,9 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
         font = pygame.font.SysFont("arial", int(18 * S.scale))
 
     screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
-    pygame.display.set_caption(f"DDA Experiment - Mode: {difficulty_mode}") 
+    pygame.display.set_caption(f"DDA Experiment - Mode: {difficulty_mode}")
     clock = pygame.time.Clock()
-    
+
     btn_font = pygame.font.Font(FONT_PATH, int(24 * S.scale))
     button_img = load_ui_image("button.png")
 
@@ -72,28 +72,28 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
     # ROD INFO
     rod_using = get_fishing_rod_info(rod_name)
 
-    player_bar_width = S.BAR_WIDTH + (rod_using["CONTROLLED"] * S.BAR_WIDTH)   
+    player_bar_width = S.BAR_WIDTH + (rod_using["CONTROLLED"] * S.BAR_WIDTH)
     bar_x = S.TRACK_X + S.TRACK_WIDTH // 2 - player_bar_width // 2
     bar_y = S.TRACK_Y
 
-    EXTRA_HEIGHT = 10  
-    fish_height = S.BAR_HEIGHT + EXTRA_HEIGHT 
+    EXTRA_HEIGHT = 10
+    fish_height = S.BAR_HEIGHT + EXTRA_HEIGHT
     fish_y_draw = S.TRACK_Y - EXTRA_HEIGHT // 2
 
     encounter_start_time = time.time()
 
     # --- Difficulty Setup ---
-    fish_speed = 1.0 
+    fish_speed = 1.0
     if difficulty_mode == "EASY":
         fish_speed = 1.0
     elif difficulty_mode == "MEDIUM":
         fish_speed = 2.0
     elif difficulty_mode == "HARD":
         fish_speed = 3.0
-    
+
     progress = 0
     progress_bar_color = PROGRESS_BAR_COLOR
-    
+
     # Fish Info
     fish_encounter = get_fish(get_random_rarity(rod_using["name"]))
     fish_resilience = fish_encounter["FISH_RESILIENCE"] + rod_using["RESILIENCE"]
@@ -125,12 +125,12 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
     if rod_using["name"] == "Shear Rod":
         knife_fill_remaining = 0.0
         KNIFE_FILL_TOTAL = 0.05
-        KNIFE_FILL_SPEED = 0.075   
-        knife_checked = False  
+        KNIFE_FILL_SPEED = 0.075
+        knife_checked = False
         mult = 0.5
 
     knife_active = False
-    
+
     if rod_using["name"] == "Anchor Rod":
         is_anchor_active = True
         player_bar_width_before = S.BAR_WIDTH + (rod_using["CONTROLLED"] * S.BAR_WIDTH)
@@ -139,12 +139,12 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
     if rod_using["name"] == "Meme Rod":
         choices = random.choices([1, 2, 3])
         if 1 in choices:
-            fish_progress = -0.9  
-    
+            fish_progress = -0.9
+
     # Fish Init
     fish_x = (S.TRACK_X + S.TRACK_WIDTH // 2 ) - (S.FISH_SIZE // 2)
     fish_direction = random.choice([-1, 1])
-    
+
     if difficulty_mode == "DDA":
         fish_speed = random.uniform(FISH_MIN_SPEED, FISH_MAX_SPEED)
 
@@ -155,11 +155,11 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
     resilient_timer = 0.0
 
     bar_velocity = 0.0
-    bar_force = 0.0   
+    bar_force = 0.0
     bar_bounced_left = False
     bar_bounced_right = False
-    BAR_BOUNCE_DAMP = 0.5   
-    
+    BAR_BOUNCE_DAMP = 0.5
+
     success = [False, "None", "None"]
     is_perfect_catch = True
     running = True
@@ -181,20 +181,20 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
         if freeze_active and progress < (PROGRESS_INIT + progress_addition):
             progress += PROGRESS_FILL_ANIM_SPEED
             progress = min(progress, PROGRESS_INIT + progress_addition)
-            
+
         # --- Player Control ---
         if not freeze_active:
             if rod_using["name"] == "Rod of the Conqueror":
-                progress_bar_color = PROGRESS_BAR_COLOR 
+                progress_bar_color = PROGRESS_BAR_COLOR
                 conqueror_active = False
             if rod_using["name"] == "Meme Rod" :
                 if 1 in choices and player_bar_width <= S.TRACK_WIDTH and fish_encounter["name"] != "Meme Fish":
-                    player_bar_width += player_bar_width * 0.005 
+                    player_bar_width += player_bar_width * 0.005
             if rod_using["name"] == "Anchor Rod" and is_anchor_active:
                 if is_catching:
                     if player_bar_width > player_bar_width_before*0.6:
                         player_bar_width -= 0.25
-                    fish_progress += 0.0003     
+                    fish_progress += 0.0003
                 else:
                     is_anchor_active = False
                     fish_progress = fish_encounter["PROGRESS_SPD"]+rod_using["PROGRESS_SPD"]
@@ -204,9 +204,9 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
 
             mouse_pressed = pygame.mouse.get_pressed()[0]
             if mouse_pressed:
-                bar_force += BAR_FORCE_INC 
+                bar_force += BAR_FORCE_INC
             else:
-                bar_force -= BAR_FORCE_DEC 
+                bar_force -= BAR_FORCE_DEC
 
             bar_force = max(0.0, min(BAR_FORCE_MAX, bar_force))
             bar_velocity = (bar_velocity + BAR_DRIFT_LEFT + bar_force) * BAR_FRICTION
@@ -247,14 +247,14 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
 
                 # In DDA mode, get resilience from the manager, otherwise use the static value
                 current_resilience = dda_manager.get_modified_resilience() if dda_manager else fish_resilience
-                
+
                 if resilient_timer >= current_resilience:
                     resilient_timer = 0
                     fish_waiting = False
                     fish_direction = random.choice([-1, 1])
-                    
+
                     # Speed is now handled continuously by the DDA manager, so no special recalculation here.
-                    
+
                     distance = random.randint(FISH_MOVE_MIN_DIST, FISH_MOVE_MAX_DIST)
                     fish_target_x = fish_x + fish_direction * distance
                     fish_target_x = max(
@@ -269,12 +269,12 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
                             chaos_chance = dda_manager.get_chaos_chance()
                         else: # Fallback to original logic for non-DDA modes
                             chaos_chance = 0.02 if difficulty_mode in ["DDA", "HARD"] else 0.01
-                        
+
                         if random.random() < chaos_chance:
                             # 40% chance to stop, 60% chance to juke
-                            if random.random() < 0.4: 
+                            if random.random() < 0.4:
                                 fish_waiting = True
-                                resilient_timer = 0 
+                                resilient_timer = 0
                             else: # Juke!
                                 fish_direction *= -1
                                 distance = random.randint(50, 150) # Short, sharp movement
@@ -291,7 +291,7 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
                         S.TRACK_X += fish_direction * fish_speed
                         bar_y += fish_direction * fish_speed
 
-                    if ((fish_direction == 1 and fish_x >= fish_target_x) or 
+                    if ((fish_direction == 1 and fish_x >= fish_target_x) or
                         (fish_direction == -1 and fish_x <= fish_target_x)):
                         fish_x = fish_target_x
                         fish_waiting = True
@@ -324,15 +324,15 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
             if knife_fill_remaining <= 0:
                 knife_active = False
                 progress_bar_color = PROGRESS_BAR_COLOR
-            
+
         # --- Progression Logic (Fixed) ---
         if not freeze_active:
             if is_catching:
                 base_gain = PROGRESS_UP_RATE
-                
+
                 # Use DDA-modified progress rate if available
                 current_fish_progress = dda_manager.get_modified_progress() if dda_manager else fish_progress
-                
+
                 raw_gain = base_gain * (1.0 + current_fish_progress)
                 actual_gain = max(base_gain * 0.1, raw_gain) # Min gain guarantee
                 progress += actual_gain * frame_scale
@@ -340,7 +340,7 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
                 progress -= PROGRESS_DOWN_RATE
                 is_perfect_catch = False
                 actual_gain = -(PROGRESS_DOWN_RATE * frame_scale)
-        
+
         progress = max(0.0, min(1.0, progress))
 
         if progress >= 1.0:
@@ -350,7 +350,7 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
             success[2] = fish_encounter["name"]
         elif progress <= 0:
             running = False
-        
+
         # --- DDA UPDATES ---
         if dda_manager:
             dda_manager.update(is_catching)
@@ -364,13 +364,13 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
         # --- Render ---
         screen.blit(bg_img, (0, 0))
         pygame.draw.rect(screen, TRACK_COLOR, (S.TRACK_X, S.TRACK_Y + 5 * S.scale, S.TRACK_WIDTH, S.TRACK_HEIGHT - 10 * S.scale))
-        
+
         bar_draw_color = (255, 210, 85) if is_catching else BAR_COLOR
         rect = pygame.Rect(bar_x, bar_y, player_bar_width, S.BAR_HEIGHT)
         radius = int(3 * S.scale)
         aplha_surf = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA)
-        
-        if is_catching:    
+
+        if is_catching:
             pygame.draw.rect(aplha_surf, (*bar_draw_color, 255), (0, 0, rect.width, rect.height), border_radius=radius)
             screen.blit(aplha_surf, rect.topleft)
             pygame.draw.rect(screen, (255, 188, 0), rect, width=int(3 * S.scale), border_radius=radius)
@@ -379,9 +379,9 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
             screen.blit(aplha_surf, rect.topleft)
 
         # Outer frame (dark)
-        
+
         pygame.draw.rect(screen, FISH_COLOR, (fish_x, fish_y_draw, S.FISH_SIZE, fish_height), border_radius=3)
-        
+
         fish_rect = fish_img.get_rect(
             center=(fish_x + S.FISH_SIZE // 2,
                     fish_y_draw + fish_height // 2 - 55 * S.scale)
@@ -403,7 +403,7 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
                 mult += 0.1
                 knife_length = int(S.FISH_SIZE * (mult))
                 knife_thickness = int(S.HEIGHT*2)
-                angle = 0 
+                angle = 0
                 fill_colors = min(fill_colors + 1, 255)
             else:
                 mult += 0.1
