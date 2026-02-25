@@ -134,11 +134,11 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
     fish_resilience = fish_encounter["FISH_RESILIENCE"] + rod_using["RESILIENCE"]
     fish_progress = fish_encounter["PROGRESS_SPD"] + rod_using["PROGRESS_SPD"]
 
-    # If Experiment, fix type of fish to "Common" and remove rod bonuses for consistency
+    # If Experiment, fix type of fish to "Uncommon" and use static resilience/progress for better comparison, while still applying rod modifiers
     if is_experiment:
-        fish_encounter = get_fish("Common")
-        fish_resilience = fish_encounter["FISH_RESILIENCE"]
-        fish_progress = fish_encounter["PROGRESS_SPD"]
+        fish_encounter = get_fish("Uncommon")
+        fish_resilience = 0.75
+        fish_progress = 0
 
     if rod_using["name"] == "Meme Rod":
         choices = random.choices([1, 2, 3])
