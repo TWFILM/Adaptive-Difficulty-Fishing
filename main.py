@@ -1,6 +1,6 @@
 # main.py
 import os
-# os.environ["SDL_AUDIODRIVER"] = "dummy"
+os.environ["SDL_AUDIODRIVER"] = "dummy"
 
 from interface.bestiary import run_bestiary
 from interface.game import run_game

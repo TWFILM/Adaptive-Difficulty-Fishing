@@ -1,32 +1,26 @@
 {
     "player": {
-        "rod": "Meme Rod",
-        "default": "horizontal",
+        "rod": "Novice Rod",
         "catched_fish": [
-            "Chinook Salmon",
-            "Bluefin Tuna",
-            "Cod",
-            "Haddock",
-            "Sardine",
-            "Mullet"
+            "Barracuda",
+            "Amberjack",
+            "Octopus"
         ],
-        "total_catched": 130,
-        "catched_streak": 2,
-        "perfect_catches": 33,
+        "total_catched": 4,
+        "catched_streak": 4,
+        "perfect_catches": 0,
         "unlocked_rods": [
-            "Novice Rod",
-            "Cool Rod"
+            "Novice Rod"
         ],
         "shown_unlock_notice": [
-            "Novice Rod",
-            "Cool Rod"
+            "Novice Rod"
         ]
     },
     "settings_data": {
         "width": 600,
         "height": 800,
-        "gameplay": "horizontal",
-        "sfx": true,
+        "gameplay": "vertical",
+        "sfx": false,
         "mode": "Default"
     }
 }
