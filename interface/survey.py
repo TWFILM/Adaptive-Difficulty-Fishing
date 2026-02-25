@@ -22,7 +22,7 @@ def draw_text(screen, text, font, color, center_x, center_y, bg_color=None):
     text_rect = text_surface.get_rect(center=(center_x, center_y))
     screen.blit(text_surface, text_rect)
 
-def run_survey(screen, S, remaining_survey=2):
+def run_survey(screen, S, mode, remaining_survey=2):
     pygame.init()
     clock = pygame.time.Clock()
 

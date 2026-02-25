@@ -514,6 +514,7 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
 
 
     # --- Result Screen ---
+    catch_duration = time.time() - encounter_start_time
     if success[0]:
         if not fish_encounter["name"] in save.data["player"]["catched_fish"]:
             save.data["player"]["catched_fish"].append(fish_encounter["name"])
@@ -582,11 +583,11 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
     while result_running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return "QUIT" if not is_experiment else success
+                return "QUIT" if not is_experiment else (success, catch_duration)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if is_experiment:
                     if continue_button.clicked(event):
-                        return success
+                        return (success, catch_duration)
                 else:
                     if retry_button.clicked(event):
                         return "RETRY"

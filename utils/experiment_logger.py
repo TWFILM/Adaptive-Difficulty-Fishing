@@ -9,12 +9,13 @@ FIELDNAMES = [
     "Player_ID", 
     "Mode_Played", 
     "Win_Loss", 
+    "Catch_Duration_Sec",
     "Q1_Boredom", 
     "Q2_Frustration", 
     "Q3_Flow"
 ]
 
-def log_experiment_data(player_id, mode, win_loss, survey_results):
+def log_experiment_data(player_id, mode, win_loss, survey_results, catch_duration=None):
     """
     Appends a new row of experiment data to the CSV file.
     
@@ -23,6 +24,7 @@ def log_experiment_data(player_id, mode, win_loss, survey_results):
         mode (str): The difficulty mode that was just played (e.g., "EASY", "DDA").
         win_loss (str): "WIN" or "LOSS".
         survey_results (dict): A dictionary with keys 'Q1', 'Q2', 'Q3' and integer values.
+        catch_duration (float | None): Seconds taken for the fishing encounter.
     """
     
     # Create file and write header if it doesn't exist
@@ -33,6 +35,7 @@ def log_experiment_data(player_id, mode, win_loss, survey_results):
         "Player_ID": player_id,
         "Mode_Played": mode,
         "Win_Loss": win_loss,
+        "Catch_Duration_Sec": catch_duration,
         "Q1_Boredom": survey_results.get("Q1", ""),
         "Q2_Frustration": survey_results.get("Q2", ""),
         "Q3_Flow": survey_results.get("Q3", "")
