@@ -1,109 +1,132 @@
-# Dynamic Difficulty Adjustment for Flow State Optimization in a Simulated Environment
+# Adaptive Difficulty Fishing (DDA Experiment)
 
-## 1. Abstract
+A Pygame fishing mini-game built to compare **static difficulty** (EASY/MEDIUM/HARD) against **Dynamic Difficulty Adjustment (DDA)** in a controlled, repeatable **Experiment Mode**. The project includes an in-game survey system and a data analysis script that exports ready-to-use charts and summary statistics.
 
-This project presents a research tool designed to investigate the relationship between **Dynamic Difficulty Adjustment (DDA)** and the psychological concept of **Flow State** within a video game context. The simulator, developed using Pygame, implements a fishing mini-game where difficulty parameters are manipulated in real-time based on player performance. By comparing player experiences under fixed difficulty settings (Easy, Medium, Hard) against a DDA-driven model, this study aims to evaluate how algorithmic adjustments can foster a more consistent state of engagement, as described by Flow Theory. Data is collected through in-game performance metrics and post-session subjective surveys to provide a quantitative and qualitative analysis of the DDA's efficacy.
+## Features
 
-## 2. Research Objectives
+- **Dynamic Difficulty Adjustment (DDA):** A DDA manager adjusts encounter parameters during gameplay.
+- **Static Difficulty Modes:** EASY, MEDIUM, HARD for baseline comparisons.
+- **Dedicated Experiment Mode:** Runs the modes in a fixed order (EASY → MEDIUM → HARD → DDA) and logs every round to a single CSV.
+- **Survey System:** Post-round questions captured immediately after each encounter.
+- **Data Analysis Exports:** A standalone script generates 6 charts + a summary table from the CSV dataset.
 
-The primary objective is to determine whether a DDA system is more effective at inducing and maintaining a Flow State in players compared to traditional static difficulty levels.
-
-This is achieved by:
-*   Exposing participants to four distinct, sequential gameplay conditions in a **fixed sequential order (EASY → MEDIUM → HARD → DDA)**.
-*   Measuring player performance objectively through in-game metrics (e.g., time-on-target).
-*   Collecting subjective feedback on player experience (Boredom, Frustration, Focus) using a mandatory mini-survey after each condition.
-*   Analyzing the resulting dataset to correlate difficulty models with player-reported states of engagement.
-
-## 3. Features for Research
-
-This simulator was built with specific features to ensure a controlled and effective research process:
-
-*   **Fixed Sequential Experiment Loop:** The system automatically guides the participant through the four required conditions in a fixed order (EASY → MEDIUM → HARD → DDA) to ensure consistent data collection.
-*   **Controlled Variables:** To eliminate confounding variables, all experiment sessions lock the fish type to **"Shrimp"** and disable any special abilities from equipped fishing rods, ensuring that the only variable being tested is the difficulty algorithm.
-*   **Mini-Survey Integration:** A brief, mandatory survey is presented after each of the four gameplay modes. This allows for the immediate capture of subjective feedback on Boredom, Frustration, and Focus, linking a player's psychological state directly to the condition they just experienced.
-*   **Automated CSV Data Logging:** All experimental data, including a timestamp, the participant's unique ID, the difficulty condition, the win/loss outcome, and their survey responses are automatically logged to a single, clean CSV file (`experiment_results.csv`) for straightforward analysis.
-
-## 4. Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
-*   Python 3.8+
-*   Git
+- Python 3.8+
+- Git
 
-### Installation Steps
+### Install
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/TWFILM/Adaptive-Difficulty-Fishing.git
-    cd Adaptive-Difficulty-Fishing
-    ```
+1. Clone the repository:
+     ```bash
+     git clone https://github.com/TWFILM/Adaptive-Difficulty-Fishing.git
+     cd Adaptive-Difficulty-Fishing
+     ```
 
-2.  **Create a virtual environment (recommended):**
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-    ```
+2. Create and activate a virtual environment (recommended):
+     ```bash
+     python -m venv venv
+     source venv/bin/activate  # Windows: venv\Scripts\activate
+     ```
 
-3.  **Install required libraries:**
-    The project requires several libraries for the simulation, data handling, and plotting.
-    ```bash
-    pip install pygame pandas numpy matplotlib
-    ```
+3. Install dependencies:
 
-## 5. How to Conduct the Experiment
+     - To **run the game only**:
+         ```bash
+         pip install pygame
+         ```
 
-This guide provides the exact steps for a researcher or participant to complete one full experimental session.
+     - To **run data analysis / plotting** (recommended):
+         ```bash
+         pip install pandas numpy matplotlib seaborn
+         ```
 
-1.  **Launch the Program:**
-    From the project's root directory, run the `main.py` script.
-    ```bash
-    python main.py
-    ```
+## How to Run
 
-2.  **Start the Experiment:**
-    In the main lobby screen, click the **"START EXPERIMENT"** button. This will initiate the sequential research session.
+Launch the game from the project root:
 
-3.  **Play Through the Four Conditions:**
-    You will be automatically presented with four fishing sessions. Play each one to the best of your ability. The order is fixed:
-    *   **Condition 1: EASY**
-    *   **Condition 2: MEDIUM**
-    *   **Condition 3: HARD**
-    *   **Condition 4: DDA**
+```bash
+python main.py
+```
 
-4.  **Complete the Post-Game Surveys:**
-    After *each* of the four sessions, a survey will appear on the screen. You **must answer the questions by pressing the number keys (1 to 5) on the keyboard, and it will automatically proceed.**
+From the lobby you can start a normal game session, or select **Start Experiment** to run the research loop.
 
-5.  **Session Completion:**
-    After the final survey (following the DDA round), the experiment is complete. The application will automatically return to the main lobby. You can now safely close the program. All data has been saved.
+## Experiment & Data Collection
 
-## 6. Data Output
+Experiment Mode is designed to minimize confounds and keep conditions comparable across participants.
 
-The results of the experiment are saved in the `experiment_results.csv` file in the root directory. Each row in this file represents a single participant's experience in one of the four conditions.
+### What gets locked
 
-The columns are defined as follows:
+- **Equipment is locked:** the rod is forced to **Novice Rod** for every experiment round.
+- **Fish encounter is controlled:** the fish is locked to **Uncommon**.
+- **Fish stats are fixed for comparison:** during experiments the encounter uses:
+    - `fish_resilience = 0.75`
+    - `fish_progress = 0`
+- **Timing is measured:** the time to finish each encounter is recorded as `Catch_Duration_Sec`.
 
-| Column Name       | Type    | Description                                                                 |
-|-------------------|---------|-----------------------------------------------------------------------------|
-| `Timestamp`       | String  | The date and time the session was completed.                                |
-| `Player_ID`       | String  | A unique identifier (UUID) assigned to each participant for the session.    |
-| `Mode_Played`     | String  | The difficulty condition being tested (`EASY`, `MEDIUM`, `HARD`, or `DDA`).   |
-| `Win_Loss`        | String  | The outcome of the mini-game for that condition (`WIN` or `LOSS`).            |
-| `Q1_Boredom`      | Integer | The participant's self-reported boredom level (1-5 scale).                  |
-| `Q2_Frustration`  | Integer | The participant's self-reported frustration level (1-5 scale).              |
-| `Q3_Flow`         | Integer | The participant's self-reported focus/flow state (1-5 scale).               |
+### Survey system
 
-This structured output is designed for easy import into statistical analysis software like R, SPSS, or Python libraries such as Pandas and SciPy.
+After each round, the participant answers a short survey using keyboard number keys.
 
-## 7. Data Visualization
+- Base questions (all modes):
+    - **Q1 Difficulty:** “How HARD was this mode?” (0–9)
+    - **Q2 Fun:** “How FUN was this mode?” (0–9)
 
-After collecting data, you can automatically generate a set of professional, poster-ready graphs by running the `plot_graph.py` script.
+- Extra questions (DDA only):
+    - **Q3 DDA Similarity:** “Which mode did this feel like?” (1=Easy, 2=Medium, 3=Hard)
+    - **Q4 DDA More Fun:** “Was this mode MORE FUN?” (0–9)
 
-**To generate the graphs:**
+### Logging & CSV safety
+
+Each experiment round appends one row to `experiment_results.csv`.
+
+The logger includes **header migration**: if the file already exists with an older header, it rewrites the CSV with the new schema while preserving any columns that still match by name.
+
+## Data Output (experiment_results.csv)
+
+Current schema:
+
+| Column | Description |
+|---|---|
+| Timestamp | ISO timestamp for the row |
+| Player_ID | UUID for the participant/session |
+| Mode_Played | `EASY`, `MEDIUM`, `HARD`, `DDA` |
+| Win_Loss | `WIN` or `LOSS` |
+| Catch_Duration_Sec | Seconds spent in the encounter |
+| Difficulty_Score | Survey Q1 (0–9) |
+| Fun_Score | Survey Q2 (0–9) |
+| DDA_Similarity | Survey Q3 (DDA only; 1/2/3) |
+| DDA_More_Fun | Survey Q4 (DDA only; 0–9) |
+
+## Data Analysis
+
+The analysis pipeline is implemented in `plot_graph.py`.
+
+### Requirements
+
+```bash
+pip install pandas numpy matplotlib seaborn
+```
+
+### Generate charts and summary table
+
+Run:
+
 ```bash
 python plot_graph.py
 ```
 
-This will read the `experiment_results.csv` file and produce the following three images inside the `Graph/` directory:
+This creates a `Graph/` directory and exports:
 
-*   `Graph/graph_flow.png`: A bar chart showing the average "Flow" score for each of the four difficulty modes.
-*   `Graph/graph_emotion.png`: A grouped bar chart comparing the average "Boredom" and "Frustration" scores side-by-side for each mode.
-*   `Graph/graph_winrate.png`: A bar chart showing the win rate percentage for each mode.
+- `Graph/1_catch_duration.png` — catch duration by mode (boxplot)
+- `Graph/2_difficulty_vs_fun.png` — grouped bars of average difficulty vs fun
+- `Graph/3_dda_similarity.png` — DDA similarity perception (pie chart)
+- `Graph/4_win_rate.png` — win rate by mode
+- `Graph/5_dda_more_fun.png` — distribution of DDA “More Fun” scores
+- `Graph/6_flow_state_scatter.png` — difficulty vs fun scatter (colored by mode, with jitter)
+- `Graph/summary_stats.csv` — per-mode aggregated statistics (count, win rate %, avg duration, avg difficulty, avg fun)
+
+### Troubleshooting
+
+- If you see errors like `Missing dependency 'matplotlib'`, install the missing package(s) listed in the message.
