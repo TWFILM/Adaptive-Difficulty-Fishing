@@ -104,20 +104,22 @@ def main():
             for mode in experiment_modes:
                 save_data = load_save()
                 rod_name = save_data["player"]["rod"]
+                # Lock equipment during experiment (force default rod visually + functionally)
+                rod_name = "Novice Rod"
                 axis = settings_data["gameplay"]
                 S = build_scaled_config(settings_data["width"], settings_data["height"], axis)
                 screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
 
                 if axis == "horizontal":
-                    game_result = run_game(screen, S, rod_name, settings_data["FPS"], mode, is_experiment=True)
+                    game_result, catch_duration = run_game(screen, S, rod_name, settings_data["FPS"], mode, is_experiment=True)
                 else:
-                    game_result = run_game_vertical(screen, S, rod_name, settings_data["FPS"], mode, is_experiment=True)
+                    game_result, catch_duration = run_game_vertical(screen, S, rod_name, settings_data["FPS"], mode, is_experiment=True)
 
                 win_loss = "WIN" if game_result[0] else "LOSS"
-
-                survey_results = run_survey(screen, S, remaining_rounds - 1)
-
-                log_experiment_data(player_id, mode, win_loss, survey_results)
+                
+                survey_results = run_survey(screen, S, mode, remaining_rounds - 1)
+                
+                log_experiment_data(player_id, mode, win_loss, survey_results, catch_duration)
                 remaining_rounds -= 1
 
             state = "LOBBY"

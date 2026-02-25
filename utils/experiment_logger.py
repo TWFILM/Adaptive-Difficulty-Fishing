@@ -5,16 +5,57 @@ from datetime import datetime
 
 LOG_FILE = "experiment_results.csv"
 FIELDNAMES = [
-    "Timestamp", 
-    "Player_ID", 
-    "Mode_Played", 
-    "Win_Loss", 
-    "Q1_Boredom", 
-    "Q2_Frustration", 
-    "Q3_Flow"
+    "Timestamp",
+    "Player_ID",
+    "Mode_Played",
+    "Win_Loss",
+    "Catch_Duration_Sec",
+    "Difficulty_Score",
+    "Fun_Score",
+    "DDA_Similarity",
+    "DDA_More_Fun",
 ]
 
-def log_experiment_data(player_id, mode, win_loss, survey_results):
+
+def _migrate_csv_header_if_needed(file_path: str) -> None:
+    """Ensure CSV header matches FIELDNAMES.
+
+    If an existing file has a different header, rewrite it with the new header and
+    preserve any rows by carrying over same-named columns.
+    """
+    if not os.path.isfile(file_path):
+        return
+
+    try:
+        with open(file_path, "r", newline="", encoding="utf-8") as f:
+            reader = csv.reader(f)
+            existing_header = next(reader, None)
+    except IOError:
+        return
+
+    if existing_header == FIELDNAMES:
+        return
+
+    tmp_path = f"{file_path}.tmp"
+    try:
+        with open(file_path, "r", newline="", encoding="utf-8") as src, open(
+            tmp_path, "w", newline="", encoding="utf-8"
+        ) as dst:
+            dict_reader = csv.DictReader(src)
+            writer = csv.DictWriter(dst, fieldnames=FIELDNAMES)
+            writer.writeheader()
+            for row in dict_reader:
+                migrated = {key: row.get(key, "") for key in FIELDNAMES}
+                writer.writerow(migrated)
+        os.replace(tmp_path, file_path)
+    finally:
+        if os.path.exists(tmp_path):
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
+
+def log_experiment_data(player_id, mode, win_loss, survey_results, catch_duration=None):
     """
     Appends a new row of experiment data to the CSV file.
     
@@ -23,19 +64,24 @@ def log_experiment_data(player_id, mode, win_loss, survey_results):
         mode (str): The difficulty mode that was just played (e.g., "EASY", "DDA").
         win_loss (str): "WIN" or "LOSS".
         survey_results (dict): A dictionary with keys 'Q1', 'Q2', 'Q3' and integer values.
+        catch_duration (float | None): Seconds taken for the fishing encounter.
     """
     
-    # Create file and write header if it doesn't exist
+    # Create file and write header if it doesn't exist (or migrate if schema changed)
     file_exists = os.path.isfile(LOG_FILE)
+    if file_exists:
+        _migrate_csv_header_if_needed(LOG_FILE)
     
     row_data = {
         "Timestamp": datetime.now().isoformat(),
         "Player_ID": player_id,
         "Mode_Played": mode,
         "Win_Loss": win_loss,
-        "Q1_Boredom": survey_results.get("Q1", ""),
-        "Q2_Frustration": survey_results.get("Q2", ""),
-        "Q3_Flow": survey_results.get("Q3", "")
+        "Catch_Duration_Sec": catch_duration,
+        "Difficulty_Score": survey_results.get("Q1", ""),
+        "Fun_Score": survey_results.get("Q2", ""),
+        "DDA_Similarity": survey_results.get("Q3", ""),
+        "DDA_More_Fun": survey_results.get("Q4", ""),
     }
     
     try:
