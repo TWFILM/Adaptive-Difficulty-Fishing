@@ -487,7 +487,7 @@ def run_game(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_experiment=F
     match_accuracy = total_catching_frames / max(1, total_active_frames)
 
     # เพิ่ม "DDA" เข้าไปในลิสต์
-    if difficulty_mode in ["EASY", "MEDIUM", "HARD", "DDA"] and not is_experiment:
+    if difficulty_mode in ["EASY", "MEDIUM", "HARD", "DDA"]:
 
         # 1. ถ้ายังไม่มี historical_stats เลย ให้สร้างโครงสร้างเริ่มต้น (เพิ่ม DDA เข้าไปแล้ว)
         if "historical_stats" not in save.data["player"]:

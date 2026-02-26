@@ -221,7 +221,33 @@ def run_settings(screen, S, settings_data):
                         "catched_streak": 0,
                         "perfect_catches": 0,
                         "unlocked_rods": ["Novice Rod"],
-                        "shown_unlock_notice": ["Novice Rod"]
+                        "shown_unlock_notice": ["Novice Rod"],
+                        "historical_stats": {
+                            "EASY": {
+                                "plays": 0,
+                                "wins": 0,
+                                "avg_accuracy": 0.0,
+                                "avg_time_taken": 0.0
+                            },
+                            "MEDIUM": {
+                                "plays": 0,
+                                "wins": 0,
+                                "avg_accuracy": 0.0,
+                                "avg_time_taken": 0.0
+                            },
+                            "HARD": {
+                                "plays": 0,
+                                "wins": 0,
+                                "avg_accuracy": 0.0,
+                                "avg_time_taken": 0.0
+                            },
+                            "DDA": {
+                                "plays": 0,
+                                "wins": 0,
+                                "avg_accuracy": 0.0,
+                                "avg_time_taken": 0.0
+                            }
+                        }
                     }
 
                     save.save()
