@@ -117,7 +117,7 @@ def main():
 
         elif state == "EXPERIMENT":
             stop_lobby_sfx()
-            run_play_guide(screen, S, duration=15, FPS=settings_data["FPS"])
+            run_play_guide(screen, S, duration=10, FPS=settings_data["FPS"])
             # เรียกใช้ฟังก์ชันที่เราสร้างไว้เพื่อรันเลขต่อจากของเดิม
             next_num = get_next_player_number()
             player_id = f"Player{next_num}"

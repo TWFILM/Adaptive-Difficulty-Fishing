@@ -3,6 +3,7 @@ import pygame
 import random
 import time
 import os
+import numpy as np
 
 from gameData.config import *
 from dda import DDAManager, update_fish_speed
@@ -24,10 +25,15 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
 
     if rod_name == "Meme Rod":
         play_meme_sfx()
+    # Create font
+    try:
+        font = pygame.font.Font(FONT_PATH, int(18 * S.scale))
+    except:
+        font = pygame.font.SysFont("arial", int(18 * S.scale))
+
     screen = pygame.display.set_mode((S.WIDTH, S.HEIGHT))
     pygame.display.set_caption(f"DDA Experiment - Mode: {difficulty_mode}")
     clock = pygame.time.Clock()
-    font = pygame.font.Font(FONT_PATH, int(18 * S.scale))
 
     btn_font = pygame.font.Font(FONT_PATH, int(24 * S.scale))
     button_img = load_ui_image("button.png")
@@ -87,24 +93,56 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
         is_anchor_active = True
         player_bar_height_before = S.BAR_HEIGHT + (rod_using["CONTROLLED"] * S.BAR_HEIGHT)
 
+    # --- Difficulty Setup ---
+    fish_speed = 1.0
+    if difficulty_mode == "EASY":
+        fish_speed = 1.0
+    elif difficulty_mode == "MEDIUM":
+        fish_speed = 2.0
+    elif difficulty_mode == "HARD":
+        fish_speed = 3.0
+
     # ── FISH DATA ────────────────────
     fish_encounter = get_fish(get_random_rarity(rod_using["name"]))
     fish_resilience = fish_encounter["FISH_RESILIENCE"] + rod_using["RESILIENCE"]
     fish_progress = fish_encounter["PROGRESS_SPD"] + rod_using["PROGRESS_SPD"]
 
+    # If Experiment, fix type of fish to "Uncommon" and use static resilience/progress for better comparison, while still applying rod modifiers
+    if is_experiment:
+        fish_encounter = get_fish("Uncommon")
+        fish_resilience = 0.75
+        fish_progress = 0
+
     # --- DDA MANAGER SETUP ---
     dda_manager = None
+    baseline_skill = None
     if difficulty_mode == "DDA":
-        dda_manager = DDAManager(fish_resilience=fish_resilience, fish_progress=fish_progress)
-        # Use a neutral starting speed for DDA mode, the manager will adjust it
-        fish_speed = 1.5
-    else:
-        # Fallback for non-DDA modes
-        fish_speed = {"EASY": 1.0, "MEDIUM": 2.0, "HARD": 3.0}.get(difficulty_mode, 1.0)
+        baseline_skill = 0.5
+
+        hist_stats = save.data["player"].get("historical_stats", None)
+        if hist_stats:
+            if hist_stats["HARD"]["plays"] > 0 and hist_stats["HARD"]["avg_accuracy"] > 0.4:
+                baseline_skill = hist_stats["HARD"]["avg_accuracy"] + 0.2
+            elif hist_stats["MEDIUM"]["plays"] > 0:
+                baseline_skill = hist_stats["MEDIUM"]["avg_accuracy"]
+            elif hist_stats["EASY"]["plays"] > 0:
+                baseline_skill = hist_stats["EASY"]["avg_accuracy"] - 0.1
+            baseline_skill = np.clip(baseline_skill, 0.1, 0.9)
+
+        dda_manager = DDAManager(
+            fish_resilience=fish_resilience,
+            fish_progress=fish_progress,
+            baseline_skill=baseline_skill,
+        )
+
+        fish_speed = np.interp(baseline_skill, [0, 1], [0.8, 2.5])
 
     # ── FISH ─────────────────────────
     fish_y = S.TRACK_Y + S.TRACK_HEIGHT // 2 - S.FISH_SIZE // 2
     fish_direction = random.choice([-1, 1])
+
+    if difficulty_mode == "DDA":
+        fish_speed = random.uniform(FISH_MIN_SPEED, FISH_MAX_SPEED)
 
     distance = random.randint(FISH_MOVE_MIN_DIST, FISH_MOVE_MAX_DIST)
     fish_target_y = fish_y
@@ -129,17 +167,6 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
     bar_bounced_bottom = False
     BAR_BOUNCE_DAMP = 0.5
 
-    # ── FISH DATA ────────────────────
-    fish_encounter = get_fish(get_random_rarity(rod_using["name"]))
-    fish_resilience = fish_encounter["FISH_RESILIENCE"] + rod_using["RESILIENCE"]
-    fish_progress = fish_encounter["PROGRESS_SPD"] + rod_using["PROGRESS_SPD"]
-
-    # If Experiment, fix type of fish to "Uncommon" and use static resilience/progress for better comparison, while still applying rod modifiers
-    if is_experiment:
-        fish_encounter = get_fish("Uncommon")
-        fish_resilience = 0.75
-        fish_progress = 0
-
     if rod_using["name"] == "Meme Rod":
         choices = random.choices([1, 2, 3])
         if 1 in choices:
@@ -159,6 +186,10 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
     is_perfect_catch = True
     success = [False, None, None]
     running = True
+
+    total_active_frames = 0
+    total_catching_frames = 0
+    actual_gain = 0.0
 
     play_reeling_sfx()
 
@@ -325,6 +356,9 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
         if knife_active:
             progress_color = (255, 215, 0)
 
+            if knife_fill_remaining == KNIFE_FILL_TOTAL:
+                play_stab_sfx()
+
             # k_dt = clock.get_time() / 1000
             fill_amount = KNIFE_FILL_SPEED * dt
 
@@ -336,18 +370,22 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
                 knife_active = False
                 progress_color = PROGRESS_BAR_COLOR
 
-        # --- Progression Logic (DDA-enabled) ---
+        # --- Progression Logic (Fixed) ---
         if not freeze_active:
+            total_active_frames += 1
             if is_catching:
-                # Use DDA-modified progress rate if available
+                total_catching_frames += 1
+
+                base_gain = PROGRESS_UP_RATE
+
                 current_fish_progress = dda_manager.get_modified_progress() if dda_manager else fish_progress
-                base_gain = PROGRESS_UP_RATE * (1.0 + current_fish_progress)
-                actual_gain = max(PROGRESS_UP_RATE * 0.1, base_gain) # Min gain guarantee
+                raw_gain = base_gain * (1.0 + current_fish_progress)
+                actual_gain = max(base_gain * 0.1, raw_gain)
                 progress += actual_gain * frame_scale
             else:
-                progress -= PROGRESS_DOWN_RATE * frame_scale
+                progress -= PROGRESS_DOWN_RATE
                 is_perfect_catch = False
-                actual_gain = -PROGRESS_DOWN_RATE
+                actual_gain = -(PROGRESS_DOWN_RATE * frame_scale)
 
         progress = max(0.0, min(1.0, progress))
 
@@ -517,6 +555,34 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
 
     # --- Result Screen ---
     catch_duration = time.time() - encounter_start_time
+
+    match_accuracy = total_catching_frames / max(1, total_active_frames)
+
+    if difficulty_mode in ["EASY", "MEDIUM", "HARD", "DDA"]:
+        if "historical_stats" not in save.data["player"]:
+            save.data["player"]["historical_stats"] = {
+                "EASY": {"plays": 0, "wins": 0, "avg_accuracy": 0.0, "avg_time_taken": 0.0},
+                "MEDIUM": {"plays": 0, "wins": 0, "avg_accuracy": 0.0, "avg_time_taken": 0.0},
+                "HARD": {"plays": 0, "wins": 0, "avg_accuracy": 0.0, "avg_time_taken": 0.0},
+                "DDA": {"plays": 0, "wins": 0, "avg_accuracy": 0.0, "avg_time_taken": 0.0},
+            }
+
+        if difficulty_mode not in save.data["player"]["historical_stats"]:
+            save.data["player"]["historical_stats"][difficulty_mode] = {
+                "plays": 0,
+                "wins": 0,
+                "avg_accuracy": 0.0,
+                "avg_time_taken": 0.0,
+            }
+
+        stats = save.data["player"]["historical_stats"][difficulty_mode]
+        old_plays = stats["plays"]
+        stats["plays"] += 1
+        if success[0]:
+            stats["wins"] += 1
+
+        stats["avg_accuracy"] = ((stats["avg_accuracy"] * old_plays) + match_accuracy) / stats["plays"]
+        stats["avg_time_taken"] = ((stats["avg_time_taken"] * old_plays) + catch_duration) / stats["plays"]
     if success[0]:
         play_caught_sfx()
         if not fish_encounter["name"] in save.data["player"]["catched_fish"]:
@@ -548,7 +614,7 @@ def run_game_vertical(screen, S, rod_name, FPS=60, difficulty_mode="DDA", is_exp
     if is_experiment:
         continue_button = Button(
             rect=(
-                start_x,
+                S.WIDTH // 2 - button_width // 2,
                 y_pos,
                 button_width,
                 button_height
