@@ -2,42 +2,78 @@
     "player": {
         "rod": "Novice Rod",
         "catched_fish": [
+            "Cod",
+            "Clownfish",
+            "Mackerel",
+            "Mullet",
+            "Giant Trevally",
+            "Sea Star",
+            "Chinook Salmon",
+            "Octopus",
+            "Colossal Squid",
+            "Great White Shark",
+            "Barracuda",
+            "Flying Fish",
+            "Sea Turtle",
+            "Shrimp",
+            "Crab",
             "Pufferfish",
-            "Shrimp"
+            "Blue Whale",
+            "Orca",
+            "Sardine",
+            "Bluefin Tuna",
+            "Haddock",
+            "Sea Bass",
+            "Amberjack",
+            "Meme Fish"
         ],
-        "total_catched": 2,
-        "catched_streak": 1,
-        "perfect_catches": 2,
+        "total_catched": 70,
+        "catched_streak": 2,
+        "perfect_catches": 18,
         "unlocked_rods": [
-            "Novice Rod"
+            "Novice Rod",
+            "Cool Rod",
+            "Prismatic Rod",
+            "Rod of the Conqueror",
+            "Meme Rod",
+            "Anchor Rod",
+            "RU Sure Rod",
+            "Shear Rod"
         ],
         "shown_unlock_notice": [
-            "Novice Rod"
+            "Novice Rod",
+            "Cool Rod",
+            "Prismatic Rod",
+            "Rod of the Conqueror",
+            "Meme Rod",
+            "Anchor Rod",
+            "RU Sure Rod",
+            "Shear Rod"
         ],
         "historical_stats": {
             "EASY": {
-                "plays": 3,
-                "wins": 2,
-                "avg_accuracy": 0.7162698412698413,
-                "avg_time_taken": 6.810763994852702
+                "plays": 39,
+                "wins": 35,
+                "avg_accuracy": 0.8948751561887439,
+                "avg_time_taken": 11.178541745894993
             },
             "MEDIUM": {
-                "plays": 0,
-                "wins": 0,
-                "avg_accuracy": 0.0,
-                "avg_time_taken": 0.0
+                "plays": 6,
+                "wins": 4,
+                "avg_accuracy": 0.5511521490274444,
+                "avg_time_taken": 14.65618391831716
             },
             "HARD": {
-                "plays": 0,
-                "wins": 0,
-                "avg_accuracy": 0.0,
-                "avg_time_taken": 0.0
+                "plays": 16,
+                "wins": 14,
+                "avg_accuracy": 0.7446892897508978,
+                "avg_time_taken": 14.186644345521927
             },
             "DDA": {
-                "plays": 0,
-                "wins": 0,
-                "avg_accuracy": 0.0,
-                "avg_time_taken": 0.0
+                "plays": 18,
+                "wins": 17,
+                "avg_accuracy": 0.8818115849248825,
+                "avg_time_taken": 18.8030606508255
             }
         }
     },
@@ -46,6 +82,6 @@
         "height": 800,
         "gameplay": "horizontal",
         "sfx": true,
-        "FPS": 90
+        "FPS": 120
     }
 }
